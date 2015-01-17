@@ -1,15 +1,18 @@
 package com.colinwhite.ping;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
+import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -23,8 +26,16 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
-    }
 
+        Intent checkIfUpServiceIntent = new Intent(this, CheckIfUpService.class);
+        startService(checkIfUpServiceIntent);
+
+        // Instantiate the intent filter and the receiver
+        IntentFilter filter = new IntentFilter(CheckUpServiceReceiver.ACTION_RESPONSE);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        CheckUpServiceReceiver receiver = new CheckUpServiceReceiver();
+        registerReceiver(receiver, filter);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -61,6 +72,36 @@ public class MainActivity extends ActionBarActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             return rootView;
+        }
+    }
+
+
+    /**
+     * Simple BroadcastReceiver that is notified when the background CheckIfUpService
+     * finishes and updates the main TextView with the returned information.
+     */
+    public class CheckUpServiceReceiver extends BroadcastReceiver {
+        public static final String ACTION_RESPONSE =
+                "com.colinwhite.ping.intent.action.CHECK_UP_SERVICE_COMPLETE";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            TextView textView = (TextView) findViewById(R.id.output_text_view_id);
+
+            switch (intent.getIntExtra(CheckIfUpService.STATUS, CheckIfUpService.OTHER)) {
+                case CheckIfUpService.IS_UP:
+                    textView.setText(R.string.is_up);
+                    break;
+                case CheckIfUpService.IS_DOWN:
+                    textView.setText(R.string.is_down);
+                    break;
+                case CheckIfUpService.DOES_NOT_EXIST:
+                    textView.setText(R.string.does_not_exist);
+                    break;
+                case CheckIfUpService.OTHER:
+                    textView.setText(R.string.other);
+                    break;
+            }
         }
     }
 }

@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="placeholder">Lorem ipsum dolor sit amet</string>
+
     <string name="app_name">Ping</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="is_up">Check your connection. The website seem to be up.</string>
+    <string name="is_down">It\'s not just you! The website seems to be down.</string>
+    <string name="does_not_exist">I don\'t think that\'s a website URL...</string>
+    <string name="other">Looks like some kind of error occured while checking!</string>
+    <string name="url">Website URL</string>
 
 </resources>
