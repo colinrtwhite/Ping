@@ -1,0 +1,1 @@
+Unsure why you can't access a website? Ping is a lightweight Android app that checks if a website is actually down or if your connection is the problem. Also, if a website is down, it can also be set to periodically check if the website is back up.
