@@ -5,30 +5,58 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
+    public final static String URL_ID = "URL_ID";
+
+    private Toolbar mToolbar;
+    private Button mButton;
+    private EditText mEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
-        }
 
-        Intent checkIfUpServiceIntent = new Intent(this, CheckIfUpService.class);
-        startService(checkIfUpServiceIntent);
+        // Attach the toolbar to the activity.
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+
+        // Set the onClickListener for the ping button to call CheckIfUpService with the URL from
+        // the text field.
+        mButton = (Button) findViewById(R.id.ping_button_id);
+        Button.OnClickListener onClickListener = new Button.OnClickListener() {
+            public void onClick(View v) {
+                // Retrieve the text from the URL input field.
+                String inputText = mEditText.getText().toString();
+
+                // Validate input
+                if (!inputText.isEmpty()) {
+                    Intent checkIfUpServiceIntent = new Intent(getApplicationContext(),
+                            CheckIfUpService.class);
+
+                    // Add the URL from the text field to the Intent.
+                    checkIfUpServiceIntent.putExtra(URL_ID, inputText);
+
+                    startService(checkIfUpServiceIntent);
+                }
+            }
+        };
+        mButton.setOnClickListener(onClickListener);
+
+        // Set the EditText to perform the same function when enter is pressed as when the Button
+        // is clicked.
+        mEditText = (EditText) findViewById(R.id.url_text_field_id);
+        mEditText.setOnClickListener(onClickListener);
 
         // Instantiate the intent filter and the receiver
         IntentFilter filter = new IntentFilter(CheckUpServiceReceiver.ACTION_RESPONSE);
@@ -60,23 +88,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
-    }
-
-
-    /**
      * Simple BroadcastReceiver that is notified when the background CheckIfUpService
      * finishes and updates the main TextView with the returned information.
      */
@@ -88,7 +99,7 @@ public class MainActivity extends ActionBarActivity {
         public void onReceive(Context context, Intent intent) {
             TextView textView = (TextView) findViewById(R.id.output_text_view_id);
 
-            switch (intent.getIntExtra(CheckIfUpService.STATUS, CheckIfUpService.OTHER)) {
+            switch (intent.getIntExtra(CheckIfUpService.STATUS_ID, CheckIfUpService.OTHER)) {
                 case CheckIfUpService.IS_UP:
                     textView.setText(R.string.is_up);
                     break;
