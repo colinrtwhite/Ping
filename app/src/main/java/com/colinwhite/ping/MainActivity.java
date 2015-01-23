@@ -12,28 +12,35 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
     public final static String URL_ID = "URL_ID";
 
-    private Toolbar mToolbar;
-    private Button mButton;
-    private EditText mEditText;
+    private static Toolbar mToolbar;
+    private static ImageButton mButton;
+    private static EditText mEditText;
+    private static LinearLayout mContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mContainer = (LinearLayout) findViewById(R.id.container);
+
         // Attach the toolbar to the activity.
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
+        }
 
         // Set the onClickListener for the ping button to call CheckIfUpService with the URL from
         // the text field.
-        mButton = (Button) findViewById(R.id.ping_button_id);
+        mButton = (ImageButton) findViewById(R.id.button_id);
         Button.OnClickListener onClickListener = new Button.OnClickListener() {
             public void onClick(View v) {
                 // Retrieve the text from the URL input field.
@@ -46,6 +53,9 @@ public class MainActivity extends ActionBarActivity {
 
                     // Add the URL from the text field to the Intent.
                     checkIfUpServiceIntent.putExtra(URL_ID, inputText);
+
+                    // Remove focus from mEditText once URL has been entered.
+                    mContainer.requestFocus();
 
                     startService(checkIfUpServiceIntent);
                 }
@@ -69,6 +79,7 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
 
@@ -79,7 +90,6 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
