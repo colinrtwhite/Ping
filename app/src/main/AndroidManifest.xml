@@ -18,8 +18,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".CreateMonitorActivity"
+            android:label="@string/create_monitor_activity_title" />
+
         <service
-            android:name=".CheckIfUpService"
+            android:name=".PingService"
             android:enabled="true" />
     </application>
 

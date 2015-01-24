@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/create_monitor_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        android:elevation="@dimen/elevation_low"
+        android:minHeight="?attr/actionBarSize" />
+
+    <LinearLayout
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10sp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10sp">
+
+            <ImageView
+                android:id="@+id/monitor_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="12sp"
+                android:src="@mipmap/ic_launcher" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/monitor_title_hint"
+                android:maxLines="1"
+                android:padding="12sp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/abc_text_size_large_material" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/url_text_field_create"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/url_hint"
+            android:maxLines="1"
+            android:padding="12sp"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/abc_text_size_small_material" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10sp"
+            android:paddingRight="10sp"
+            android:text="@string/ping_frequency_header"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/abc_text_size_medium_material" />
+
+        <SeekBar
+            android:id="@+id/ping_frequency_seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="14sp" />
+
+        <TextView
+            android:id="@+id/ping_frequency_explanation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</LinearLayout>

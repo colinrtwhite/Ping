@@ -7,7 +7,11 @@
     <string name="is_down">The website seems to be down!</string>
     <string name="does_not_exist">That doesn\'t look like a website URL...</string>
     <string name="other">Looks like some kind of error occurred while checking!</string>
-    <string name="url">Website URL</string>
+    <string name="quick_check_title">Quick Check!</string>
     <string name="initial_output_text_id">Enter a website URL to check.</string>
+    <string name="create_monitor_activity_title">Create Monitor</string>
+    <string name="monitor_title_hint">Title</string>
+    <string name="ping_frequency_header">Ping Frequency</string>
+    <string name="url_hint">URL</string>
 
 </resources>

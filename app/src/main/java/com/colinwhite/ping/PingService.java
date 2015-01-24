@@ -4,8 +4,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
-import com.colinwhite.ping.MainActivity.CheckUpServiceReceiver;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -18,12 +16,12 @@ import java.io.InputStreamReader;
 import java.util.regex.Pattern;
 
 /**
- * CheckIfUpService resolves if the HOST can see the user's website and sends its result to
- * CheckUpServiceReceiver.
+ * PingService resolves if the HOST can see the user's website and sends its result to
+ * PingServiceReceiver.
  *
- * @see CheckUpServiceReceiver
+ * @see com.colinwhite.ping.MainActivity.PingServiceReceiver
  */
-public class CheckIfUpService extends IntentService {
+public class PingService extends IntentService {
 
     public static final String STATUS_ID = "WEBSITE_STATUS";
     public static final int IS_UP = 0;
@@ -32,24 +30,25 @@ public class CheckIfUpService extends IntentService {
     public static final int OTHER = 3;
     private static final String HOST = "http://www.downforeveryoneorjustme.com/";
 
-    public CheckIfUpService() {
-        super("CheckIfUpService");
+    public PingService() {
+        super("PingService");
     }
 
     /**
      * Creates an IntentService.  Invoked by your IntentService's constructor.
+     *
      * @param name Used to name the worker thread, important only for debugging.
      */
-    public CheckIfUpService(String name) {
+    public PingService(String name) {
         super(name);
     }
 
     /**
      * Calls getHtml and parses the returned HTML from the HOST to see if the user's website
-     * is accessible by the host or not. Sends a broadcast response for CheckUpServiceReceiver.
+     * is accessible by the host or not. Sends a broadcast response for PingServiceReceiver.
      *
      * @param intent Intent that was sent to start this service.
-     * @see CheckUpServiceReceiver
+     * @see com.colinwhite.ping.MainActivity.PingServiceReceiver
      */
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -62,7 +61,7 @@ public class CheckIfUpService extends IntentService {
         Pattern doesNotExist = Pattern.compile("doesn't look like a site on the interwho.");
 
         Intent response = new Intent()
-                .setAction(CheckUpServiceReceiver.ACTION_RESPONSE)
+                .setAction(MainActivity.PingServiceReceiver.ACTION_RESPONSE)
                 .addCategory(Intent.CATEGORY_DEFAULT);
 
         if (up.matcher(html).find()) {
@@ -102,7 +101,7 @@ public class CheckIfUpService extends IntentService {
 
             return html.toString();
         } catch (IOException e) {
-            Log.e("CheckIfUpService", "onHandleIntent failed; error: " + e.toString());
+            Log.e("PingService", "onHandleIntent failed; error: " + e.toString());
         }
 
         return "";
