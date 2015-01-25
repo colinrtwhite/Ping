@@ -14,21 +14,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary"
-        android:elevation="@dimen/elevation_low"
+        android:elevation="@dimen/elevation_medium"
         android:minHeight="?attr/actionBarSize" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary"
-        android:elevation="@dimen/elevation_low"
+        android:elevation="@dimen/elevation_medium"
         android:orientation="horizontal"
         android:paddingBottom="10sp"
         android:paddingLeft="10sp"
         android:paddingRight="10sp">
 
         <ImageButton
-            android:id="@+id/button_id"
+            android:id="@+id/ping_button"
             android:layout_width="40sp"
             android:layout_height="40sp"
             android:layout_gravity="center"
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/quick_check_title"
                 android:textColor="@color/accent"
-                android:textSize="@dimen/abc_text_size_medium_material" />
+                android:textSize="@dimen/abc_text_size_small_material" />
 
             <Space
                 android:layout_width="match_parent"
@@ -63,7 +63,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="textNoSuggestions"
                 android:maxLines="1"
-                android:textSize="@dimen/abc_text_size_large_material" />
+                android:privateImeOptions="nm"
+                android:textSize="@dimen/abc_text_size_medium_material" />
 
             <Space
                 android:layout_width="match_parent"
@@ -74,12 +75,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/initial_output_text_id"
-                android:textSize="@dimen/abc_text_size_medium_material" />
+                android:textSize="@dimen/abc_text_size_small_material" />
         </LinearLayout>
     </LinearLayout>
 
-    <ListView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageButton
+            android:id="@+id/add_button"
+            android:layout_width="@dimen/round_button_diameter"
+            android:layout_height="@dimen/round_button_diameter"
+            android:layout_gravity="end|bottom"
+            android:layout_marginBottom="@dimen/add_button_margin"
+            android:layout_marginEnd="@dimen/add_button_margin"
+            android:background="@drawable/oval"
+            android:elevation="@dimen/elevation_high"
+            android:src="@android:drawable/ic_input_add"
+            android:tint="@android:color/white"
+            tools:ignore="RtlCompat" />
+
+    </FrameLayout>
 
 </LinearLayout>

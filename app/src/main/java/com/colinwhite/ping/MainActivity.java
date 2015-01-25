@@ -7,11 +7,12 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -23,6 +24,7 @@ public class MainActivity extends ActionBarActivity {
 
     private static Toolbar mToolbar;
     private static ImageButton mButton;
+    private static ImageButton mFloatingButton;
     private static EditText mEditText;
     private static LinearLayout mActivityContainer;
 
@@ -39,41 +41,35 @@ public class MainActivity extends ActionBarActivity {
             setSupportActionBar(mToolbar);
         }
 
-        // Set the onClickListener for the ping button to call PingService with the URL from
-        // the text field.
-        mButton = (ImageButton) findViewById(R.id.button_id);
-        Button.OnClickListener onClickListener = new Button.OnClickListener() {
+        // Set the onClickListener for the ping button to attempt to start the PingService.
+        mButton = (ImageButton) findViewById(R.id.ping_button);
+        mButton.setOnClickListener(new ImageButton.OnClickListener() {
             public void onClick(View v) {
-                // Retrieve the text from the URL input field.
-                String inputText = mEditText.getText().toString();
-
-                // Validate input
-                if (!inputText.isEmpty()) {
-                    Intent checkIfUpServiceIntent = new Intent(getApplicationContext(),
-                            PingService.class);
-
-                    // Add the URL from the text field to the Intent.
-                    checkIfUpServiceIntent.putExtra(URL_ID, inputText);
-
-                    // Remove focus from mEditText once URL has been entered.
-                    mActivityContainer.requestFocus();
-
-                    // Close the virtual keyboard.
-                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(
-                            Context.INPUT_METHOD_SERVICE);
-                    inputMethodManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-
-                    startService(checkIfUpServiceIntent);
-                }
+                startPingService();
             }
-        };
-        mButton.setOnClickListener(onClickListener);
+        });
 
-        // Set the EditText to use the same onClickListener.
+        // Give the same logic to the "enter" key on the soft keyboard while in the EditText.
         mEditText = (EditText) findViewById(R.id.url_text_field_quick);
-        mEditText.setOnClickListener(onClickListener);
+        mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean isActionDone = actionId == EditorInfo.IME_ACTION_DONE;
+                if (isActionDone) {
+                    startPingService();
+                }
+                return isActionDone;
+            }
+        });
 
-        // Instantiate the intent filter and the receiver
+        // Set the floating button to open the CreateMonitorActivity.
+        mFloatingButton = (ImageButton) findViewById(R.id.add_button);
+        mFloatingButton.setOnClickListener(new ImageButton.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), CreateMonitorActivity.class));
+            }
+        });
+
+        // Instantiate the intent filter and the receiver to receive the output.
         IntentFilter filter = new IntentFilter(PingServiceReceiver.ACTION_RESPONSE);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         PingServiceReceiver receiver = new PingServiceReceiver();
@@ -100,6 +96,30 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startPingService() {
+        // Retrieve the text from the URL input field.
+        String inputText = mEditText.getText().toString();
+
+        // Validate input
+        if (!inputText.isEmpty()) {
+            Intent pingServiceIntent = new Intent(getApplicationContext(),
+                    PingService.class);
+
+            // Add the URL from the text field to the Intent.
+            pingServiceIntent.putExtra(URL_ID, inputText);
+
+            // Close the virtual keyboard.
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+
+            // Remove focus from mEditText once URL has been entered.
+            mActivityContainer.requestFocus();
+
+            startService(pingServiceIntent);
+        }
     }
 
     /**
