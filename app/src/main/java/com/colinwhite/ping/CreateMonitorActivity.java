@@ -1,16 +1,21 @@
 package com.colinwhite.ping;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 public class CreateMonitorActivity extends ActionBarActivity {
 
+    public static final String URL_FIELD_VALUE = "URL_FIELD_VALUE";
+
     private static Toolbar mToolbar;
     private static ImageView mMonitorIcon;
+    private static EditText mUrlField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +31,15 @@ public class CreateMonitorActivity extends ActionBarActivity {
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
         }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mUrlField = (EditText) findViewById(R.id.url_text_field_create);
+
+        // Set the URL EditText to the passed value.
+        Intent intent = getIntent();
+        if (intent.hasExtra(URL_FIELD_VALUE)) {
+            mUrlField.setText(intent.getStringExtra(URL_FIELD_VALUE));
+        }
     }
 
     @Override

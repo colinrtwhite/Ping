@@ -13,5 +13,6 @@
     <string name="monitor_title_hint">Title</string>
     <string name="ping_frequency_header">Ping Frequency</string>
     <string name="url_hint">URL</string>
+    <string name="save_button_text">Save</string>
 
 </resources>

@@ -65,7 +65,15 @@ public class MainActivity extends ActionBarActivity {
         mFloatingButton = (ImageButton) findViewById(R.id.add_button);
         mFloatingButton.setOnClickListener(new ImageButton.OnClickListener() {
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), CreateMonitorActivity.class));
+                // Pass the value of the EditText to CreateMonitorActivity.
+                Intent createMonitorActivityIntent = new Intent(getApplicationContext(),
+                        CreateMonitorActivity.class);
+                String text = mEditText.getText().toString();
+                if (!text.isEmpty()) {
+                    createMonitorActivityIntent.putExtra(CreateMonitorActivity.URL_FIELD_VALUE,
+                            text);
+                }
+                startActivity(createMonitorActivityIntent);
             }
         });
 

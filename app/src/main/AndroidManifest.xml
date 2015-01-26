@@ -20,7 +20,13 @@
 
         <activity
             android:name=".CreateMonitorActivity"
-            android:label="@string/create_monitor_activity_title" />
+            android:label="@string/create_monitor_activity_title"
+            android:parentActivityName=".MainActivity">
+            <!-- Parent activity meta-data to support 4.0 and lower. -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.colinwhite.ping.MainActivity" />
+        </activity>
 
         <service
             android:name=".PingService"

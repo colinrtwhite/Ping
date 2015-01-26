@@ -41,6 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/monitor_title_hint"
+                android:inputType="textCapSentences"
                 android:maxLines="1"
                 android:padding="12sp"
                 android:textColor="@android:color/black"
@@ -79,7 +80,19 @@
         <TextView
             android:id="@+id/ping_frequency_explanation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text="Placeholder"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/abc_text_size_small_material" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20sp"
+            android:text="@string/save_button_text"
+            android:textSize="@dimen/abc_text_size_medium_material" />
 
     </LinearLayout>
 </LinearLayout>
