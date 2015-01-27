@@ -77,11 +77,6 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        // Instantiate the intent filter and the receiver to receive the output.
-        IntentFilter filter = new IntentFilter(PingServiceReceiver.ACTION_RESPONSE);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        PingServiceReceiver receiver = new PingServiceReceiver();
-        registerReceiver(receiver, filter);
     }
 
     @Override
@@ -126,6 +121,12 @@ public class MainActivity extends ActionBarActivity {
             // Remove focus from mEditText once URL has been entered.
             mActivityContainer.requestFocus();
 
+            // Instantiate the intent filter and the receiver to receive the output.
+            IntentFilter filter = new IntentFilter(PingServiceReceiver.ACTION_RESPONSE);
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+            PingServiceReceiver receiver = new PingServiceReceiver();
+            registerReceiver(receiver, filter);
+
             startService(pingServiceIntent);
         }
     }
@@ -156,6 +157,9 @@ public class MainActivity extends ActionBarActivity {
                     textView.setText(R.string.other);
                     break;
             }
+
+            // Don't leak the BroadcastReceiver.
+            context.unregisterReceiver(this);
         }
     }
 }
