@@ -1,21 +1,34 @@
 package com.colinwhite.ping;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class CreateMonitorActivity extends ActionBarActivity {
 
     public static final String URL_FIELD_VALUE = "URL_FIELD_VALUE";
+    private static final String DATE_FORMAT = "dd/MM/yy";
 
     private static Toolbar mToolbar;
     private static ImageView mMonitorIcon;
     private static EditText mUrlField;
+    private static TextView mDatePickerOutput;
+    private static Calendar mEndDate;
+    private static DatePickerDialog mDatePickerDialog;
+    private boolean mHasEndDate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +46,39 @@ public class CreateMonitorActivity extends ActionBarActivity {
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mUrlField = (EditText) findViewById(R.id.url_text_field_create);
+        // Make the DatePicker set the output TextField's date when it is changed.
+        mEndDate = Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                mEndDate.set(Calendar.YEAR, year);
+                mEndDate.set(Calendar.MONTH, month);
+                mEndDate.set(Calendar.DAY_OF_MONTH, day);
+
+                // Set the output TextView's text.
+                SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT, Locale.UK);
+                mDatePickerOutput.setText(format.format(mEndDate.getTime()));
+
+                mHasEndDate = true;
+            }
+        };
+
+        // Set the DatePicker to popup when the TextField is clicked.
+        mDatePickerOutput = (TextView) findViewById(R.id.date_picker_output);
+        mDatePickerDialog = new DatePickerDialog(this,
+                date,
+                mEndDate.get(Calendar.YEAR),
+                mEndDate.get(Calendar.MONTH),
+                mEndDate.get(Calendar.DAY_OF_MONTH));
+        mDatePickerOutput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDatePickerDialog.show();
+            }
+        });
 
         // Set the URL EditText to the passed value.
+        mUrlField = (EditText) findViewById(R.id.url_text_field_create);
         Intent intent = getIntent();
         if (intent.hasExtra(URL_FIELD_VALUE)) {
             mUrlField.setText(intent.getStringExtra(URL_FIELD_VALUE));

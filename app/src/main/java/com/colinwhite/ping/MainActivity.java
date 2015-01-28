@@ -141,7 +141,7 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            TextView textView = (TextView) findViewById(R.id.output_text_view_id);
+            TextView textView = (TextView) findViewById(R.id.output_text_view);
 
             switch (intent.getIntExtra(PingService.STATUS_ID, PingService.OTHER)) {
                 case PingService.IS_UP:

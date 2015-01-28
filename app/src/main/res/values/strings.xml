@@ -14,5 +14,9 @@
     <string name="ping_frequency_header">Ping Frequency</string>
     <string name="url_hint">URL</string>
     <string name="save_button_text">Save</string>
+    <string name="delete_button_text">Delete</string>
+    <string name="ping_frequency_explanation">Ping frequency explanation</string>
+    <string name="date_picker_header">Run Until</string>
+    <string name="date_picker_label">Monitor URL indefinitely.</string>
 
 </resources>

@@ -9,7 +9,7 @@
     tools:context=".CreateMonitorActivity"
     tools:ignore="MergeRootFrame">
 
-<android.support.v7.widget.Toolbar
+    <android.support.v7.widget.Toolbar
         android:id="@+id/create_monitor_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -75,24 +75,65 @@
             android:id="@+id/ping_frequency_seek_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="14sp" />
+            android:max="5"
+            android:paddingBottom="14sp"
+            android:paddingLeft="20sp"
+            android:paddingRight="20sp"
+            android:paddingTop="14sp" />
 
         <TextView
             android:id="@+id/ping_frequency_explanation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:maxLines="1"
-            android:text="Placeholder"
+            android:text="@string/ping_frequency_explanation"
             android:textColor="@android:color/black"
             android:textSize="@dimen/abc_text_size_small_material" />
 
-        <Button
-            android:layout_width="wrap_content"
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20sp"
-            android:text="@string/save_button_text"
+            android:padding="12sp"
+            android:text="@string/date_picker_header"
+            android:textColor="@android:color/black"
             android:textSize="@dimen/abc_text_size_medium_material" />
 
+        <TextView
+            android:id="@+id/date_picker_output"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/date_picker_label"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/abc_text_size_small_material" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/delete_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10sp"
+                android:text="@string/delete_button_text"
+                android:textSize="@dimen/abc_text_size_medium_material" />
+
+            <Button
+                android:id="@+id/save_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10sp"
+                android:text="@string/save_button_text"
+                android:textSize="@dimen/abc_text_size_medium_material" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -71,7 +71,7 @@
                 android:layout_height="10sp" />
 
             <TextView
-                android:id="@+id/output_text_view_id"
+                android:id="@+id/output_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/initial_output_text_id"
