@@ -22,7 +22,7 @@ public class PingDbHelper extends SQLiteOpenHelper {
         final String LONG_TYPE = " LONG";
         final String NOT_NULL = " NOT NULL";
         final String SQL_CREATE_ENTRIES = "CREATE TABLE " + MonitorEntry.TABLE_NAME + " (" +
-                MonitorEntry._ID + INTEGER_TYPE + " PRIMARY KEY," + COMMA_SEP +
+                MonitorEntry._ID + INTEGER_TYPE + " PRIMARY KEY" + COMMA_SEP +
                 MonitorEntry.TITLE + TEXT_TYPE + NOT_NULL + COMMA_SEP +
                 MonitorEntry.URL + TEXT_TYPE + NOT_NULL + COMMA_SEP +
                 MonitorEntry.PING_FREQUENCY + INTEGER_TYPE + NOT_NULL + COMMA_SEP +

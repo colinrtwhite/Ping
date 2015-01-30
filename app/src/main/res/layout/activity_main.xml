@@ -64,7 +64,9 @@
                 android:inputType="textNoSuggestions"
                 android:maxLines="1"
                 android:privateImeOptions="nm"
-                android:textSize="@dimen/abc_text_size_medium_material" />
+                android:textSize="@dimen/abc_text_size_medium_material"
+                android:hint="@string/initial_output_text_id"
+                android:textColorHint="@android:color/white"/>
 
             <Space
                 android:layout_width="match_parent"

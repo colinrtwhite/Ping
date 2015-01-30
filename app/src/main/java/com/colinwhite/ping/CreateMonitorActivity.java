@@ -1,6 +1,7 @@
 package com.colinwhite.ping;
 
 import android.app.DatePickerDialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -8,10 +9,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.colinwhite.ping.data.PingContract;
+import com.colinwhite.ping.data.PingContract.MonitorEntry;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,12 +28,17 @@ public class CreateMonitorActivity extends ActionBarActivity {
     public static final String URL_FIELD_VALUE = "URL_FIELD_VALUE";
     private static final String DATE_FORMAT = "dd/MM/yy";
 
+    // Database fields
+    private static EditText mTitleField;
+    private static EditText mUrlField;
+    private static SeekBar mPingFrequency;
+    private static Calendar mEndDate;
+
     private static Toolbar mToolbar;
     private static ImageView mMonitorIcon;
-    private static EditText mUrlField;
     private static TextView mDatePickerOutput;
-    private static Calendar mEndDate;
     private static DatePickerDialog mDatePickerDialog;
+    private static Button mSaveButton;
     private boolean mHasEndDate = false;
 
     @Override
@@ -83,6 +94,28 @@ public class CreateMonitorActivity extends ActionBarActivity {
         if (intent.hasExtra(URL_FIELD_VALUE)) {
             mUrlField.setText(intent.getStringExtra(URL_FIELD_VALUE));
         }
+
+        // Get references to the title field and ping frequency seek bar.
+        mTitleField = (EditText) findViewById(R.id.create_monitor_title);
+        mPingFrequency = (SeekBar) findViewById(R.id.ping_frequency_seek_bar);
+
+        // Set the save button to write to the database and close the activity.
+        mSaveButton = (Button) findViewById(R.id.save_button);
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContentValues values = new ContentValues();
+                values.put(MonitorEntry.TITLE, mTitleField.getText().toString());
+                values.put(MonitorEntry.URL, mUrlField.getText().toString());
+                values.put(MonitorEntry.PING_FREQUENCY, mPingFrequency.getProgress());
+                if (mHasEndDate) {
+                    values.put(MonitorEntry.END_DATE, mEndDate.getTimeInMillis());
+                }
+
+                getContentResolver().insert(PingContract.MonitorEntry.CONTENT_URI, values);
+                finish();
+            }
+        });
     }
 
     @Override

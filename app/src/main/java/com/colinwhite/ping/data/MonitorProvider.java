@@ -29,7 +29,7 @@ public class MonitorProvider extends ContentProvider {
         final String authority = PingContract.CONTENT_AUTHORITY;
 
         matcher.addURI(authority, PingContract.PATH_MONITOR, MONITOR);
-        matcher.addURI(authority, PingContract.PATH_MONITOR, MONITOR_BY_ID);
+        matcher.addURI(authority, PingContract.PATH_MONITOR + "/#", MONITOR_BY_ID);
 
         return matcher;
     }

@@ -38,6 +38,7 @@
                 android:src="@mipmap/ic_launcher" />
 
             <EditText
+                android:id="@+id/create_monitor_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/monitor_title_hint"
@@ -53,6 +54,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/url_hint"
+            android:inputType="textNoSuggestions"
+            android:privateImeOptions="nm"
             android:maxLines="1"
             android:padding="12sp"
             android:textColor="@android:color/black"
@@ -125,6 +128,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10sp"
                 android:text="@string/delete_button_text"
+                android:visibility="gone"
                 android:textSize="@dimen/abc_text_size_medium_material" />
 
             <Button

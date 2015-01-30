@@ -29,13 +29,5 @@ public final class PingContract {
         public static Uri buildUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
-
-
-
-
-
-
-
-
     }
 }
