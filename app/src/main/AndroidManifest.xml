@@ -3,6 +3,8 @@
     package="com.colinwhite.ping">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -30,6 +32,10 @@
 
         <service
             android:name=".PingService"
+            android:enabled="true" />
+
+        <service
+            android:name=".data.DataService"
             android:enabled="true" />
     </application>
 

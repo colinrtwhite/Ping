@@ -18,5 +18,7 @@
     <string name="ping_frequency_explanation">Ping frequency explanation</string>
     <string name="date_picker_header">Run Until</string>
     <string name="date_picker_label">Monitor URL indefinitely.</string>
+    <string name="no_internet_connection">You don\'t have an internet connection!</string>
+    <string name="empty_list_view_message">This is where your Monitors would go...if you had any.</string>
 
 </resources>

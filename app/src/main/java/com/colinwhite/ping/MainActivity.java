@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 
@@ -27,6 +28,7 @@ public class MainActivity extends ActionBarActivity {
     private static ImageButton mFloatingButton;
     private static EditText mEditText;
     private static LinearLayout mActivityContainer;
+    private static ListView mMonitorList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,9 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        // Set the text that is shown when the list of monitors is empty.
+        mMonitorList = (ListView) findViewById(R.id.monitor_list);
+        mMonitorList.setEmptyView(findViewById(R.id.empty_monitor_list_text));
     }
 
     @Override
@@ -152,6 +157,9 @@ public class MainActivity extends ActionBarActivity {
                     break;
                 case PingService.DOES_NOT_EXIST:
                     textView.setText(R.string.does_not_exist);
+                    break;
+                case PingService.NO_INTERNET_CONNECTION:
+                    textView.setText(R.string.no_internet_connection);
                     break;
                 case PingService.OTHER:
                     textView.setText(R.string.other);

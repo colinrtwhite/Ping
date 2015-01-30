@@ -1,7 +1,10 @@
 package com.colinwhite.ping;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import org.apache.http.HttpResponse;
@@ -27,7 +30,8 @@ public class PingService extends IntentService {
     public static final int IS_UP = 0;
     public static final int IS_DOWN = 1;
     public static final int DOES_NOT_EXIST = 2;
-    public static final int OTHER = 3;
+    public static final int NO_INTERNET_CONNECTION = 3;
+    public static final int OTHER = 4;
     private static final String HOST = "http://www.downforeveryoneorjustme.com/";
 
     public PingService() {
@@ -64,7 +68,9 @@ public class PingService extends IntentService {
                 .setAction(MainActivity.PingServiceReceiver.ACTION_RESPONSE)
                 .addCategory(Intent.CATEGORY_DEFAULT);
 
-        if (up.matcher(html).find()) {
+        if (!isNetworkConnected()) {
+            response.putExtra(STATUS_ID, NO_INTERNET_CONNECTION);
+        } else if (up.matcher(html).find()) {
             response.putExtra(STATUS_ID, IS_UP);
         } else if (down.matcher(html).find()) {
             response.putExtra(STATUS_ID, IS_DOWN);
@@ -101,9 +107,17 @@ public class PingService extends IntentService {
 
             return html.toString();
         } catch (IOException e) {
-            Log.e("PingService", "onHandleIntent failed; error: " + e.toString());
+            Log.e("PingService", "getHtml failed; error: " + e.toString());
         }
 
         return "";
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+
+        // If info is null, there are no active networks.
+        return (info != null);
     }
 }

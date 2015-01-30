@@ -84,6 +84,7 @@
         android:layout_height="match_parent">
 
         <ListView
+            android:id="@+id/monitor_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:focusable="true"
@@ -102,6 +103,6 @@
             android:tint="@android:color/white"
             tools:ignore="RtlCompat" />
 
+        <include layout="@layout/empty_list_view" />
     </FrameLayout>
-
 </LinearLayout>
