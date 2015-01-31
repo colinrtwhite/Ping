@@ -13,7 +13,7 @@
     <string name="monitor_title_hint">Title</string>
     <string name="ping_frequency_header">Ping Frequency</string>
     <string name="url_hint">URL</string>
-    <string name="save_button_text">Save</string>
+    <string name="create_button_text">Create</string>
     <string name="delete_button_text">Delete</string>
     <string name="ping_frequency_explanation">Ping frequency explanation</string>
     <string name="date_picker_header">Run Until</string>
@@ -22,5 +22,7 @@
     <string name="empty_list_view_message">This is where your Monitors would go...if you had any.</string>
     <string name="sync_account_type">ping.colinwhite.com</string>
     <string name="content_authority">com.colinwhite.ping</string>
+    <string name="monitor_detail_activity_title">Update Monitor</string>
+    <string name="update_button_text">Update</string>
 
 </resources>

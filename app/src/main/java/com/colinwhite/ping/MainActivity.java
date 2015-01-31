@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -80,20 +81,39 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         mFloatingButton.setOnClickListener(new ImageButton.OnClickListener() {
             public void onClick(View v) {
                 // Pass the value of the EditText to MonitorDetailActivity.
-                Intent createMonitorActivityIntent = new Intent(getApplicationContext(),
+                Intent monitorDetailActivityIntent = new Intent(getApplicationContext(),
                         MonitorDetailActivity.class);
                 String text = mEditText.getText().toString();
                 if (!text.isEmpty()) {
-                    createMonitorActivityIntent.putExtra(MonitorDetailActivity.URL_FIELD_VALUE,
+                    monitorDetailActivityIntent.putExtra(MonitorDetailActivity.URL_FIELD_VALUE,
                             text);
                 }
-                startActivity(createMonitorActivityIntent);
+
+                // Show that we are creating a new Monitor.
+                monitorDetailActivityIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
+                        MonitorDetailActivity.CREATE);
+
+                startActivity(monitorDetailActivityIntent);
             }
         });
 
         // Set the text that is shown when the list of monitors is empty.
         mMonitorList = (ListView) findViewById(R.id.monitor_list);
         mMonitorList.setEmptyView(findViewById(R.id.empty_monitor_list_text));
+
+        // Set the any items in the Monitor ListView to open up their detail activity.
+        mMonitorList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent monitorDetailActivityIntent = new Intent(getApplicationContext(), MonitorDetailActivity.class);
+                // Show that we are looking at an existing Monitor
+                monitorDetailActivityIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
+                        MonitorDetailActivity.DETAIL);
+                monitorDetailActivityIntent.putExtra(MonitorEntry._ID, id);
+
+                startActivity(monitorDetailActivityIntent);
+            }
+        });
 
         // Initialise the Loader for the ListView.
         String[] uiBindFrom = { MonitorEntry.TITLE, MonitorEntry.URL};

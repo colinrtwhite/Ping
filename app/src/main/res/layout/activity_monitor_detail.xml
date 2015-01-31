@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".CreateMonitorActivity">
 
     <android.support.v7.widget.Toolbar
@@ -33,10 +36,11 @@
 
                 <ImageView
                     android:id="@+id/monitor_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="48sp"
+                    android:layout_height="48sp"
                     android:padding="12sp"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@mipmap/ic_launcher"
+                    android:layout_gravity="center"/>
 
                 <EditText
                     android:id="@+id/create_monitor_title"
@@ -130,14 +134,14 @@
                     android:layout_margin="10sp"
                     android:text="@string/delete_button_text"
                     android:textSize="@dimen/abc_text_size_medium_material"
-                    android:visibility="gone" />
+                    android:visibility="gone"/>
 
                 <Button
                     android:id="@+id/save_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10sp"
-                    android:text="@string/save_button_text"
+                    android:text="@string/create_button_text"
                     android:textSize="@dimen/abc_text_size_medium_material" />
             </LinearLayout>
         </LinearLayout>

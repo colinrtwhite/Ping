@@ -15,7 +15,8 @@ public class MonitorProvider extends ContentProvider {
     private static final UriMatcher mUriMatcher = buildUriMatcher();
     private static final int MONITOR = 0;
     private static final int MONITOR_BY_ID = 1;
-    // SQL commands
+
+    // SQL-related objects
     private static final String[] mProjection = {
             PingContract.MonitorEntry._ID,
             PingContract.MonitorEntry.TITLE,
