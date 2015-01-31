@@ -22,7 +22,7 @@ public class MonitorProvider extends ContentProvider {
             PingContract.MonitorEntry.URL,
             PingContract.MonitorEntry.PING_FREQUENCY,
             PingContract.MonitorEntry.END_DATE};
-    private static final String mSortOrder = PingContract.MonitorEntry._ID + " ASC";
+    private static final String mSortOrder = PingContract.MonitorEntry._ID + " DESC";
     private static PingDbHelper mDbHelper;
 
     private static UriMatcher buildUriMatcher() {

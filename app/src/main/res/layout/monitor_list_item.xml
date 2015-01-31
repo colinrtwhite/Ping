@@ -6,35 +6,53 @@
     android:orientation="horizontal">
 
     <ImageView
-        android:layout_width="72sp"
-        android:layout_height="72sp"
+        android:layout_width="48sp"
+        android:layout_height="48sp"
         android:src="@drawable/ic_refresh_white_48dp"
         android:layout_gravity="center"
-        android:padding="10sp"/>
+        android:layout_margin="12sp"
+        android:layout_weight="0"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_weight="1">
 
         <TextView
             android:id="@+id/list_item_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/abc_text_size_medium_material"
-            android:textColor="@android:color/black"
-            android:text="Title"
-            android:padding="6sp"/>
-
-        <TextView
-            android:id="@+id/list_item_url"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/abc_text_size_small_material"
             android:textColor="@android:color/black"
+            android:text="Title"
+            android:padding="4sp"/>
+
+        <TextView
+            android:id="@+id/list_item_url"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/abc_text_size_caption_material"
+            android:textColor="@android:color/black"
             android:text="URL.com"
-            android:padding="6sp" />
+            android:padding="4sp" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/abc_text_size_caption_material"
+            android:textColor="@android:color/black"
+            android:text="Last checked: 4 hours ago"
+            android:padding="4sp" />
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="48sp"
+        android:layout_height="48sp"
+        android:src="@drawable/up_button"
+        android:layout_gravity="center"
+        android:layout_weight="0"
+        android:layout_margin="20sp"/>
 
 </LinearLayout>
