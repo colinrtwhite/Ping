@@ -3,11 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context=".CreateMonitorActivity"
-    tools:ignore="MergeRootFrame">
+    tools:context=".CreateMonitorActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/create_monitor_toolbar"
@@ -17,127 +14,132 @@
         android:elevation="@dimen/elevation_low"
         android:minHeight="?attr/actionBarSize" />
 
-    <LinearLayout
-        android:id="@+id/content_container"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="10sp">
+        android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/content_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
             android:padding="10sp">
 
-            <ImageView
-                android:id="@+id/monitor_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="12sp"
-                android:src="@mipmap/ic_launcher" />
-
-            <EditText
-                android:id="@+id/create_monitor_title"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/monitor_title_hint"
-                android:inputType="textCapSentences"
+                android:orientation="horizontal"
+                android:padding="10sp">
+
+                <ImageView
+                    android:id="@+id/monitor_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:padding="12sp"
+                    android:src="@mipmap/ic_launcher" />
+
+                <EditText
+                    android:id="@+id/create_monitor_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/monitor_title_hint"
+                    android:inputType="textCapSentences"
+                    android:maxLines="1"
+                    android:padding="12sp"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/abc_text_size_large_material" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/url_text_field_create"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/url_hint"
+                android:inputType="textNoSuggestions"
                 android:maxLines="1"
                 android:padding="12sp"
+                android:privateImeOptions="nm"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/abc_text_size_large_material" />
-        </LinearLayout>
+                android:textSize="@dimen/abc_text_size_small_material" />
 
-        <EditText
-            android:id="@+id/url_text_field_create"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/url_hint"
-            android:inputType="textNoSuggestions"
-            android:privateImeOptions="nm"
-            android:maxLines="1"
-            android:padding="12sp"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/abc_text_size_small_material" />
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16sp" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="16sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10sp"
-            android:paddingRight="10sp"
-            android:text="@string/ping_frequency_header"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/abc_text_size_medium_material" />
-
-        <SeekBar
-            android:id="@+id/ping_frequency_seek_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="5"
-            android:paddingBottom="14sp"
-            android:paddingLeft="20sp"
-            android:paddingRight="20sp"
-            android:paddingTop="14sp" />
-
-        <TextView
-            android:id="@+id/ping_frequency_explanation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:maxLines="1"
-            android:text="@string/ping_frequency_explanation"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/abc_text_size_small_material" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="16sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="12sp"
-            android:text="@string/date_picker_header"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/abc_text_size_medium_material" />
-
-        <TextView
-            android:id="@+id/date_picker_output"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/date_picker_label"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/abc_text_size_small_material" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20sp"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/delete_button"
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10sp"
-                android:text="@string/delete_button_text"
-                android:visibility="gone"
+                android:paddingLeft="10sp"
+                android:paddingRight="10sp"
+                android:text="@string/ping_frequency_header"
+                android:textColor="@android:color/black"
                 android:textSize="@dimen/abc_text_size_medium_material" />
 
-            <Button
-                android:id="@+id/save_button"
+            <SeekBar
+                android:id="@+id/ping_frequency_seek_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="5"
+                android:paddingBottom="14sp"
+                android:paddingLeft="20sp"
+                android:paddingRight="20sp"
+                android:paddingTop="14sp" />
+
+            <TextView
+                android:id="@+id/ping_frequency_explanation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:maxLines="1"
+                android:text="@string/ping_frequency_explanation"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/abc_text_size_small_material" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12sp"
+                android:text="@string/date_picker_header"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/abc_text_size_medium_material" />
+
+            <TextView
+                android:id="@+id/date_picker_output"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10sp"
-                android:text="@string/save_button_text"
-                android:textSize="@dimen/abc_text_size_medium_material" />
+                android:layout_gravity="center"
+                android:text="@string/date_picker_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/abc_text_size_small_material" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20sp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/delete_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10sp"
+                    android:text="@string/delete_button_text"
+                    android:textSize="@dimen/abc_text_size_medium_material"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/save_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10sp"
+                    android:text="@string/save_button_text"
+                    android:textSize="@dimen/abc_text_size_medium_material" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 </LinearLayout>
