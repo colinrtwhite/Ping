@@ -83,7 +83,7 @@
                 android:id="@+id/ping_frequency_seek_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:max="5"
+                android:max="7"
                 android:paddingBottom="14sp"
                 android:paddingLeft="20sp"
                 android:paddingRight="20sp"

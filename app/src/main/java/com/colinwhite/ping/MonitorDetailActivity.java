@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.colinwhite.ping.data.PingContract;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
+import com.colinwhite.ping.sync.PingSyncAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -31,6 +32,9 @@ public class MonitorDetailActivity extends ActionBarActivity {
     public static final String CREATE = "CREATE";
     public static final String DETAIL = "DETAIL";
     private static final String DATE_FORMAT = "E, d MMMM, y";
+    private static final int PING_FREQUENCY_ON_CREATE = 4;
+    private static final String[] DURATION_SUFFIXES = {"minute", " minutes", "hour", " hours",
+            "day", " days"};
 
     // Fields that are used in the database.
     private static EditText mTitleField;
@@ -45,6 +49,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
     private static DatePickerDialog mDatePickerDialog;
     private static Button mConfirmButton;
     private static Button mDeleteButton;
+    private static TextView mPingFrequencyExplanation;
 
     private static SimpleDateFormat mDateFormat;
     private Intent mStartIntent;
@@ -68,10 +73,29 @@ public class MonitorDetailActivity extends ActionBarActivity {
         mPingFrequency = (SeekBar) findViewById(R.id.ping_frequency_seek_bar);
         mDatePickerOutput = (TextView) findViewById(R.id.date_picker_output);
         mConfirmButton = (Button) findViewById(R.id.save_button);
+        mPingFrequencyExplanation = (TextView) findViewById(R.id.ping_frequency_explanation);
 
         // Initialise the date format of the DatePicker's output and the DatePicker's initial date.
         mDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.UK);
         mDatePickerDate = Calendar.getInstance();
+
+        // Set the ping frequency SeekBar to update its explanation TextField when its progress changes.
+        mPingFrequency.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                setPingFrequencyExplanation(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Do nothing.
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // Do nothing.
+            }
+        });
 
         // Change UI elements and data whether we are creating or updating/looking at a Monitor.
         // Default to a creation activity.
@@ -143,7 +167,6 @@ public class MonitorDetailActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 getContentResolver().delete(MonitorEntry.CONTENT_URI, selection, selectionArgs);
-                getContentResolver().notifyChange(MonitorEntry.CONTENT_URI, null);
                 finish();
             }
         });
@@ -156,6 +179,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
         mUrlField.setText(url);
         final int pingFrequency = query.getInt(query.getColumnIndex(MonitorEntry.PING_FREQUENCY));
         mPingFrequency.setProgress(pingFrequency);
+        setPingFrequencyExplanation(pingFrequency);
 
         // Populate the endDate. If we get 0, that means the monitor is set to run indefinitely.
         long endDateInMillis = query.getLong(query.getColumnIndex(MonitorEntry.END_DATE));
@@ -194,6 +218,10 @@ public class MonitorDetailActivity extends ActionBarActivity {
                 saveAllFields(CREATE, null, null);
             }
         });
+
+        // Set the initial ping frequency values.
+        mPingFrequency.setProgress(PING_FREQUENCY_ON_CREATE);
+        setPingFrequencyExplanation(PING_FREQUENCY_ON_CREATE);
     }
 
     // Save all user-accessible fields in the activity, and create a new Monitor/update a current
@@ -212,8 +240,39 @@ public class MonitorDetailActivity extends ActionBarActivity {
         } else {
             getContentResolver().insert(PingContract.MonitorEntry.CONTENT_URI, values);
         }
-        getContentResolver().notifyChange(MonitorEntry.CONTENT_URI, null);
         finish();
+    }
+
+    private void setPingFrequencyExplanation(int progress) {
+        int durationInMinutes = PingSyncAdapter.PING_FREQUENCY_MINUTES[progress];
+        int durationInHours = durationInMinutes / 60;
+        int durationInDays = durationInHours / 24;
+        String duration;
+        if (durationInDays > 0) {
+            duration = _formatDuration(4, durationInDays);
+        } else if (durationInHours > 0) {
+            duration = _formatDuration(2, durationInHours);
+        } else {
+            duration = _formatDuration(0, durationInMinutes);
+        }
+
+        String explanation = getString(R.string.ping_frequency_explanation)
+                .replace("?",  duration);
+        mPingFrequencyExplanation.setText(explanation);
+    }
+
+    /**
+     * Format a duration of time.
+     * @param index_offset The offset to the index in DURATION_SUFFIXES to the desired unit
+     *                     (minute/hour/day).
+     * @param duration An amount of time.
+     */
+    private String _formatDuration(int index_offset, int duration) {
+        if (duration == 1) {
+            return DURATION_SUFFIXES[index_offset];
+        } else {
+            return String.valueOf(duration) + DURATION_SUFFIXES[index_offset + 1];
+        }
     }
 
     @Override

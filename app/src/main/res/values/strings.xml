@@ -15,7 +15,7 @@
     <string name="url_hint">URL</string>
     <string name="create_button_text">Create</string>
     <string name="delete_button_text">Delete</string>
-    <string name="ping_frequency_explanation">Ping frequency explanation</string>
+    <string name="ping_frequency_explanation">Ping every ?, approximately.</string>
     <string name="date_picker_header">Run Until</string>
     <string name="date_picker_label">Monitor URL indefinitely.</string>
     <string name="no_internet_connection">You don\'t have an internet connection!</string>
