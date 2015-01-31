@@ -75,16 +75,16 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
             }
         });
 
-        // Set the floating button to open the CreateMonitorActivity.
+        // Set the floating button to open the MonitorDetailActivity.
         mFloatingButton = (ImageButton) findViewById(R.id.add_button);
         mFloatingButton.setOnClickListener(new ImageButton.OnClickListener() {
             public void onClick(View v) {
-                // Pass the value of the EditText to CreateMonitorActivity.
+                // Pass the value of the EditText to MonitorDetailActivity.
                 Intent createMonitorActivityIntent = new Intent(getApplicationContext(),
-                        CreateMonitorActivity.class);
+                        MonitorDetailActivity.class);
                 String text = mEditText.getText().toString();
                 if (!text.isEmpty()) {
-                    createMonitorActivityIntent.putExtra(CreateMonitorActivity.URL_FIELD_VALUE,
+                    createMonitorActivityIntent.putExtra(MonitorDetailActivity.URL_FIELD_VALUE,
                             text);
                 }
                 startActivity(createMonitorActivityIntent);

@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class CreateMonitorActivity extends ActionBarActivity {
+public class MonitorDetailActivity extends ActionBarActivity {
 
     public static final String URL_FIELD_VALUE = "URL_FIELD_VALUE";
     private static final String DATE_FORMAT = "dd/MM/yy";
@@ -44,7 +44,7 @@ public class CreateMonitorActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_monitor);
+        setContentView(R.layout.activity_monitor_detail);
 
         // Set the icon's width to be equal to its height (square).
         mMonitorIcon = (ImageView) findViewById(R.id.monitor_icon);
