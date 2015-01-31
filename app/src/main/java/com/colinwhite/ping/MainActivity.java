@@ -1,12 +1,17 @@
 package com.colinwhite.ping;
 
+import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,18 +22,25 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import com.colinwhite.ping.data.PingContract.MonitorEntry;
 
-public class MainActivity extends ActionBarActivity {
+
+public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     public final static String URL_ID = "URL_ID";
 
+    // UI elements
     private static Toolbar mToolbar;
     private static ImageButton mButton;
     private static ImageButton mFloatingButton;
     private static EditText mEditText;
     private static LinearLayout mActivityContainer;
     private static ListView mMonitorList;
+
+    private SimpleCursorAdapter mAdapter;
+    private CursorLoader mCursorLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +94,13 @@ public class MainActivity extends ActionBarActivity {
         // Set the text that is shown when the list of monitors is empty.
         mMonitorList = (ListView) findViewById(R.id.monitor_list);
         mMonitorList.setEmptyView(findViewById(R.id.empty_monitor_list_text));
+
+        // Initialise the Loader for the ListView.
+        String[] uiBindFrom = { MonitorEntry.TITLE, MonitorEntry.URL};
+        int[] uiBindTo = { R.id.list_item_title, R.id.list_item_url };
+        mAdapter = new SimpleCursorAdapter(this, R.layout.monitor_list_item, null, uiBindFrom, uiBindTo, 0);
+        mMonitorList.setAdapter(mAdapter);
+        getLoaderManager().initLoader(1, null, this);
     }
 
     @Override
@@ -133,6 +152,37 @@ public class MainActivity extends ActionBarActivity {
             registerReceiver(receiver, filter);
 
             startService(pingServiceIntent);
+        }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {
+                MonitorEntry._ID,
+                MonitorEntry.TITLE,
+                MonitorEntry.URL,
+                MonitorEntry.PING_FREQUENCY,
+                MonitorEntry.END_DATE};
+
+        mCursorLoader = new CursorLoader(this, MonitorEntry.CONTENT_URI, projection, null, null, null);
+        return mCursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (mAdapter != null && data != null) {
+            mAdapter.swapCursor(data);
+        } else {
+            Log.v("MainActivity", "OnLoadFinished: mAdapter is null.");
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        if (mAdapter != null) {
+            mAdapter.swapCursor(null);
+        } else {
+            Log.v("MainActivity", "OnLoadFinished: mAdapter is null.");
         }
     }
 

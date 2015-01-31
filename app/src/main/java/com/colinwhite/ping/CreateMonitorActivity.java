@@ -113,6 +113,8 @@ public class CreateMonitorActivity extends ActionBarActivity {
                 }
 
                 getContentResolver().insert(PingContract.MonitorEntry.CONTENT_URI, values);
+                // Notify the Monitor ListView that the database has been updated.
+                getContentResolver().notifyChange(MonitorEntry.CONTENT_URI, null);
                 finish();
             }
         });

@@ -19,6 +19,7 @@
         android:gravity="center">
 
         <TextView
+            android:id="@+id/list_item_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/abc_text_size_medium_material"
@@ -27,6 +28,7 @@
             android:padding="6sp"/>
 
         <TextView
+            android:id="@+id/list_item_url"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/abc_text_size_small_material"
