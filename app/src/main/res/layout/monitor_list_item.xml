@@ -39,6 +39,7 @@
             android:padding="4sp" />
 
         <TextView
+            android:id="@+id/time_last_checked"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/abc_text_size_caption_material"

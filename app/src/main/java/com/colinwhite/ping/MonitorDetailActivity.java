@@ -238,7 +238,9 @@ public class MonitorDetailActivity extends ActionBarActivity {
         if (DETAIL.equals(pageType)) {
             getContentResolver().update(MonitorEntry.CONTENT_URI, values, selection, selectionArgs);
         } else {
+            // This is a create page.
             getContentResolver().insert(PingContract.MonitorEntry.CONTENT_URI, values);
+            PingSyncAdapter.getSyncAccount(this, mUrlField.getText().toString());
         }
         finish();
     }

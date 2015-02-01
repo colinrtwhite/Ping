@@ -116,8 +116,8 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         });
 
         // Initialise the Loader for the ListView.
-        String[] uiBindFrom = { MonitorEntry.TITLE, MonitorEntry.URL};
-        int[] uiBindTo = { R.id.list_item_title, R.id.list_item_url };
+        String[] uiBindFrom = {MonitorEntry.TITLE, MonitorEntry.URL, MonitorEntry.TIME_LAST_CHECKED};
+        int[] uiBindTo = {R.id.list_item_title, R.id.list_item_url, R.id.time_last_checked};
         mAdapter = new SimpleCursorAdapter(this, R.layout.monitor_list_item, null, uiBindFrom, uiBindTo, 0);
         mMonitorList.setAdapter(mAdapter);
         getLoaderManager().initLoader(1, null, this);
@@ -182,7 +182,9 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                 MonitorEntry.TITLE,
                 MonitorEntry.URL,
                 MonitorEntry.PING_FREQUENCY,
-                MonitorEntry.END_DATE};
+                MonitorEntry.END_DATE,
+                MonitorEntry.TIME_LAST_CHECKED,
+                MonitorEntry.STATUS};
 
         mCursorLoader = new CursorLoader(this, MonitorEntry.CONTENT_URI, projection, null, null, null);
         return mCursorLoader;

@@ -60,7 +60,7 @@
         <service
             android:name=".sync.PingSyncService"
             android:exported="true"
-            >
+            android:process=":sync">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>

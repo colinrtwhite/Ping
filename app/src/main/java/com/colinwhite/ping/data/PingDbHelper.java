@@ -20,7 +20,6 @@ public class PingDbHelper extends SQLiteOpenHelper {
         final String TEXT_TYPE = " TEXT";
         final String INTEGER_TYPE = " INTEGER";
         final String LONG_TYPE = " LONG";
-        final String BOOLEAN_TYPE = " BOOLEAN";
         final String NOT_NULL = " NOT NULL";
         final String SQL_CREATE_ENTRIES = "CREATE TABLE " + MonitorEntry.TABLE_NAME + " (" +
                 MonitorEntry._ID + INTEGER_TYPE + " PRIMARY KEY" + COMMA_SEP +
@@ -29,7 +28,7 @@ public class PingDbHelper extends SQLiteOpenHelper {
                 MonitorEntry.PING_FREQUENCY + INTEGER_TYPE + NOT_NULL + COMMA_SEP +
                 MonitorEntry.END_DATE + LONG_TYPE + COMMA_SEP +
                 MonitorEntry.TIME_LAST_CHECKED + LONG_TYPE + COMMA_SEP +
-                MonitorEntry.IS_UP + BOOLEAN_TYPE + ")";
+                MonitorEntry.STATUS + INTEGER_TYPE + ")";
 
         db.execSQL(SQL_CREATE_ENTRIES);
     }
