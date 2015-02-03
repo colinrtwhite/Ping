@@ -3,15 +3,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="100sp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:descendantFocusability="blocksDescendants">
 
-    <ImageView
+    <ImageButton
+        android:id="@+id/list_item_refresh_button"
         android:layout_width="48sp"
         android:layout_height="48sp"
         android:src="@drawable/ic_refresh_white_48dp"
         android:layout_gravity="center"
         android:layout_margin="12sp"
-        android:layout_weight="0"/>
+        android:layout_weight="0"
+        android:background="@null"
+        android:focusable="false"
+        android:focusableInTouchMode="false"/>
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -39,7 +44,7 @@
             android:padding="4sp" />
 
         <TextView
-            android:id="@+id/time_last_checked"
+            android:id="@+id/list_item_time_last_checked"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/abc_text_size_caption_material"
@@ -49,6 +54,7 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/list_item_status"
         android:layout_width="48sp"
         android:layout_height="48sp"
         android:src="@drawable/up_button"

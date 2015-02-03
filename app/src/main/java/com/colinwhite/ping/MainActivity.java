@@ -23,7 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
@@ -40,7 +39,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     private static LinearLayout mActivityContainer;
     private static ListView mMonitorList;
 
-    private SimpleCursorAdapter mAdapter;
+    private MonitorAdapter mAdapter;
     private CursorLoader mCursorLoader;
 
     @Override
@@ -117,8 +116,9 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
         // Initialise the Loader for the ListView.
         String[] uiBindFrom = {MonitorEntry.TITLE, MonitorEntry.URL, MonitorEntry.TIME_LAST_CHECKED};
-        int[] uiBindTo = {R.id.list_item_title, R.id.list_item_url, R.id.time_last_checked};
-        mAdapter = new SimpleCursorAdapter(this, R.layout.monitor_list_item, null, uiBindFrom, uiBindTo, 0);
+        int[] uiBindTo = {R.id.list_item_title, R.id.list_item_url, R.id.list_item_time_last_checked};
+        //mAdapter = new SimpleCursorAdapter(this, R.layout.monitor_list_item, null, uiBindFrom, uiBindTo, 0);
+        mAdapter = new MonitorAdapter(this, null, 0);
         mMonitorList.setAdapter(mAdapter);
         getLoaderManager().initLoader(1, null, this);
     }
