@@ -13,15 +13,10 @@ import android.widget.TextView;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.sync.PingSyncAdapter;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class MonitorAdapter extends CursorAdapter {
-    private static SimpleDateFormat mTimeFormat;
 
     public MonitorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
-        mTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
     }
 
     @Override
@@ -41,8 +36,11 @@ public class MonitorAdapter extends CursorAdapter {
         viewHolder.refreshButtonView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = cursor.getString(cursor.getColumnIndex(MonitorEntry.URL));
-                PingSyncAdapter.syncImmediately(context, url);
+                // Refresh the Monitor right now.
+                PingSyncAdapter.syncImmediately(
+                        context,
+                        cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)),
+                        cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)));
             }
         });
 
@@ -52,24 +50,31 @@ public class MonitorAdapter extends CursorAdapter {
 
         // Set the time last checked.
         long timeLastCheckedMillis = cursor.getLong(cursor.getColumnIndex(MonitorEntry.TIME_LAST_CHECKED));
-        Date timeLastChecked = new Date(timeLastCheckedMillis);
-        viewHolder.lastCheckedView.setText("Last checked on " + mTimeFormat.format(timeLastChecked));
+        if (timeLastCheckedMillis > 0) {
+            // Format the duration and place it in the resource string.
+            viewHolder.lastCheckedView.setText(String.format(
+                    context.getResources().getString(R.string.last_checked_text),
+                    Utility.formatDate(timeLastCheckedMillis)));
+        } else {
+            // If timeLastCheckedMillis is 0, it hasn't been checked yet.
+            viewHolder.lastCheckedView.setText(context.getResources().getString(R.string.last_checked_text_no_info));
+        }
 
         switch (cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS))) {
-            case PingSyncAdapter.NO_INFO:
+            case MonitorEntry.STATUS_NO_INFO:
                 viewHolder.statusView.setImageDrawable(context.getResources().getDrawable(R.drawable.down_button));
                 break;
-            case PingSyncAdapter.IS_UP:
+            case MonitorEntry.STATUS_IS_UP:
                 viewHolder.statusView.setImageDrawable(context.getResources().getDrawable(R.drawable.up_button));
                 break;
-            case PingSyncAdapter.IS_DOWN:
+            case MonitorEntry.STATUS_IS_DOWN:
                 viewHolder.statusView.setImageDrawable(context.getResources().getDrawable(R.drawable.down_button));
                 break;
-            case PingSyncAdapter.DOES_NOT_EXIST:
+            case MonitorEntry.STATUS_NO_INTERNET:
                 viewHolder.statusView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_share_variant_white_48dp));
                 break;
             default:
-                // Something went wrong. Just set it as down since we don't have an icon for this yet.
+                // Something went wrong.
                 viewHolder.statusView.setImageDrawable(context.getResources().getDrawable(R.drawable.down_button));
                 break;
         }

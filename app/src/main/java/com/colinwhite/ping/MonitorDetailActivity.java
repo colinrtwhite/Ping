@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -25,16 +26,17 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class MonitorDetailActivity extends ActionBarActivity {
+    public static final String LOG_TAG = MonitorDetailActivity.class.getSimpleName();
+
     public static final String URL_FIELD_VALUE = "URL_FIELD_VALUE";
     public static final String PAGE_TYPE_ID = "PAGE_TYPE_ID";
-    public static final String CREATE = "CREATE";
-    public static final String DETAIL = "DETAIL";
-    private static final String DATE_FORMAT = "E, d MMMM, y";
+    public static final String PAGE_CREATE = "PAGE_CREATE";
+    public static final String PAGE_DETAIL = "PAGE_DETAIL";
     private static final int PING_FREQUENCY_ON_CREATE = 4;
-    private static final String[] DURATION_SUFFIXES = {"minute", " minutes", "hour", " hours",
-            "day", " days"};
+    private static final String DATE_FORMAT = "EEEE, d MMMM, y";
 
     // Fields that are used in the database.
     private static EditText mTitleField;
@@ -51,8 +53,8 @@ public class MonitorDetailActivity extends ActionBarActivity {
     private static Button mDeleteButton;
     private static TextView mPingFrequencyExplanation;
 
-    private static SimpleDateFormat mDateFormat;
     private Intent mStartIntent;
+    private SimpleDateFormat mDateFormat;
     private boolean mHasEndDate = false;
 
     @Override
@@ -87,20 +89,16 @@ public class MonitorDetailActivity extends ActionBarActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // Do nothing.
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) { /* Do nothing. */ }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // Do nothing.
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) { /* Do nothing. */ }
         });
 
         // Change UI elements and data whether we are creating or updating/looking at a Monitor.
         // Default to a creation activity.
         mStartIntent = getIntent();
-        if (mStartIntent.getStringExtra(PAGE_TYPE_ID).equals(DETAIL)) {
+        if (mStartIntent.getStringExtra(PAGE_TYPE_ID).equals(PAGE_DETAIL)) {
             buildDetailPageElements();
         } else {
             buildCreatePageElements();
@@ -114,9 +112,8 @@ public class MonitorDetailActivity extends ActionBarActivity {
                 mDatePickerDate.set(Calendar.MONTH, month);
                 mDatePickerDate.set(Calendar.DAY_OF_MONTH, day);
 
-                // Set the output TextView's text.
+                // Set the output TextView's text. Record that it has has a set end date.
                 mDatePickerOutput.setText(mDateFormat.format(mDatePickerDate.getTime()));
-
                 mHasEndDate = true;
             }
         };
@@ -143,7 +140,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
         // Get the ID of the Monitor.
         long monitorId = mStartIntent.getLongExtra(MonitorEntry._ID, -1);
         if (monitorId == -1) {
-            Log.e("MonitorDetailActivity", "Intent does not contain a Monitor ID.");
+            Log.e(LOG_TAG, "Intent does not contain a Monitor ID.");
             finish(); // Close the activity.
         }
 
@@ -166,7 +163,9 @@ public class MonitorDetailActivity extends ActionBarActivity {
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Delete the Monitor's database entry and its sync account then close the activity.
                 getContentResolver().delete(MonitorEntry.CONTENT_URI, selection, selectionArgs);
+                PingSyncAdapter.removeSyncAccount(v.getContext(), mUrlField.getText().toString());
                 finish();
             }
         });
@@ -196,7 +195,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
             public void onClick(View v) {
                 // Update all fields. Don't bother to check, as it takes more time than to just
                 // update all the possible columns.
-                saveAllFields(DETAIL, selection, selectionArgs);
+                saveAllFields(PAGE_DETAIL, selection, selectionArgs);
             }
         });
 
@@ -215,7 +214,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveAllFields(CREATE, null, null);
+                saveAllFields(PAGE_CREATE, null, null);
             }
         });
 
@@ -224,8 +223,10 @@ public class MonitorDetailActivity extends ActionBarActivity {
         setPingFrequencyExplanation(PING_FREQUENCY_ON_CREATE);
     }
 
-    // Save all user-accessible fields in the activity, and create a new Monitor/update a current
-    // one.
+    /**
+     * Save all user-accessible fields in the activity, and create a new Monitor/update a current one.
+     * Used for the CREATE/UPDATE buttons.
+     */
     private void saveAllFields(String pageType, String selection, String[] selectionArgs) {
         ContentValues values = new ContentValues();
         values.put(MonitorEntry.TITLE, mTitleField.getText().toString());
@@ -235,46 +236,39 @@ public class MonitorDetailActivity extends ActionBarActivity {
             values.put(MonitorEntry.END_DATE, mDatePickerDate.getTimeInMillis());
         }
 
-        if (DETAIL.equals(pageType)) {
+        if (PAGE_DETAIL.equals(pageType)) {
             getContentResolver().update(MonitorEntry.CONTENT_URI, values, selection, selectionArgs);
+
+            // Remove the current sync Account and create a new one.
+            PingSyncAdapter.removeSyncAccount(this, mUrlField.getText().toString());
+            PingSyncAdapter.initSyncAccount(this,
+                    mUrlField.getText().toString(),
+                    Integer.parseInt(selectionArgs[0]), // The only selection arg should be the Monitor ID.
+                    mPingFrequency.getProgress());
         } else {
             // This is a create page.
-            getContentResolver().insert(PingContract.MonitorEntry.CONTENT_URI, values);
-            PingSyncAdapter.getSyncAccount(this, mUrlField.getText().toString());
+            Uri returnUri = getContentResolver().insert(PingContract.MonitorEntry.CONTENT_URI, values);
+
+            //Get the id from the URI and initialise the sync parameters.
+            String path = returnUri.getPath();
+            int id = Integer.parseInt(path.substring(path.lastIndexOf('/') + 1));
+            PingSyncAdapter.initSyncAccount(
+                    this,
+                    mUrlField.getText().toString(),
+                    id,
+                    mPingFrequency.getProgress());
         }
         finish();
     }
 
     private void setPingFrequencyExplanation(int progress) {
-        int durationInMinutes = PingSyncAdapter.PING_FREQUENCY_MINUTES[progress];
-        int durationInHours = durationInMinutes / 60;
-        int durationInDays = durationInHours / 24;
-        String duration;
-        if (durationInDays > 0) {
-            duration = _formatDuration(4, durationInDays);
-        } else if (durationInHours > 0) {
-            duration = _formatDuration(2, durationInHours);
-        } else {
-            duration = _formatDuration(0, durationInMinutes);
-        }
+        long durationInMinutes = PingSyncAdapter.PING_FREQUENCY_MINUTES[progress];
 
-        String explanation = getString(R.string.ping_frequency_explanation)
-                .replace("?",  duration);
-        mPingFrequencyExplanation.setText(explanation);
-    }
-
-    /**
-     * Format a duration of time.
-     * @param index_offset The offset to the index in DURATION_SUFFIXES to the desired unit
-     *                     (minute/hour/day).
-     * @param duration An amount of time.
-     */
-    private String _formatDuration(int index_offset, int duration) {
-        if (duration == 1) {
-            return DURATION_SUFFIXES[index_offset];
-        } else {
-            return String.valueOf(duration) + DURATION_SUFFIXES[index_offset + 1];
-        }
+        // Place the formatted duration in the resource string and set the result as the explanation
+        // TextField for the frequency SeekBar.
+        mPingFrequencyExplanation.setText(String.format(
+                getString(R.string.ping_frequency_explanation),
+                Utility.formatTimeDuration(TimeUnit.MINUTES.toMillis(durationInMinutes))));
     }
 
     @Override

@@ -29,6 +29,7 @@ import com.colinwhite.ping.data.PingContract.MonitorEntry;
 
 
 public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+    public static final String LOG_TAG = MainActivity.class.getSimpleName();
     public final static String URL_ID = "URL_ID";
 
     // UI elements
@@ -90,7 +91,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
                 // Show that we are creating a new Monitor.
                 monitorDetailActivityIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
-                        MonitorDetailActivity.CREATE);
+                        MonitorDetailActivity.PAGE_CREATE);
 
                 startActivity(monitorDetailActivityIntent);
             }
@@ -107,7 +108,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                 Intent monitorDetailActivityIntent = new Intent(getApplicationContext(), MonitorDetailActivity.class);
                 // Show that we are looking at an existing Monitor
                 monitorDetailActivityIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
-                        MonitorDetailActivity.DETAIL);
+                        MonitorDetailActivity.PAGE_DETAIL);
                 monitorDetailActivityIntent.putExtra(MonitorEntry._ID, id);
 
                 startActivity(monitorDetailActivityIntent);
@@ -115,9 +116,6 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         });
 
         // Initialise the Loader for the ListView.
-        String[] uiBindFrom = {MonitorEntry.TITLE, MonitorEntry.URL, MonitorEntry.TIME_LAST_CHECKED};
-        int[] uiBindTo = {R.id.list_item_title, R.id.list_item_url, R.id.list_item_time_last_checked};
-        //mAdapter = new SimpleCursorAdapter(this, R.layout.monitor_list_item, null, uiBindFrom, uiBindTo, 0);
         mAdapter = new MonitorAdapter(this, null, 0);
         mMonitorList.setAdapter(mAdapter);
         getLoaderManager().initLoader(1, null, this);
@@ -195,7 +193,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         if (mAdapter != null && data != null) {
             mAdapter.swapCursor(data);
         } else {
-            Log.v("MainActivity", "OnLoadFinished: mAdapter is null.");
+            Log.v(LOG_TAG, "OnLoadFinished: mAdapter is null.");
         }
     }
 
@@ -204,13 +202,13 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         if (mAdapter != null) {
             mAdapter.swapCursor(null);
         } else {
-            Log.v("MainActivity", "OnLoadFinished: mAdapter is null.");
+            Log.v(LOG_TAG, "OnLoadFinished: mAdapter is null.");
         }
     }
 
     /**
-     * Simple BroadcastReceiver that is notified when the background PingService
-     * finishes and updates the main TextView with the returned information.
+     * Simple BroadcastReceiver that is notified when the background PingService finishes and updates
+     * the main TextView with the returned information.
      */
     public class PingServiceReceiver extends BroadcastReceiver {
         public static final String ACTION_RESPONSE =
@@ -220,20 +218,20 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         public void onReceive(Context context, Intent intent) {
             TextView textView = (TextView) findViewById(R.id.output_text_view);
 
-            switch (intent.getIntExtra(PingService.STATUS_ID, PingService.OTHER)) {
-                case PingService.IS_UP:
+            switch (intent.getIntExtra(PingService.STATUS_ID, -1)) {
+                case MonitorEntry.STATUS_IS_UP:
                     textView.setText(R.string.is_up);
                     break;
-                case PingService.IS_DOWN:
+                case MonitorEntry.STATUS_IS_DOWN:
                     textView.setText(R.string.is_down);
                     break;
-                case PingService.DOES_NOT_EXIST:
+                case MonitorEntry.STATUS_IS_NOT_WEBSITE:
                     textView.setText(R.string.does_not_exist);
                     break;
-                case PingService.NO_INTERNET_CONNECTION:
+                case MonitorEntry.STATUS_NO_INTERNET:
                     textView.setText(R.string.no_internet_connection);
                     break;
-                case PingService.OTHER:
+                default:
                     textView.setText(R.string.other);
                     break;
             }

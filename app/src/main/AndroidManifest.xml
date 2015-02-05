@@ -45,6 +45,10 @@
             android:exported="false"
             android:syncable="true" />
 
+        <service
+            android:name=".PingService"
+            android:enabled="true" />
+
         <!-- SyncAdapter's dummy authentication service -->
         <service
             android:name=".sync.PingAuthenticatorService">
@@ -59,8 +63,7 @@
         <!-- The SyncAdapter service -->
         <service
             android:name=".sync.PingSyncService"
-            android:exported="true"
-            android:process=":sync">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
@@ -68,10 +71,6 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
-
-        <service
-            android:name=".PingService"
-            android:enabled="true" />
     </application>
 
 </manifest>

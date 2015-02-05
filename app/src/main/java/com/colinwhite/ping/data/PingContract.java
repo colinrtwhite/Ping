@@ -27,6 +27,13 @@ public final class PingContract {
         public static final String TIME_LAST_CHECKED = "time_last_checked";
         public static final String STATUS = "status";
 
+        // Status codes for MonitorEntry.STATUS
+        public static final int STATUS_NO_INFO = 0;
+        public static final int STATUS_IS_UP = 1;
+        public static final int STATUS_IS_DOWN = 2;
+        public static final int STATUS_IS_NOT_WEBSITE = 3;
+        public static final int STATUS_NO_INTERNET = 4;
+
         public static Uri buildUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }

@@ -5,20 +5,18 @@ import android.content.Intent;
 import android.os.IBinder;
 
 public class PingSyncService extends Service {
-    private static final Object sSyncAdapterLock = new Object();
-    private static PingSyncAdapter sSunshineSyncAdapter = null;
+    private static PingSyncAdapter mPingSyncAdapter = null;
 
     @Override
     public void onCreate() {
-        synchronized (sSyncAdapterLock) {
-            if (sSunshineSyncAdapter == null) {
-                sSunshineSyncAdapter = new PingSyncAdapter(getApplicationContext(), true);
-            }
+        super.onCreate();
+        if (mPingSyncAdapter == null) {
+            mPingSyncAdapter = new PingSyncAdapter(getApplicationContext(), true);
         }
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return sSunshineSyncAdapter.getSyncAdapterBinder();
+        return mPingSyncAdapter.getSyncAdapterBinder();
     }
 }
