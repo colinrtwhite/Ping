@@ -109,7 +109,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent monitorDetailActivityIntent = new Intent(getApplicationContext(), MonitorDetailActivity.class);
-                // Show that we are looking at an existing Monitor
+                // Show that we are looking at an existing Monitor.
                 monitorDetailActivityIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
                         MonitorDetailActivity.PAGE_DETAIL);
                 monitorDetailActivityIntent.putExtra(MonitorEntry._ID, id);

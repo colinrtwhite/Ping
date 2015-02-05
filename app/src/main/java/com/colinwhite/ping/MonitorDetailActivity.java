@@ -1,7 +1,9 @@
 package com.colinwhite.ping;
 
 import android.app.DatePickerDialog;
+import android.app.NotificationManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -103,6 +105,10 @@ public class MonitorDetailActivity extends ActionBarActivity {
             buildCreatePageElements();
         }
 
+        // Hide any notifications for this Monitor.
+        NotificationManager notificationManager = ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
+        notificationManager.cancel((int) getIntent().getLongExtra(MonitorEntry._ID, -1));
+
         // Make the DatePicker set the output TextField's date when it is changed.
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -151,7 +157,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
                 MonitorEntry.PING_FREQUENCY,
                 MonitorEntry.END_DATE};
         final String selection = MonitorEntry._ID + " = ?";
-        final String[] selectionArgs = { String.valueOf(monitorId) };
+        final String[] selectionArgs = {String.valueOf(monitorId)};
         Cursor query = getContentResolver().query(
                 MonitorEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(monitorId)).build(),
                 projection, selection, selectionArgs, null);
@@ -238,35 +244,34 @@ public class MonitorDetailActivity extends ActionBarActivity {
             values.put(MonitorEntry.END_DATE, mDatePickerDate.getTimeInMillis());
         }
 
+        int monitorId = -1;
         if (PAGE_DETAIL.equals(pageType)) {
             // This is a detail page.
             getContentResolver().update(MonitorEntry.CONTENT_URI, values, selection, selectionArgs);
 
             // The only selection arg should be the Monitor ID.
-            int monitorId = Integer.parseInt(selectionArgs[0]);
-            // Remove the current periodic sync timer for this Monitor and create a new one.
+            monitorId = Integer.parseInt(selectionArgs[0]);
+            // Remove the current periodic sync timer for this Monitor, later we create a new one.
             PingSyncAdapter.removePeriodicSync(
                     this,
                     mStartIntent.getStringExtra(MonitorEntry.URL),
                     monitorId);
-            PingSyncAdapter.createPeriodicSync(
-                    this,
-                    mUrlField.getText().toString(),
-                    monitorId,
-                    (int) TimeUnit.MINUTES.toSeconds(PING_FREQUENCY_MINUTES[mPingFrequency.getProgress()]));
         } else {
             // This is a create page.
             Uri returnUri = getContentResolver().insert(PingContract.MonitorEntry.CONTENT_URI, values);
 
             // Get the ID from the URI and initialise the sync parameters.
             String path = returnUri.getPath();
-            int monitorId = Integer.parseInt(path.substring(path.lastIndexOf('/') + 1));
-            PingSyncAdapter.createPeriodicSync(
-                    this,
-                    mUrlField.getText().toString(),
-                    monitorId,
-                    (int) TimeUnit.MINUTES.toSeconds(PING_FREQUENCY_MINUTES[mPingFrequency.getProgress()]));
+            monitorId = Integer.parseInt(path.substring(path.lastIndexOf('/') + 1));
         }
+
+        // Create the new sync timer for the Monitor.
+        PingSyncAdapter.createPeriodicSync(
+                this,
+                mUrlField.getText().toString(),
+                monitorId,
+                (int) TimeUnit.MINUTES.toSeconds(PING_FREQUENCY_MINUTES[mPingFrequency.getProgress()]));
+
         finish();
     }
 

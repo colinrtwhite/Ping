@@ -2,16 +2,23 @@ package com.colinwhite.ping.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncRequest;
 import android.content.SyncResult;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.colinwhite.ping.MonitorDetailActivity;
 import com.colinwhite.ping.R;
 import com.colinwhite.ping.Utility;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
@@ -23,11 +30,13 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
     // The SQL selection string is always the same.
     private static final String mSelection = MonitorEntry._ID + " = ?";
 
+    Context mContext;
     Pattern mUpPattern, mDownPattern, mDoesNotExistPattern;
     ContentResolver mContentResolver;
 
     public PingSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
+        mContext = context;
         mContentResolver = context.getContentResolver();
 
         mUpPattern = Pattern.compile("It's just you.");
@@ -51,7 +60,8 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
         String url = extras.getString(MonitorEntry.URL);
         String html = Utility.getHtml(url);
 
-        final String[] selectionArgs = { String.valueOf(extras.getInt(MonitorEntry._ID)) };
+        int monitorId = extras.getInt(MonitorEntry._ID);
+        final String[] selectionArgs = {String.valueOf(monitorId)};
 
         int status = -1;
         if (mUpPattern.matcher(html).find()) {
@@ -62,12 +72,82 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             status = MonitorEntry.STATUS_IS_NOT_WEBSITE;
         }
 
+        long timeLastChecked = Calendar.getInstance().getTimeInMillis();
+
+        // Get the Monitor's previous status to compare.
+        String[] projection = {MonitorEntry.TITLE, MonitorEntry.STATUS};
+        Cursor cursor = mContentResolver.query(MonitorEntry.CONTENT_URI, projection, mSelection, selectionArgs, null);
+        cursor.moveToFirst();
+        int previousStatus = cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS));
+        if (previousStatus != 0 && previousStatus != status) {
+            // If the status has changed, trigger a notification.
+            triggerNotification(
+                    monitorId,
+                    cursor.getString(cursor.getColumnIndex(MonitorEntry.TITLE)),
+                    url,
+                    status,
+                    timeLastChecked);
+        }
+
         // Update the server's status, and the time last checked.
         ContentValues values = new ContentValues();
         values.put(MonitorEntry.STATUS, status);
-        values.put(MonitorEntry.TIME_LAST_CHECKED, Calendar.getInstance().getTimeInMillis());
+        values.put(MonitorEntry.TIME_LAST_CHECKED, timeLastChecked);
 
         mContentResolver.update(MonitorEntry.CONTENT_URI, values, mSelection, selectionArgs);
+    }
+
+    /**
+     * Creates and displays a notification of a Monitor's status change.
+     * @param monitorId Database ID of the Monitor.
+     * @param title Title of the Monitor.
+     * @param url URL of the Monitor.
+     * @param status The current status of the Monitor.
+     * @param timeLastChecked The time the status was checked at in milliseconds.
+     */
+    private void triggerNotification(int monitorId, String title, String url, int status, long timeLastChecked) {
+        String statusStr;
+        switch (status) {
+            case MonitorEntry.STATUS_IS_UP:
+                statusStr = "up";
+                break;
+            case MonitorEntry.STATUS_IS_DOWN:
+                statusStr = "down";
+                break;
+            case MonitorEntry.STATUS_IS_NOT_WEBSITE:
+            case MonitorEntry.STATUS_NO_INTERNET:
+            case MonitorEntry.STATUS_NO_INFO:
+            default:
+                // Don't trigger a notification for these.
+                return;
+        }
+
+        String notificationText = String.format(
+                mContext.getString(R.string.notification_text),
+                Utility.formatDate(timeLastChecked),
+                url,
+                statusStr);
+
+        Notification.Builder notificationBuilder = new Notification.Builder(mContext)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(title)
+                .setContentText(notificationText);
+
+        // Construct artificial back stack.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+        Intent monitorDetailActivityIntent = new Intent(mContext, MonitorDetailActivity.class);
+        monitorDetailActivityIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
+                MonitorDetailActivity.PAGE_DETAIL);
+        monitorDetailActivityIntent.putExtra(MonitorEntry._ID, (long) monitorId);
+        monitorDetailActivityIntent.putExtra(MonitorEntry.URL, url);
+        stackBuilder.addParentStack(MonitorDetailActivity.class);
+        stackBuilder.addNextIntent(monitorDetailActivityIntent);
+        PendingIntent detailPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder.setContentIntent(detailPendingIntent);
+
+        // Send the notification.
+        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(monitorId, notificationBuilder.build());
     }
 
     /**
