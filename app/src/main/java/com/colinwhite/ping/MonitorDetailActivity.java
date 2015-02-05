@@ -30,13 +30,12 @@ import java.util.concurrent.TimeUnit;
 
 public class MonitorDetailActivity extends ActionBarActivity {
     public static final String LOG_TAG = MonitorDetailActivity.class.getSimpleName();
-
-    public static final String URL_FIELD_VALUE = "URL_FIELD_VALUE";
     public static final String PAGE_TYPE_ID = "PAGE_TYPE_ID";
     public static final String PAGE_CREATE = "PAGE_CREATE";
     public static final String PAGE_DETAIL = "PAGE_DETAIL";
     private static final int PING_FREQUENCY_ON_CREATE = 4;
     private static final String DATE_FORMAT = "EEEE, d MMMM, y";
+    public static final int[] PING_FREQUENCY_MINUTES = {1, 5, 15, 30, 60, 120, 240, 720, 1440};
 
     // Fields that are used in the database.
     private static EditText mTitleField;
@@ -138,7 +137,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
         setTitle(R.string.monitor_detail_activity_title);
 
         // Get the ID of the Monitor.
-        long monitorId = mStartIntent.getLongExtra(MonitorEntry._ID, -1);
+        final long monitorId = mStartIntent.getLongExtra(MonitorEntry._ID, -1);
         if (monitorId == -1) {
             Log.e(LOG_TAG, "Intent does not contain a Monitor ID.");
             finish(); // Close the activity.
@@ -165,7 +164,10 @@ public class MonitorDetailActivity extends ActionBarActivity {
             public void onClick(View v) {
                 // Delete the Monitor's database entry and its sync account then close the activity.
                 getContentResolver().delete(MonitorEntry.CONTENT_URI, selection, selectionArgs);
-                PingSyncAdapter.removeSyncAccount(v.getContext(), mUrlField.getText().toString());
+                PingSyncAdapter.removePeriodicSync(
+                        v.getContext(),
+                        mStartIntent.getStringExtra(MonitorEntry.URL),
+                        (int) monitorId);
                 finish();
             }
         });
@@ -205,8 +207,8 @@ public class MonitorDetailActivity extends ActionBarActivity {
     // Build the elements for a Monitor creation version of this Activity.
     private void buildCreatePageElements() {
         // Set the URL EditText to the value passed in the Intent, if it exists.
-        if (mStartIntent.hasExtra(URL_FIELD_VALUE)) {
-            mUrlField.setText(mStartIntent.getStringExtra(URL_FIELD_VALUE));
+        if (mStartIntent.hasExtra(MonitorEntry.URL)) {
+            mUrlField.setText(mStartIntent.getStringExtra(MonitorEntry.URL));
         }
 
         // Set the confirm button to create a new entry in the database and close the activity.
@@ -237,38 +239,45 @@ public class MonitorDetailActivity extends ActionBarActivity {
         }
 
         if (PAGE_DETAIL.equals(pageType)) {
+            // This is a detail page.
             getContentResolver().update(MonitorEntry.CONTENT_URI, values, selection, selectionArgs);
 
-            // Remove the current sync Account and create a new one.
-            PingSyncAdapter.removeSyncAccount(this, mUrlField.getText().toString());
-            PingSyncAdapter.initSyncAccount(this,
+            // The only selection arg should be the Monitor ID.
+            int monitorId = Integer.parseInt(selectionArgs[0]);
+            // Remove the current periodic sync timer for this Monitor and create a new one.
+            PingSyncAdapter.removePeriodicSync(
+                    this,
+                    mStartIntent.getStringExtra(MonitorEntry.URL),
+                    monitorId);
+            PingSyncAdapter.createPeriodicSync(
+                    this,
                     mUrlField.getText().toString(),
-                    Integer.parseInt(selectionArgs[0]), // The only selection arg should be the Monitor ID.
-                    mPingFrequency.getProgress());
+                    monitorId,
+                    (int) TimeUnit.MINUTES.toSeconds(PING_FREQUENCY_MINUTES[mPingFrequency.getProgress()]));
         } else {
             // This is a create page.
             Uri returnUri = getContentResolver().insert(PingContract.MonitorEntry.CONTENT_URI, values);
 
-            //Get the id from the URI and initialise the sync parameters.
+            // Get the ID from the URI and initialise the sync parameters.
             String path = returnUri.getPath();
-            int id = Integer.parseInt(path.substring(path.lastIndexOf('/') + 1));
-            PingSyncAdapter.initSyncAccount(
+            int monitorId = Integer.parseInt(path.substring(path.lastIndexOf('/') + 1));
+            PingSyncAdapter.createPeriodicSync(
                     this,
                     mUrlField.getText().toString(),
-                    id,
-                    mPingFrequency.getProgress());
+                    monitorId,
+                    (int) TimeUnit.MINUTES.toSeconds(PING_FREQUENCY_MINUTES[mPingFrequency.getProgress()]));
         }
         finish();
     }
 
     private void setPingFrequencyExplanation(int progress) {
-        long durationInMinutes = PingSyncAdapter.PING_FREQUENCY_MINUTES[progress];
+        long duration = TimeUnit.MINUTES.toMillis(PING_FREQUENCY_MINUTES[progress]);
 
         // Place the formatted duration in the resource string and set the result as the explanation
         // TextField for the frequency SeekBar.
         mPingFrequencyExplanation.setText(String.format(
                 getString(R.string.ping_frequency_explanation),
-                Utility.formatTimeDuration(TimeUnit.MINUTES.toMillis(durationInMinutes))));
+                Utility.formatTimeDuration(duration)));
     }
 
     @Override

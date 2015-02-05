@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
+import com.colinwhite.ping.sync.PingSyncAdapter;
 
 
 public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -47,6 +48,9 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Attempt to initialise the SyncAdapter Account for Ping.
+        PingSyncAdapter.getSyncAccount(this);
 
         mActivityContainer = (LinearLayout) findViewById(R.id.activity_container);
 
@@ -85,8 +89,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                         MonitorDetailActivity.class);
                 String text = mEditText.getText().toString();
                 if (!text.isEmpty()) {
-                    monitorDetailActivityIntent.putExtra(MonitorDetailActivity.URL_FIELD_VALUE,
-                            text);
+                    monitorDetailActivityIntent.putExtra(MonitorEntry.URL, text);
                 }
 
                 // Show that we are creating a new Monitor.
@@ -110,6 +113,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                 monitorDetailActivityIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
                         MonitorDetailActivity.PAGE_DETAIL);
                 monitorDetailActivityIntent.putExtra(MonitorEntry._ID, id);
+                monitorDetailActivityIntent.putExtra(MonitorEntry.URL, ((TextView) view.findViewById(R.id.list_item_url)).getText());
 
                 startActivity(monitorDetailActivityIntent);
             }

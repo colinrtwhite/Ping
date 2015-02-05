@@ -20,8 +20,6 @@ import java.util.Calendar;
 import java.util.regex.Pattern;
 
 public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
-    public static final int[] PING_FREQUENCY_MINUTES = {1, 5, 15, 30, 60, 120, 240, 720, 1440};
-
     // The SQL selection string is always the same.
     private static final String mSelection = MonitorEntry._ID + " = ?";
 
@@ -43,8 +41,14 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                               String authority,
                               ContentProviderClient provider,
                               SyncResult syncResult) {
+        // Simply return if we're not given ID nor URL.
+        // TODO: Fix bug where onPerformSync is called with an empty Bundle after the first Monitor is created.
+        if (extras.isEmpty()) {
+            return;
+        }
+
         // Recover the URL from the intent and get the returned HTML from our request.
-        String url = account.name;
+        String url = extras.getString(MonitorEntry.URL);
         String html = Utility.getHtml(url);
 
         final String[] selectionArgs = { String.valueOf(extras.getInt(MonitorEntry._ID)) };
@@ -67,113 +71,109 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     /**
-     * Create a new Account for a new URL Monitor.
+     * Get or create a new Account for a new URL Monitor if one does not already exist.
      * @param context The Context used to access the account service.
-     * @param url The URL that the Account is tied to.
-     * @param id The id of the relevant Monitor in the database.
-     * @param interval The duration between syncs in minutes.
+     * @return The account associated with Ping's sync account type.
      */
-    public static Account initSyncAccount(Context context, String url, int id, int interval) {
+    public static Account getSyncAccount(Context context) {
         // Get an instance of the Android account manager.
         AccountManager accountManager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
 
         // Create the Account type and default Account.
-        Account newAccount = new Account(url, context.getString(R.string.sync_account_type));
+        Account pingAccount = new Account(context.getString(R.string.app_name), context.getString(R.string.sync_account_type));
 
-        // If the password exists then the Account already exists.
-        if (null != accountManager.getPassword(newAccount)) {
-            return null;
+        // If the password doesn't exist then the Account doesn't exists and we need to create it.
+        if (null == accountManager.getPassword(pingAccount)) {
+            // Add the Account and Account type with no password or user data.
+            // If successful, return the Account object, otherwise report an error.
+            if (!accountManager.addAccountExplicitly(pingAccount, "", null)) {
+                return null;
+            }
         }
 
-        // Add the Account and Account type with no password or user data.
-        // If successful, return the Account object, otherwise report an error.
-        if (!accountManager.addAccountExplicitly(newAccount, "", null)) {
-            return null;
-        }
-
-        // Set up the data required for onPerformSync to be called on an interval.
-        configurePeriodicSync(context, url, id, interval);
-
-        // Without calling setSyncAutomatically, our periodic sync will not be enabled.
-        ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
-
-        // Perform an initial sync.
-        syncImmediately(context, url, id);
-
-        return newAccount;
+        return pingAccount;
     }
 
     /**
-     * Helper method to get the fake Account to be used with SyncAdapter. If the Account doesn't
-     * exist, we return null.
+     * Create a new periodic sync timer for a Monitor.
      * @param context The Context used to access the account service.
-     * @param url The URL that the Account is tied to.
-     * @return The account tied to the provided URL.
+     * @param url The URL that the periodic sync is tied to.
+     * @param monitorId The ID of the relevant Monitor in the database.
+     * @param interval The duration between syncs in seconds.
      */
-    public static Account getSyncAccount(Context context, String url) {
-        // Get an instance of the Android account manager.
-        AccountManager accountManager = AccountManager.get(context);
+    public static void createPeriodicSync(Context context, String url, int monitorId, int interval) {
+        Account account = getSyncAccount(context);
 
-        // Create the account type and default account.
-        Account existingAccount = new Account(url, context.getString(R.string.sync_account_type));
+        // Set up the data required for onPerformSync to be called on an interval.
+        configurePeriodicSync(context, account, url, monitorId, interval);
 
-        // If the password doesn't exist, the account doesn't exist.
-        if (null == accountManager.getPassword(existingAccount)) {
-            return null;
-        }
-        return existingAccount;
+        // Without calling setSyncAutomatically, our periodic sync will not be enabled.
+        ContentResolver.setSyncAutomatically(account, context.getString(R.string.content_authority),
+                true);
+
+        // Perform an initial sync.
+        syncImmediately(context, account, url, monitorId);
     }
 
     /**
      * Schedule the SyncAdapter periodic execution.
      * @param context The Context used to access the account service.
-     * @param url The URL that the Account is tied to.
-     * @param id The id of the relevant Monitor in the database.
-     * @param interval The duration between syncs in minutes.
+     * @param account Ping's sync account.
+     * @param url The URL that the periodic sync is tied to.
+     * @param monitorId The ID of the relevant Monitor in the database.
+     * @param interval The duration between syncs in seconds.
      */
-    public static void configurePeriodicSync(Context context, String url, int id, int interval) {
-        Account account = getSyncAccount(context, url);
+    private static void configurePeriodicSync(Context context, Account account, String url,
+                                              int monitorId, int interval) {
         String authority = context.getString(R.string.content_authority);
 
-        // We need to provide the Monitor's ID to correctly update the database during a sync.
+        // We need to provide the Monitor's ID and URL to correctly ping the website and update the
+        // database during a sync.
         Bundle bundle = new Bundle();
-        bundle.putInt(MonitorEntry._ID, id);
+        bundle.putInt(MonitorEntry._ID, monitorId);
+        bundle.putString(MonitorEntry.URL, url);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             // We can enable inexact timers in our periodic sync.
             SyncRequest request = new SyncRequest.Builder().
-                    syncPeriodic(PING_FREQUENCY_MINUTES[interval], PING_FREQUENCY_MINUTES[interval] / 2).
+                    syncPeriodic(interval, interval / 2).
                     setSyncAdapter(account, authority)
                     .setExtras(bundle).build();
 
             ContentResolver.requestSync(request);
         } else {
-            ContentResolver.addPeriodicSync(account, authority, bundle, PING_FREQUENCY_MINUTES[interval]);
+            ContentResolver.addPeriodicSync(account, authority, bundle, interval);
         }
     }
 
     /**
-     * Helper method to have the sync adapter sync immediately.
+     * Helper method to have the SyncAdapter sync immediately.
      * @param context The context used to access the account service
-     * @param url The URL that the account is tied to.
+     * @param account Ping's sync account.
+     * @param url The URL that the periodic sync is tied to.
+     * @param monitorId The ID of the relevant Monitor in the database.
      */
-    public static void syncImmediately(Context context, String url, int id) {
+    public static void syncImmediately(Context context, Account account, String url, int monitorId) {
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        bundle.putInt(MonitorEntry._ID, id);
-        ContentResolver.requestSync(getSyncAccount(context, url),
+        bundle.putInt(MonitorEntry._ID, monitorId);
+        bundle.putString(MonitorEntry.URL, url);
+        ContentResolver.requestSync(account,
                 context.getString(R.string.content_authority), bundle);
     }
 
     /**
-     * Delete the selected sync Account and stop it from syncing any more.
-     * @param context The Context used to access the account service.
-     * @param url The URL that the Account is tied to.
+     * Attempt to delete the selected periodic sync timer.
+     * @param context The context used to access the account service
+     * @param url The URL that the periodic sync is tied to.
+     * @param monitorId The ID of the relevant Monitor in the database.
      */
-    public static void removeSyncAccount(Context context, String url) {
-        Account toRemove = getSyncAccount(context, url);
-        AccountManager accountManager = AccountManager.get(context);
-        accountManager.removeAccount(toRemove, null, null);
+    public static void removePeriodicSync(Context context, String url, int monitorId) {
+        Account account = getSyncAccount(context);
+        Bundle bundle = new Bundle();
+        bundle.putInt(MonitorEntry._ID, monitorId);
+        bundle.putString(MonitorEntry.URL, url);
+        ContentResolver.removePeriodicSync(account, context.getString(R.string.content_authority), bundle);
     }
 }

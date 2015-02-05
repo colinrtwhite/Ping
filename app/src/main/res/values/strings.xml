@@ -12,7 +12,7 @@
     <string name="create_monitor_activity_title">Create Monitor</string>
     <string name="monitor_title_hint">Title</string>
     <string name="ping_frequency_header">Ping Frequency</string>
-    <string name="url_hint">URL</string>
+    <string name="url_hint">URL (ex. "google.com")</string>
     <string name="create_button_text">Create</string>
     <string name="delete_button_text">Delete</string>
     <string name="ping_frequency_explanation">Ping every %s, approximately.</string>

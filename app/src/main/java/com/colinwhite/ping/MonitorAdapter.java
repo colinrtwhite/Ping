@@ -39,6 +39,7 @@ public class MonitorAdapter extends CursorAdapter {
                 // Refresh the Monitor right now.
                 PingSyncAdapter.syncImmediately(
                         context,
+                        PingSyncAdapter.getSyncAccount(context),
                         cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)),
                         cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)));
             }

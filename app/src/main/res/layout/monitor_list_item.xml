@@ -31,7 +31,6 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/abc_text_size_small_material"
             android:textColor="@android:color/black"
-            android:text="Title"
             android:padding="4sp"/>
 
         <TextView
@@ -40,7 +39,6 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/abc_text_size_caption_material"
             android:textColor="@android:color/black"
-            android:text="URL.com"
             android:padding="4sp" />
 
         <TextView
@@ -49,7 +47,6 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/abc_text_size_caption_material"
             android:textColor="@android:color/black"
-            android:text="Last checked: 4 hours ago"
             android:padding="4sp" />
     </LinearLayout>
 

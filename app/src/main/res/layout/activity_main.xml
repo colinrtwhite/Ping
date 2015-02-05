@@ -46,17 +46,6 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/quick_check_title"
-                android:textColor="@color/accent"
-                android:textSize="@dimen/abc_text_size_small_material" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="10sp" />
-
             <EditText
                 android:id="@+id/url_text_field_quick"
                 android:layout_width="match_parent"
