@@ -18,7 +18,7 @@ public class PingService extends IntentService {
     public static final String STATUS_ID = "WEBSITE_STATUS";
 
     public PingService() {
-        super("PingService");
+        super(PingService.class.getName());
     }
     public PingService(String name) {
         super(name);
@@ -34,7 +34,7 @@ public class PingService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         // Recover the URL from the intent and get the returned HTML from our request.
-        String url = intent.getStringExtra(MainActivity.URL_ID);
+        String url = intent.getStringExtra(MonitorEntry.URL);
         String html = Utility.getHtml(url);
 
         Pattern up = Pattern.compile("It's just you.");

@@ -43,6 +43,10 @@
             android:name=".PingService"
             android:enabled="true" />
 
+        <service
+            android:name=".SyncRemovalService"
+            android:enabled="true" />
+
         <!-- SyncAdapter's dummy authentication service -->
         <service
             android:name=".sync.PingAuthenticatorService">

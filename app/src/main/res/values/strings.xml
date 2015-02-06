@@ -23,12 +23,12 @@
     <string name="empty_list_view_message">This is where your Monitors would go...if you had any.</string>
     <string name="sync_account_type">ping.colinwhite.com</string>
     <string name="content_authority">com.colinwhite.ping</string>
-    <string name="monitor_detail_activity_title">Update Monitor</string>
+    <string name="monitor_detail_activity_title">Edit Monitor</string>
     <string name="update_button_text">Update</string>
     <string name="last_checked_text">Last checked at %s.</string>
     <string name="last_checked_text_no_info">This website hasn\'t been checked yet!</string>
     <string name="notification_text" formatted="false">As of %s, %s is %s!</string>
-    <string name="expiration_date_explanation">Set the date and time you would like the Monitor to stop pinging.</string>
+    <string name="expiration_date_explanation">Set the date and time you would like the Monitor to stop pinging automatically.</string>
     <string name="ping_explanation_never">Never ping the website automatically.</string>
 
 </resources>

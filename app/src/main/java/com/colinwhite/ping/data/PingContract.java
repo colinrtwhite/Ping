@@ -37,6 +37,9 @@ public final class PingContract {
         // Denotes no expiry date.
         public static final long END_DATE_NONE = 0;
 
+        // Must match the maximum of ping_frequency_seek_bar.
+        public static final int PING_FREQUENCY_MAX = 9;
+
         public static Uri buildUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }

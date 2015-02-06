@@ -31,7 +31,6 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
 
 public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
-    public final static String URL_ID = "URL_ID";
 
     // UI elements
     private static Toolbar mToolbar;
@@ -157,7 +156,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                     PingService.class);
 
             // Add the URL from the text field to the Intent.
-            pingServiceIntent.putExtra(URL_ID, inputText);
+            pingServiceIntent.putExtra(MonitorEntry.URL, inputText);
 
             // Close the virtual keyboard.
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(

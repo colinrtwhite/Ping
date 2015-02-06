@@ -1,9 +1,14 @@
 package com.colinwhite.ping;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+
+import com.colinwhite.ping.data.PingContract;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -144,6 +149,7 @@ public class Utility {
     /**
      * Determines whether the device is connected to a network (and thus, if we can have a connection
      * to the Internet).
+     * @param context The Context used to access the ConnectivityManager.
      */
     public static boolean isNetworkConnected(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -151,5 +157,40 @@ public class Utility {
 
         // If info is null, there are no active networks.
         return (info != null);
+    }
+
+    /**
+     * Sets the SyncRemovalService to run at the specified end time.
+     * @param context Context used to access the AlarmManager.
+     * @param monitorId ID of the relevant Monitor in the database.
+     * @param endTime Date/time when the SyncRemovalService will be triggered in milliseconds.
+     */
+    public static void addRemovalAlarm(Context context, int monitorId, long endTime) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, endTime, createPendingRemovalIntent(context, monitorId, endTime));
+    }
+
+    /**
+     * Removes the alarm previously set for the Monitor with monitorId.
+     * Note: All the parameters must match the ones originally passed to addRemovalAlarm.
+     * @param context Context used to access the AlarmManager.
+     * @param monitorId ID of the relevant Monitor in the database.
+     * @param endTime Date/time when the SyncRemovalService will be triggered in milliseconds.
+     */
+    public static void deleteRemovalAlarm(Context context, int monitorId, long endTime) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+        alarmManager.cancel(createPendingRemovalIntent(context, monitorId, endTime));
+    }
+
+    /**
+     * Helper method to create the pending removal intent.
+     * @param context Context used to access get the SyncRemovalService.
+     * @param monitorId ID of the relevant Monitor in the database.
+     * @param endTime Date/time when the SyncRemovalService will be triggered in milliseconds.
+     */
+    private static PendingIntent createPendingRemovalIntent(Context context, int monitorId, long endTime) {
+        Intent intent = new Intent(context, SyncRemovalService.class);
+        intent.putExtra(PingContract.MonitorEntry._ID, monitorId);
+        return PendingIntent.getService(context, monitorId, intent, PendingIntent.FLAG_ONE_SHOT);
     }
 }

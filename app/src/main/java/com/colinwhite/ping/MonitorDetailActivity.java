@@ -98,6 +98,8 @@ public class MonitorDetailActivity extends ActionBarActivity {
         mDateFormat = new SimpleDateFormat(DATE_FORMAT);
         mTimeFormat = new SimpleDateFormat(Utility.TIME_FORMAT_12_HOURS);
         mSelectedDateTime = Calendar.getInstance();
+        mSelectedDateTime.set(Calendar.SECOND, 0);
+        mSelectedDateTime.set(Calendar.MILLISECOND, 0);
 
         // Set the ping frequency SeekBar to update its explanation TextField when its progress changes.
         mPingFrequency.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -156,7 +158,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
                 mSelectedDateTime.set(Calendar.MINUTE, minute);
 
                 // Set the output TextView's text.
-                mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()));
+                mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()) + ", approximately");
             }
         };
 
@@ -240,6 +242,11 @@ public class MonitorDetailActivity extends ActionBarActivity {
                         v.getContext(),
                         mStartIntent.getStringExtra(MonitorEntry.URL),
                         (int) monitorId);
+                // If the Monitor had a removal alarm set, delete it.
+                long endDate = mCursor.getLong(mCursor.getColumnIndex(MonitorEntry.END_TIME));
+                if (endDate != MonitorEntry.END_DATE_NONE) {
+                    Utility.deleteRemovalAlarm(v.getContext(), (int)monitorId, endDate);
+                }
                 finish();
             }
         });
@@ -259,7 +266,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
         if (endDateInMillis != MonitorEntry.END_DATE_NONE) {
             mSelectedDateTime.setTimeInMillis(endDateInMillis);
             mDatePickerOutput.setText(mDateFormat.format(mSelectedDateTime.getTime()));
-            mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()));
+            mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()) + ", approximately");
         }
 
         // Set the confirm button to update the current Monitor and close the activity.
@@ -319,6 +326,10 @@ public class MonitorDetailActivity extends ActionBarActivity {
                     this,
                     mStartIntent.getStringExtra(MonitorEntry.URL),
                     monitorId);
+            // If the Monitor previously had a removal alarm set, delete it.
+            if (mCursor.getLong(mCursor.getColumnIndex(MonitorEntry.END_TIME)) != MonitorEntry.END_DATE_NONE) {
+                Utility.deleteRemovalAlarm(this, monitorId, endDate);
+            }
         } else {
             // This is a create page.
             Uri returnUri = getContentResolver().insert(PingContract.MonitorEntry.CONTENT_URI, values);
@@ -336,6 +347,10 @@ public class MonitorDetailActivity extends ActionBarActivity {
                     mUrlField.getText().toString(),
                     monitorId,
                     (int) TimeUnit.MINUTES.toSeconds(PING_FREQUENCY_MINUTES[mPingFrequency.getProgress()]));
+            // If the Monitor has been set to never ping automatically, don't add a removal alarm.
+            if (endDate != MonitorEntry.END_DATE_NONE) {
+                Utility.addRemovalAlarm(this, monitorId, endDate);
+            }
         } else {
             // Instead, we just sync once.
             PingSyncAdapter.syncImmediately(
@@ -362,7 +377,8 @@ public class MonitorDetailActivity extends ActionBarActivity {
 
         // Set the result as the explanation TextField for the frequency SeekBar.
         if (progress == 0) {
-            formattedStr += "<br><font color=\"#ff0000\">WARNING:</font> This will keep turn your cell radio on very often and will reduce battery life.";
+            formattedStr += "<br><font color=\"#ff0000\">WARNING:</font> This will keep turn your" +
+                    " cell radio on very often and will reduce battery life.";
             mPingFrequencyExplanation.setText(Html.fromHtml(formattedStr));
         } else {
             mPingFrequencyExplanation.setText(formattedStr);
