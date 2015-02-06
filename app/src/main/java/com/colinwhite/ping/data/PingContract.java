@@ -23,7 +23,7 @@ public final class PingContract {
         public static final String TITLE = "title";
         public static final String URL = "url";
         public static final String PING_FREQUENCY = "ping_frequency";
-        public static final String END_DATE = "end_date";
+        public static final String END_TIME = "end_time";
         public static final String TIME_LAST_CHECKED = "time_last_checked";
         public static final String STATUS = "status";
 
@@ -33,6 +33,9 @@ public final class PingContract {
         public static final int STATUS_IS_DOWN = 2;
         public static final int STATUS_IS_NOT_WEBSITE = 3;
         public static final int STATUS_NO_INTERNET = 4;
+
+        // Denotes no expiry date.
+        public static final long END_DATE_NONE = 0;
 
         public static Uri buildUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);

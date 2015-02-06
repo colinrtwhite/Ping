@@ -2,17 +2,17 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="100sp"
+    android:layout_height="100dp"
     android:orientation="horizontal"
     android:descendantFocusability="blocksDescendants">
 
     <ImageButton
         android:id="@+id/list_item_refresh_button"
-        android:layout_width="48sp"
-        android:layout_height="48sp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:src="@drawable/ic_refresh_white_48dp"
         android:layout_gravity="center"
-        android:layout_margin="12sp"
+        android:layout_margin="12dp"
         android:layout_weight="0"
         android:background="@null"
         android:focusable="false"
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/abc_text_size_small_material"
             android:textColor="@android:color/black"
-            android:padding="4sp"/>
+            android:padding="4dp"/>
 
         <TextView
             android:id="@+id/list_item_url"
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/abc_text_size_caption_material"
             android:textColor="@android:color/black"
-            android:padding="4sp" />
+            android:padding="4dp" />
 
         <TextView
             android:id="@+id/list_item_time_last_checked"
@@ -47,16 +47,16 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/abc_text_size_caption_material"
             android:textColor="@android:color/black"
-            android:padding="4sp" />
+            android:padding="4dp" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/list_item_status"
-        android:layout_width="48sp"
-        android:layout_height="48sp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:src="@drawable/up_button"
         android:layout_gravity="center"
         android:layout_weight="0"
-        android:layout_margin="20sp"/>
+        android:layout_margin="20dp"/>
 
 </LinearLayout>

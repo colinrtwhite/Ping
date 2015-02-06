@@ -27,8 +27,9 @@ public class Utility {
             "minute", "minutes",
             "second", "seconds"};
     private static final String HOST = "http://www.downforeveryoneorjustme.com/";
-    private static final String DATE_FORMAT_12_HOURS = "K:mm a";
-    private static final String DATE_FORMAT_24_HOURS = "H:mm";
+
+    public static final String TIME_FORMAT_12_HOURS = "h:mm a";
+    public static final String TIME_FORMAT_24_HOURS = "H:mm";
 
     /**
      * Converts an amount of time into a formatted string.
@@ -85,7 +86,7 @@ public class Utility {
         }
 
         // Get the last checked time.
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_12_HOURS);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(TIME_FORMAT_12_HOURS);
         StringBuilder formattedString = new StringBuilder(dateFormat.format(new Date(date)));
 
         Calendar lastCheckedDate = Calendar.getInstance();

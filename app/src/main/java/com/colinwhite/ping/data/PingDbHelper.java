@@ -26,7 +26,7 @@ public class PingDbHelper extends SQLiteOpenHelper {
                 MonitorEntry.TITLE + TEXT_TYPE + NOT_NULL + COMMA_SEP +
                 MonitorEntry.URL + TEXT_TYPE + NOT_NULL + COMMA_SEP +
                 MonitorEntry.PING_FREQUENCY + INTEGER_TYPE + NOT_NULL + COMMA_SEP +
-                MonitorEntry.END_DATE + LONG_TYPE + COMMA_SEP +
+                MonitorEntry.END_TIME + LONG_TYPE + COMMA_SEP +
                 MonitorEntry.TIME_LAST_CHECKED + LONG_TYPE + COMMA_SEP +
                 MonitorEntry.STATUS + INTEGER_TYPE + ")";
 

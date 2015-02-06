@@ -16,8 +16,9 @@
     <string name="create_button_text">Create</string>
     <string name="delete_button_text">Delete</string>
     <string name="ping_frequency_explanation">Ping every %s, approximately.</string>
-    <string name="date_picker_header">Run Until</string>
-    <string name="date_picker_label">Monitor URL indefinitely.</string>
+    <string name="date_picker_header">Expiration Date</string>
+    <string name="date_picker_label">Tap to set date.</string>
+    <string name="time_picker_label">Tap to set time.</string>
     <string name="no_internet_connection">You don\'t have an internet connection!</string>
     <string name="empty_list_view_message">This is where your Monitors would go...if you had any.</string>
     <string name="sync_account_type">ping.colinwhite.com</string>
@@ -27,5 +28,7 @@
     <string name="last_checked_text">Last checked at %s.</string>
     <string name="last_checked_text_no_info">This website hasn\'t been checked yet!</string>
     <string name="notification_text" formatted="false">As of %s, %s is %s!</string>
+    <string name="expiration_date_explanation">Set the date and time you would like the Monitor to stop pinging.</string>
+    <string name="ping_explanation_never">Never ping the website automatically.</string>
 
 </resources>

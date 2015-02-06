@@ -22,7 +22,7 @@ public class MonitorProvider extends ContentProvider {
             MonitorEntry.TITLE,
             MonitorEntry.URL,
             MonitorEntry.PING_FREQUENCY,
-            MonitorEntry.END_DATE,
+            MonitorEntry.END_TIME,
             MonitorEntry.TIME_LAST_CHECKED,
             MonitorEntry.STATUS};
     private static final String mSortOrder = PingContract.MonitorEntry._ID + " DESC";

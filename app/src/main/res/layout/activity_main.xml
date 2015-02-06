@@ -23,21 +23,21 @@
         android:background="@color/primary"
         android:elevation="@dimen/elevation_medium"
         android:orientation="horizontal"
-        android:paddingBottom="10sp"
-        android:paddingLeft="10sp"
-        android:paddingRight="10sp">
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <ImageButton
             android:id="@+id/ping_button"
-            android:layout_width="40sp"
-            android:layout_height="40sp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_gravity="center"
             android:background="@android:color/transparent"
-            android:padding="12sp"
+            android:padding="12dp"
             android:src="@drawable/ic_refresh_white_48dp" />
 
         <Space
-            android:layout_width="6sp"
+            android:layout_width="6dp"
             android:layout_height="match_parent" />
 
         <LinearLayout
@@ -59,7 +59,7 @@
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="10sp" />
+                android:layout_height="10dp" />
 
             <TextView
                 android:id="@+id/output_text_view"

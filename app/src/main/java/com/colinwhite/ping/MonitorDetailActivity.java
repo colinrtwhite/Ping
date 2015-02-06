@@ -2,6 +2,7 @@ package com.colinwhite.ping;
 
 import android.app.DatePickerDialog;
 import android.app.NotificationManager;
+import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -10,16 +11,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.colinwhite.ping.data.PingContract;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
@@ -27,7 +32,6 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class MonitorDetailActivity extends ActionBarActivity {
@@ -43,20 +47,28 @@ public class MonitorDetailActivity extends ActionBarActivity {
     private static EditText mTitleField;
     private static EditText mUrlField;
     private static SeekBar mPingFrequency;
-    private static Calendar mDatePickerDate;
+    private static Calendar mSelectedDateTime;
 
     // Other UI elements
     private static Toolbar mToolbar;
-    private static ImageView mMonitorIcon;
+    private static ImageView mStatusIcon;
     private static TextView mDatePickerOutput;
+    private static TextView mTimePickerOutput;
     private static DatePickerDialog mDatePickerDialog;
+    private static TimePickerDialog mTimePickerDialog;
     private static Button mConfirmButton;
     private static Button mDeleteButton;
     private static TextView mPingFrequencyExplanation;
+    private static Switch mDatePickerSwitch;
+    private static TextView mExpirationDateExplanation;
+
+    // Only used on DETAIL pages
+    private static Cursor mCursor; // Contains the full database row on the current monitor.
+    private boolean mHasEndDate = false;
 
     private Intent mStartIntent;
     private SimpleDateFormat mDateFormat;
-    private boolean mHasEndDate = false;
+    private SimpleDateFormat mTimeFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,12 +87,17 @@ public class MonitorDetailActivity extends ActionBarActivity {
         mTitleField = (EditText) findViewById(R.id.create_monitor_title);
         mPingFrequency = (SeekBar) findViewById(R.id.ping_frequency_seek_bar);
         mDatePickerOutput = (TextView) findViewById(R.id.date_picker_output);
+        mTimePickerOutput = (TextView) findViewById(R.id.time_picker_output);
+        mExpirationDateExplanation = (TextView) findViewById(R.id.expiration_date_explanation);
         mConfirmButton = (Button) findViewById(R.id.save_button);
         mPingFrequencyExplanation = (TextView) findViewById(R.id.ping_frequency_explanation);
+        mDatePickerSwitch = (Switch) findViewById(R.id.date_picker_switch);
+        mStatusIcon = (ImageView) findViewById(R.id.status_icon);
 
-        // Initialise the date format of the DatePicker's output and the DatePicker's initial date.
-        mDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.UK);
-        mDatePickerDate = Calendar.getInstance();
+        // Initialise the formats of the date and time pickers and get the date picker's initial date.
+        mDateFormat = new SimpleDateFormat(DATE_FORMAT);
+        mTimeFormat = new SimpleDateFormat(Utility.TIME_FORMAT_12_HOURS);
+        mSelectedDateTime = Calendar.getInstance();
 
         // Set the ping frequency SeekBar to update its explanation TextField when its progress changes.
         mPingFrequency.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -88,10 +105,8 @@ public class MonitorDetailActivity extends ActionBarActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 setPingFrequencyExplanation(progress);
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) { /* Do nothing. */ }
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) { /* Do nothing. */ }
         });
@@ -109,26 +124,77 @@ public class MonitorDetailActivity extends ActionBarActivity {
         NotificationManager notificationManager = ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
         notificationManager.cancel((int) getIntent().getLongExtra(MonitorEntry._ID, -1));
 
+        // Set the expiry date + time section of the page.
+        setExpiryDateElements();
+    }
+
+    private void setExpiryDateElements() {
+        // Set the Switch to change the visibility of the pickers and explanation.
+        mDatePickerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int visibility = (isChecked) ? View.VISIBLE : View.GONE;
+                mDatePickerOutput.setVisibility(visibility);
+                mTimePickerOutput.setVisibility(visibility);
+                mExpirationDateExplanation.setVisibility(visibility);
+                mHasEndDate = isChecked;
+            }
+        });
+
+        // Set the Monitor's preference if this is a DETAIL page.
+        if (mStartIntent.getStringExtra(PAGE_TYPE_ID).equals(PAGE_DETAIL)) {
+            mDatePickerSwitch.setChecked(mCursor.getLong(mCursor.getColumnIndex(MonitorEntry.END_TIME))
+                    != MonitorEntry.END_DATE_NONE);
+        }
+
+        // -- TIME PICKER --
+        // Make the TimePicker set the output TextField's time when it is changed.
+        final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                mSelectedDateTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                mSelectedDateTime.set(Calendar.MINUTE, minute);
+
+                // Set the output TextView's text.
+                mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()));
+            }
+        };
+
+        // Set the TimePicker to popup when the TextField is clicked.
+        mTimePickerDialog = new TimePickerDialog(
+                this,
+                time,
+                mSelectedDateTime.get(Calendar.HOUR_OF_DAY),
+                mSelectedDateTime.get(Calendar.MINUTE),
+                false);
+        mTimePickerOutput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTimePickerDialog.show();
+            }
+        });
+
+        // -- DATE PICKER --
         // Make the DatePicker set the output TextField's date when it is changed.
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                mDatePickerDate.set(Calendar.YEAR, year);
-                mDatePickerDate.set(Calendar.MONTH, month);
-                mDatePickerDate.set(Calendar.DAY_OF_MONTH, day);
+                mSelectedDateTime.set(Calendar.YEAR, year);
+                mSelectedDateTime.set(Calendar.MONTH, month);
+                mSelectedDateTime.set(Calendar.DAY_OF_MONTH, day);
 
-                // Set the output TextView's text. Record that it has has a set end date.
-                mDatePickerOutput.setText(mDateFormat.format(mDatePickerDate.getTime()));
-                mHasEndDate = true;
+                // Set the output TextView's text.
+                mDatePickerOutput.setText(mDateFormat.format(mSelectedDateTime.getTime()));
             }
         };
 
         // Set the DatePicker to popup when the TextField is clicked.
-        mDatePickerDialog = new DatePickerDialog(this,
+        mDatePickerDialog = new DatePickerDialog(
+                this,
                 date,
-                mDatePickerDate.get(Calendar.YEAR),
-                mDatePickerDate.get(Calendar.MONTH),
-                mDatePickerDate.get(Calendar.DAY_OF_MONTH));
+                mSelectedDateTime.get(Calendar.YEAR),
+                mSelectedDateTime.get(Calendar.MONTH),
+                mSelectedDateTime.get(Calendar.DAY_OF_MONTH));
         mDatePickerOutput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -155,10 +221,10 @@ public class MonitorDetailActivity extends ActionBarActivity {
                 MonitorEntry.TITLE,
                 MonitorEntry.URL,
                 MonitorEntry.PING_FREQUENCY,
-                MonitorEntry.END_DATE};
+                MonitorEntry.END_TIME};
         final String selection = MonitorEntry._ID + " = ?";
         final String[] selectionArgs = {String.valueOf(monitorId)};
-        Cursor query = getContentResolver().query(
+        mCursor = getContentResolver().query(
                 MonitorEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(monitorId)).build(),
                 projection, selection, selectionArgs, null);
 
@@ -179,21 +245,21 @@ public class MonitorDetailActivity extends ActionBarActivity {
         });
 
         // Populate all the fields.
-        query.moveToFirst();
-        final String title = query.getString(query.getColumnIndex(MonitorEntry.TITLE));
+        mCursor.moveToFirst();
+        final String title = mCursor.getString(mCursor.getColumnIndex(MonitorEntry.TITLE));
         mTitleField.setText(title);
-        final String url = query.getString(query.getColumnIndex(MonitorEntry.URL));
+        final String url = mCursor.getString(mCursor.getColumnIndex(MonitorEntry.URL));
         mUrlField.setText(url);
-        final int pingFrequency = query.getInt(query.getColumnIndex(MonitorEntry.PING_FREQUENCY));
+        final int pingFrequency = mCursor.getInt(mCursor.getColumnIndex(MonitorEntry.PING_FREQUENCY));
         mPingFrequency.setProgress(pingFrequency);
         setPingFrequencyExplanation(pingFrequency);
 
-        // Populate the endDate. If we get 0, that means the monitor is set to run indefinitely.
-        long endDateInMillis = query.getLong(query.getColumnIndex(MonitorEntry.END_DATE));
-        if (endDateInMillis > 0) {
-            mDatePickerDate.setTimeInMillis(endDateInMillis);
-            mDatePickerOutput.setText(mDateFormat.format(mDatePickerDate.getTime()));
-            mHasEndDate = true;
+        // Populate the endDate, only if one already exists.
+        long endDateInMillis = mCursor.getLong(mCursor.getColumnIndex(MonitorEntry.END_TIME));
+        if (endDateInMillis != MonitorEntry.END_DATE_NONE) {
+            mSelectedDateTime.setTimeInMillis(endDateInMillis);
+            mDatePickerOutput.setText(mDateFormat.format(mSelectedDateTime.getTime()));
+            mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()));
         }
 
         // Set the confirm button to update the current Monitor and close the activity.
@@ -206,8 +272,6 @@ public class MonitorDetailActivity extends ActionBarActivity {
                 saveAllFields(PAGE_DETAIL, selection, selectionArgs);
             }
         });
-
-        query.close();
     }
 
     // Build the elements for a Monitor creation version of this Activity.
@@ -240,9 +304,8 @@ public class MonitorDetailActivity extends ActionBarActivity {
         values.put(MonitorEntry.TITLE, mTitleField.getText().toString());
         values.put(MonitorEntry.URL, mUrlField.getText().toString());
         values.put(MonitorEntry.PING_FREQUENCY, mPingFrequency.getProgress());
-        if (mHasEndDate) {
-            values.put(MonitorEntry.END_DATE, mDatePickerDate.getTimeInMillis());
-        }
+        long endDate = (mHasEndDate) ? mSelectedDateTime.getTimeInMillis() : MonitorEntry.END_DATE_NONE;
+        values.put(MonitorEntry.END_TIME, endDate);
 
         int monitorId = -1;
         if (PAGE_DETAIL.equals(pageType)) {
@@ -265,24 +328,47 @@ public class MonitorDetailActivity extends ActionBarActivity {
             monitorId = Integer.parseInt(path.substring(path.lastIndexOf('/') + 1));
         }
 
-        // Create the new sync timer for the Monitor.
-        PingSyncAdapter.createPeriodicSync(
-                this,
-                mUrlField.getText().toString(),
-                monitorId,
-                (int) TimeUnit.MINUTES.toSeconds(PING_FREQUENCY_MINUTES[mPingFrequency.getProgress()]));
+        // Don't create a sync timer for the last ping frequency option.
+        if (mPingFrequency.getProgress() != mPingFrequency.getMax()) {
+            // Create the new sync timer for the Monitor.
+            PingSyncAdapter.createPeriodicSync(
+                    this,
+                    mUrlField.getText().toString(),
+                    monitorId,
+                    (int) TimeUnit.MINUTES.toSeconds(PING_FREQUENCY_MINUTES[mPingFrequency.getProgress()]));
+        } else {
+            // Instead, we just sync once.
+            PingSyncAdapter.syncImmediately(
+                    this,
+                    PingSyncAdapter.getSyncAccount(this),
+                    mUrlField.getText().toString(),
+                    monitorId);
+        }
 
         finish();
     }
 
     private void setPingFrequencyExplanation(int progress) {
+        if (progress == mPingFrequency.getMax()) {
+            mPingFrequencyExplanation.setText(R.string.ping_explanation_never);
+            return;
+        }
         long duration = TimeUnit.MINUTES.toMillis(PING_FREQUENCY_MINUTES[progress]);
 
-        // Place the formatted duration in the resource string and set the result as the explanation
-        // TextField for the frequency SeekBar.
-        mPingFrequencyExplanation.setText(String.format(
+        // Place the formatted duration in the resource string.
+        String formattedStr = String.format(
                 getString(R.string.ping_frequency_explanation),
-                Utility.formatTimeDuration(duration)));
+                Utility.formatTimeDuration(duration));
+
+        // Set the result as the explanation TextField for the frequency SeekBar.
+        if (progress == 0) {
+            formattedStr += "<br><font color=\"#ff0000\">WARNING:</font> This will keep turn your cell radio on very often and will reduce battery life.";
+            mPingFrequencyExplanation.setText(Html.fromHtml(formattedStr));
+        } else {
+            mPingFrequencyExplanation.setText(formattedStr);
+        }
+
+        mPingFrequencyExplanation.setText(Html.fromHtml(formattedStr));
     }
 
     @Override

@@ -184,7 +184,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                 MonitorEntry.TITLE,
                 MonitorEntry.URL,
                 MonitorEntry.PING_FREQUENCY,
-                MonitorEntry.END_DATE,
+                MonitorEntry.END_TIME,
                 MonitorEntry.TIME_LAST_CHECKED,
                 MonitorEntry.STATUS};
 
