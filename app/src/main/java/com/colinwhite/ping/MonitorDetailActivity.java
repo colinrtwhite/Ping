@@ -373,8 +373,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
 
         // Set the result as the explanation TextField for the frequency SeekBar.
         if (progress == 0) {
-            formattedStr += "<br><font color=\"#ff0000\">WARNING:</font> This will keep turn your" +
-                    " cell radio on very often and will reduce battery life.";
+            formattedStr += getString(R.string.ping_frequency_warning);
             mPingFrequencyExplanation.setText(Html.fromHtml(formattedStr));
         } else {
             mPingFrequencyExplanation.setText(formattedStr);
@@ -458,7 +457,10 @@ public class MonitorDetailActivity extends ActionBarActivity {
             return false;
         } else if (mDatePickerSwitch.isChecked()) {
             // Check both the time field and the date field.
-            if (!mIsTimePickerSet) {
+            if (mPingFrequency.getProgress() == mPingFrequency.getMax()) {
+                Toast.makeText(this, getString(R.string.invalid_input_ping_frequency), Toast.LENGTH_LONG).show();
+                return false;
+            } else if (!mIsTimePickerSet) {
                 Toast.makeText(this, getString(R.string.invalid_input_time), Toast.LENGTH_LONG).show();
                 return false;
             } else if (!mIsDatePickerSet) {

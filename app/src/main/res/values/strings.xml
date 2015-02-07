@@ -35,5 +35,7 @@
     <string name="invalid_input_url">Please enter a URL.</string>
     <string name="invalid_input_time">Please set an expiration time.</string>
     <string name="invalid_input_date">Please set an expiration date.</string>
+    <string name="invalid_input_ping_frequency">You cannot set an expiration date if the Monitor is set to never ping automatically.</string>
+    <string name="ping_frequency_warning"><![CDATA[<br><font color=\"#ff0000\">WARNING:</font> This will wake your phone often and can reduce battery life.]]></string>
 
 </resources>
