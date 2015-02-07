@@ -101,7 +101,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
         // Set the text that is shown when the list of monitors is empty.
         mMonitorList = (ListView) findViewById(R.id.monitor_list);
-        mMonitorList.setEmptyView(findViewById(R.id.empty_monitor_list_text));
+        mMonitorList.setEmptyView(findViewById(R.id.empty_monitor_list));
 
         // Set the any items in the Monitor ListView to open up their detail activity.
         mMonitorList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
