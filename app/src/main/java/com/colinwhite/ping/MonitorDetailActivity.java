@@ -187,6 +187,8 @@ public class MonitorDetailActivity extends ActionBarActivity {
             mDatePickerOutput.setText(mDateFormat.format(mSelectedDateTime.getTime()));
             mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()) +
                     getString(R.string.approximately_tag));
+            mIsDatePickerSet = true;
+            mIsTimePickerSet = true;
         }
 
         // Set the status icon.
