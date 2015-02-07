@@ -1,5 +1,6 @@
 package com.colinwhite.ping;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Vibrator;
@@ -36,6 +37,14 @@ public class MonitorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, final Context context, final Cursor cursor) {
+        // Store the cursor's elements, as the cursor's information can become unavailable at any time.
+        final ContentValues values = new ContentValues();
+        values.put(MonitorEntry.URL, cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)));
+        values.put(MonitorEntry._ID, cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)));
+        values.put(MonitorEntry.TITLE, cursor.getString(cursor.getColumnIndex(MonitorEntry.TITLE)));
+        values.put(MonitorEntry.TIME_LAST_CHECKED, cursor.getLong(cursor.getColumnIndex(MonitorEntry.TIME_LAST_CHECKED)));
+        values.put(MonitorEntry.STATUS, cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS)));
+
         // Our ViewHolder already contains references to the relevant views, so set the appropriate
         // values through the viewHolder references instead of costly findViewById calls.
         ViewHolder viewHolder = (ViewHolder) view.getTag();
@@ -50,17 +59,17 @@ public class MonitorAdapter extends CursorAdapter {
                 PingSyncAdapter.syncImmediately(
                         context,
                         PingSyncAdapter.getSyncAccount(context),
-                        cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)),
-                        cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)));
+                        (String)values.get(MonitorEntry.URL),
+                        (int)values.get(MonitorEntry._ID));
             }
         });
 
         // Set the Title and URL.
-        viewHolder.titleView.setText(cursor.getString(cursor.getColumnIndex(MonitorEntry.TITLE)));
-        viewHolder.urlView.setText(cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)));
+        viewHolder.titleView.setText((String)values.get(MonitorEntry.TITLE));
+        viewHolder.urlView.setText((String)values.get(MonitorEntry.URL));
 
         // Set the time last checked.
-        long timeLastCheckedMillis = cursor.getLong(cursor.getColumnIndex(MonitorEntry.TIME_LAST_CHECKED));
+        long timeLastCheckedMillis = (long)values.get(MonitorEntry.TIME_LAST_CHECKED);
         if (timeLastCheckedMillis != MonitorEntry.TIME_LAST_CHECKED_NONE) {
             // Format the time last checked and place it in the resource string.
             viewHolder.lastCheckedView.setText(String.format(
@@ -72,7 +81,7 @@ public class MonitorAdapter extends CursorAdapter {
         }
 
         // Set the icon based on the Monitor's status.
-        int statusIcon = Utility.getStatusIcon(cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS)));
+        int statusIcon = Utility.getStatusIcon((int)values.get(MonitorEntry.STATUS));
         viewHolder.statusView.setImageDrawable(context.getResources().getDrawable(statusIcon));
     }
 
