@@ -195,6 +195,11 @@ public class Utility {
         return PendingIntent.getService(context, monitorId, intent, PendingIntent.FLAG_ONE_SHOT);
     }
 
+    /**
+     * Get the icon reference for the corresponding status.
+     * @param status A valid Monitor's status.
+     * @return The icon reference number corresponding to the input status.
+     */
     public static int getStatusIcon(int status) {
         switch (status) {
             case PingContract.MonitorEntry.STATUS_NO_INFO:
@@ -211,6 +216,12 @@ public class Utility {
         }
     }
 
+    /**
+     * Return true if the status denotes some kind of error that we shouldn't bother to notify the
+     * user about, as it is often temporary.
+     * @param status A valid Monitor's status.
+     * @return Whether the status denotes some kind of error.
+     */
     public static boolean isErrorStatus(int status) {
         switch (status) {
             case MonitorEntry.STATUS_IS_UP:

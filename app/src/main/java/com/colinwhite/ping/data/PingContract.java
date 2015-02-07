@@ -28,7 +28,7 @@ public final class PingContract {
         public static final String END_TIME = "end_time";
         public static final String TIME_LAST_CHECKED = "time_last_checked";
         public static final String STATUS = "status";
-        public static final String LAST_NON_ERROR_STATUS = "last_non_error_status";
+        public static final String LAST_NON_ERROR_STATUS = "last_non_error_status"; // Used for notification purposes.
 
         // Status codes for MonitorEntry.STATUS
         public static final int STATUS_NO_INFO = 0; // Error
@@ -39,6 +39,9 @@ public final class PingContract {
 
         // Denotes no expiry date.
         public static final long END_TIME_NONE = 0;
+
+        // Denotes no previous check.
+        public static final long TIME_LAST_CHECKED_NONE = 0;
 
         // Must match the maximum of ping_frequency_seek_bar.
         public static final int PING_FREQUENCY_MAX = 9;

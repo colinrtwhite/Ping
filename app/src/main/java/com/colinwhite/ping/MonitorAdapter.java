@@ -51,7 +51,7 @@ public class MonitorAdapter extends CursorAdapter {
 
         // Set the time last checked.
         long timeLastCheckedMillis = cursor.getLong(cursor.getColumnIndex(MonitorEntry.TIME_LAST_CHECKED));
-        if (timeLastCheckedMillis > 0) {
+        if (timeLastCheckedMillis != MonitorEntry.TIME_LAST_CHECKED_NONE) {
             // Format the time last checked and place it in the resource string.
             viewHolder.lastCheckedView.setText(String.format(
                     context.getString(R.string.last_checked_text),

@@ -198,7 +198,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
         // Format the time last checked and place it in the resource string.
         long timeLastChecked = (long) mValues.get(MonitorEntry.TIME_LAST_CHECKED);
         mLastCheckedField.setVisibility(View.VISIBLE);
-        if (timeLastChecked > 0) {
+        if (timeLastChecked != MonitorEntry.TIME_LAST_CHECKED_NONE) {
             mLastCheckedField.setText(String.format(
                     getString(R.string.last_checked_text),
                     Utility.formatDate(timeLastChecked)));
@@ -305,10 +305,16 @@ public class MonitorDetailActivity extends ActionBarActivity {
     private void saveAllFields(String pageType, String selection, String[] selectionArgs) {
         ContentValues values = new ContentValues();
         values.put(MonitorEntry.TITLE, mTitleField.getText().toString());
-        values.put(MonitorEntry.URL, mUrlField.getText().toString());
+        String url = mUrlField.getText().toString();
+        values.put(MonitorEntry.URL, url);
         values.put(MonitorEntry.PING_FREQUENCY, mPingFrequency.getProgress());
         long endDate = (mHasEndDate) ? mSelectedDateTime.getTimeInMillis() : MonitorEntry.END_TIME_NONE;
         values.put(MonitorEntry.END_TIME, endDate);
+        // If the URL has changed, invalidate the last checked time and status.
+        if (!mValues.get(MonitorEntry.URL).equals(url)) {
+            values.put(MonitorEntry.TIME_LAST_CHECKED, MonitorEntry.TIME_LAST_CHECKED_NONE);
+            values.put(MonitorEntry.STATUS, MonitorEntry.STATUS_NO_INFO);
+        }
 
         int monitorId = -1;
         if (PAGE_DETAIL.equals(pageType)) {
