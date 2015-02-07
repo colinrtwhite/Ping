@@ -193,4 +193,20 @@ public class Utility {
         intent.putExtra(PingContract.MonitorEntry._ID, monitorId);
         return PendingIntent.getService(context, monitorId, intent, PendingIntent.FLAG_ONE_SHOT);
     }
+
+    public static int getStatusIcon(int status) {
+        switch (status) {
+            case PingContract.MonitorEntry.STATUS_NO_INFO:
+                return R.drawable.down_button;
+            case PingContract.MonitorEntry.STATUS_IS_UP:
+                return R.drawable.up_button;
+            case PingContract.MonitorEntry.STATUS_IS_DOWN:
+                return R.drawable.down_button;
+            case PingContract.MonitorEntry.STATUS_NO_INTERNET:
+                return R.drawable.ic_share_variant_white_48dp;
+            default:
+                // Something went wrong.
+                return R.drawable.down_button;
+        }
+    }
 }

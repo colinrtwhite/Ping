@@ -122,7 +122,8 @@ public class MonitorDetailActivity extends ActionBarActivity {
         }
 
         // Hide any notifications for this Monitor.
-        NotificationManager notificationManager = ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
+        NotificationManager notificationManager = ((NotificationManager)
+                getSystemService(Context.NOTIFICATION_SERVICE));
         notificationManager.cancel((int) getIntent().getLongExtra(MonitorEntry._ID, -1));
 
         // Set the expiry date + time section of the page.
@@ -168,7 +169,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
         mValues.put(MonitorEntry.STATUS, cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS)));
         cursor.close();
 
-        // Populate all the fields.
+        // Populate all the user-accessible fields.
         final String title = (String) mValues.get(MonitorEntry.TITLE);
         mTitleField.setText(title);
         final String url = (String) mValues.get(MonitorEntry.URL);
@@ -182,8 +183,13 @@ public class MonitorDetailActivity extends ActionBarActivity {
         if (endDateInMillis != MonitorEntry.END_TIME_NONE) {
             mSelectedDateTime.setTimeInMillis(endDateInMillis);
             mDatePickerOutput.setText(mDateFormat.format(mSelectedDateTime.getTime()));
-            mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()) + ", approximately");
+            mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()) +
+                    getString(R.string.approximately_tag));
         }
+
+        // Set the status icon.
+        mStatusIcon.setImageDrawable(getResources().getDrawable(
+                Utility.getStatusIcon((int)mValues.get(MonitorEntry.STATUS))));
     }
 
     // Build the elements for a Monitor creation version of this Activity.
@@ -226,7 +232,8 @@ public class MonitorDetailActivity extends ActionBarActivity {
                 mSelectedDateTime.set(Calendar.MINUTE, minute);
 
                 // Set the output TextView's text.
-                mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()) + ", approximately");
+                mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()) +
+                        getString(R.string.approximately_tag));
                 mIsTimePickerSet = true;
             }
         };

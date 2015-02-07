@@ -30,5 +30,6 @@
     <string name="notification_text" formatted="false">As of %s, %s is %s!</string>
     <string name="expiration_date_explanation">Set the date and time you would like the Monitor to stop pinging automatically.</string>
     <string name="ping_explanation_never">Never ping the website automatically.</string>
+    <string name="approximately_tag">, approximately</string>
 
 </resources>

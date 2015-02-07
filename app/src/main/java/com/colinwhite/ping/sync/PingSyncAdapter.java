@@ -17,6 +17,7 @@ import android.content.SyncResult;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.colinwhite.ping.MonitorDetailActivity;
 import com.colinwhite.ping.R;
@@ -27,6 +28,8 @@ import java.util.Calendar;
 import java.util.regex.Pattern;
 
 public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
+    public static final String LOG_TAG = PingSyncAdapter.class.getSimpleName();
+
     // The SQL selection string is always the same.
     private static final String mSelection = MonitorEntry._ID + " = ?";
 
@@ -50,51 +53,58 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                               String authority,
                               ContentProviderClient provider,
                               SyncResult syncResult) {
-        // Simply return if we're not given ID nor URL.
-        // TODO: Fix bug where onPerformSync is called with an empty Bundle after the first Monitor is created.
-        if (extras.isEmpty()) {
-            return;
+        try {
+            // Simply return if we're not given ID nor URL.
+            // TODO: Fix bug where onPerformSync is called with an empty Bundle after the first Monitor is created.
+            if (extras.isEmpty()) {
+                return;
+            }
+
+            // Recover the URL from the intent and get the returned HTML from our request.
+            String url = extras.getString(MonitorEntry.URL);
+            String html = Utility.getHtml(url);
+
+            int monitorId = extras.getInt(MonitorEntry._ID);
+            final String[] selectionArgs = {String.valueOf(monitorId)};
+
+            int status = -1;
+            if (mUpPattern.matcher(html).find()) {
+                status = MonitorEntry.STATUS_IS_UP;
+            } else if (mDownPattern.matcher(html).find()) {
+                status = MonitorEntry.STATUS_IS_DOWN;
+            } else if (mDoesNotExistPattern.matcher(html).find()) {
+                status = MonitorEntry.STATUS_IS_NOT_WEBSITE;
+            }
+
+            long timeLastChecked = Calendar.getInstance().getTimeInMillis();
+
+            // Get the Monitor's previous status to compare.
+            String[] projection = {MonitorEntry.TITLE, MonitorEntry.STATUS};
+            Cursor cursor = mContentResolver.query(MonitorEntry.CONTENT_URI, projection, mSelection, selectionArgs, null);
+            cursor.moveToFirst();
+            int previousStatus = cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS));
+            if (previousStatus != 0 && previousStatus != status) {
+                // If the status has changed, trigger a notification.
+                triggerNotification(
+                        monitorId,
+                        cursor.getString(cursor.getColumnIndex(MonitorEntry.TITLE)),
+                        url,
+                        status,
+                        timeLastChecked);
+            }
+            cursor.close();
+
+            // Update the server's status, and the time last checked.
+            ContentValues values = new ContentValues();
+            values.put(MonitorEntry.STATUS, status);
+            values.put(MonitorEntry.TIME_LAST_CHECKED, timeLastChecked);
+
+            mContentResolver.update(MonitorEntry.CONTENT_URI, values, mSelection, selectionArgs);
+        } catch (Exception e) {
+            // If any problems occur while syncing simply record an error in the Log, cancel the sync,
+            // and try again next time.
+            Log.e(LOG_TAG, "Error occurred while syncing: " + e.toString());
         }
-
-        // Recover the URL from the intent and get the returned HTML from our request.
-        String url = extras.getString(MonitorEntry.URL);
-        String html = Utility.getHtml(url);
-
-        int monitorId = extras.getInt(MonitorEntry._ID);
-        final String[] selectionArgs = {String.valueOf(monitorId)};
-
-        int status = -1;
-        if (mUpPattern.matcher(html).find()) {
-            status = MonitorEntry.STATUS_IS_UP;
-        } else if (mDownPattern.matcher(html).find()) {
-            status = MonitorEntry.STATUS_IS_DOWN;
-        } else if (mDoesNotExistPattern.matcher(html).find()) {
-            status = MonitorEntry.STATUS_IS_NOT_WEBSITE;
-        }
-
-        long timeLastChecked = Calendar.getInstance().getTimeInMillis();
-
-        // Get the Monitor's previous status to compare.
-        String[] projection = {MonitorEntry.TITLE, MonitorEntry.STATUS};
-        Cursor cursor = mContentResolver.query(MonitorEntry.CONTENT_URI, projection, mSelection, selectionArgs, null);
-        cursor.moveToFirst();
-        int previousStatus = cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS));
-        if (previousStatus != 0 && previousStatus != status) {
-            // If the status has changed, trigger a notification.
-            triggerNotification(
-                    monitorId,
-                    cursor.getString(cursor.getColumnIndex(MonitorEntry.TITLE)),
-                    url,
-                    status,
-                    timeLastChecked);
-        }
-
-        // Update the server's status, and the time last checked.
-        ContentValues values = new ContentValues();
-        values.put(MonitorEntry.STATUS, status);
-        values.put(MonitorEntry.TIME_LAST_CHECKED, timeLastChecked);
-
-        mContentResolver.update(MonitorEntry.CONTENT_URI, values, mSelection, selectionArgs);
     }
 
     /**

@@ -61,24 +61,9 @@ public class MonitorAdapter extends CursorAdapter {
             viewHolder.lastCheckedView.setText(context.getResources().getString(R.string.last_checked_text_no_info));
         }
 
-        switch (cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS))) {
-            case MonitorEntry.STATUS_NO_INFO:
-                viewHolder.statusView.setImageDrawable(context.getResources().getDrawable(R.drawable.down_button));
-                break;
-            case MonitorEntry.STATUS_IS_UP:
-                viewHolder.statusView.setImageDrawable(context.getResources().getDrawable(R.drawable.up_button));
-                break;
-            case MonitorEntry.STATUS_IS_DOWN:
-                viewHolder.statusView.setImageDrawable(context.getResources().getDrawable(R.drawable.down_button));
-                break;
-            case MonitorEntry.STATUS_NO_INTERNET:
-                viewHolder.statusView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_share_variant_white_48dp));
-                break;
-            default:
-                // Something went wrong.
-                viewHolder.statusView.setImageDrawable(context.getResources().getDrawable(R.drawable.down_button));
-                break;
-        }
+        // Set the icon based on the Monitor's status.
+        int statusIcon = Utility.getStatusIcon(cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS)));
+        viewHolder.statusView.setImageDrawable(context.getResources().getDrawable(statusIcon));
     }
 
     /**
