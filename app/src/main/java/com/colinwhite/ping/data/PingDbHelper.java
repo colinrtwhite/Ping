@@ -28,7 +28,8 @@ public class PingDbHelper extends SQLiteOpenHelper {
                 MonitorEntry.PING_FREQUENCY + INTEGER_TYPE + NOT_NULL + COMMA_SEP +
                 MonitorEntry.END_TIME + LONG_TYPE + COMMA_SEP +
                 MonitorEntry.TIME_LAST_CHECKED + LONG_TYPE + COMMA_SEP +
-                MonitorEntry.STATUS + INTEGER_TYPE + ")";
+                MonitorEntry.STATUS + INTEGER_TYPE + COMMA_SEP +
+                MonitorEntry.LAST_NON_ERROR_STATUS + INTEGER_TYPE + ")";
 
         db.execSQL(SQL_CREATE_ENTRIES);
     }

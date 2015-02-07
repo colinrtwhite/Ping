@@ -28,13 +28,14 @@ public final class PingContract {
         public static final String END_TIME = "end_time";
         public static final String TIME_LAST_CHECKED = "time_last_checked";
         public static final String STATUS = "status";
+        public static final String LAST_NON_ERROR_STATUS = "last_non_error_status";
 
         // Status codes for MonitorEntry.STATUS
-        public static final int STATUS_NO_INFO = 0;
+        public static final int STATUS_NO_INFO = 0; // Error
         public static final int STATUS_IS_UP = 1;
         public static final int STATUS_IS_DOWN = 2;
         public static final int STATUS_IS_NOT_WEBSITE = 3;
-        public static final int STATUS_NO_INTERNET = 4;
+        public static final int STATUS_NO_INTERNET = 4; // Error
 
         // Denotes no expiry date.
         public static final long END_TIME_NONE = 0;

@@ -16,7 +16,7 @@ public class MonitorProvider extends ContentProvider {
     private static final int MONITOR = 0;
     private static final int MONITOR_BY_ID = 1;
 
-    // SQL-related objects
+    // SQL-related objects (needs to follow what is laid out in MonitorEntry),
     private static final String[] mProjection = {
             MonitorEntry._ID,
             MonitorEntry.TITLE,
@@ -24,7 +24,8 @@ public class MonitorProvider extends ContentProvider {
             MonitorEntry.PING_FREQUENCY,
             MonitorEntry.END_TIME,
             MonitorEntry.TIME_LAST_CHECKED,
-            MonitorEntry.STATUS};
+            MonitorEntry.STATUS,
+            MonitorEntry.LAST_NON_ERROR_STATUS};
     private static final String mSortOrder = PingContract.MonitorEntry._ID + " DESC";
     private static PingDbHelper mDbHelper;
 

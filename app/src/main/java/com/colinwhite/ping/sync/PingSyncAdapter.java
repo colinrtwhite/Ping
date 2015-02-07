@@ -79,11 +79,23 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             long timeLastChecked = Calendar.getInstance().getTimeInMillis();
 
             // Get the Monitor's previous status to compare.
-            String[] projection = {MonitorEntry.TITLE, MonitorEntry.STATUS};
+            String[] projection = {MonitorEntry.TITLE, MonitorEntry.STATUS, MonitorEntry.LAST_NON_ERROR_STATUS};
             Cursor cursor = mContentResolver.query(MonitorEntry.CONTENT_URI, projection, mSelection, selectionArgs, null);
             cursor.moveToFirst();
             int previousStatus = cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS));
-            if (previousStatus != 0 && previousStatus != status) {
+            int lastNonErrorStatus = cursor.getInt(cursor.getColumnIndex(MonitorEntry.LAST_NON_ERROR_STATUS));
+
+            // Only trigger a notification if:
+            // The previous status was not "no information."
+            if (previousStatus != 0 &&
+                    // The previous status is not the same as the current one.
+                    previousStatus != status &&
+                    // The current status is not an error.
+                    !Utility.isErrorStatus(status) &&
+                    // The most recent non-error status is not the same as the current one (this is to
+                    // prevent cases, for instance, where we lost internet for a second, but then got it
+                    // back and the website status did not change in the meantime).
+                    lastNonErrorStatus != status) {
                 // If the status has changed, trigger a notification.
                 triggerNotification(
                         monitorId,
@@ -94,10 +106,14 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             }
             cursor.close();
 
-            // Update the server's status, and the time last checked.
+            // Update the time last checked, the server's status, and the server's last non-error
+            // status, if applicable.
             ContentValues values = new ContentValues();
-            values.put(MonitorEntry.STATUS, status);
             values.put(MonitorEntry.TIME_LAST_CHECKED, timeLastChecked);
+            values.put(MonitorEntry.STATUS, status);
+            if (!Utility.isErrorStatus(status)) {
+                values.put(MonitorEntry.LAST_NON_ERROR_STATUS, status);
+            }
 
             mContentResolver.update(MonitorEntry.CONTENT_URI, values, mSelection, selectionArgs);
         } catch (Exception e) {
@@ -116,20 +132,17 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
      * @param timeLastChecked The time the status was checked at in milliseconds.
      */
     private void triggerNotification(int monitorId, String title, String url, int status, long timeLastChecked) {
+        // Don't trigger a notification for an internally errored status.
+        if (Utility.isErrorStatus(status)) {
+            return;
+        }
+
         String statusStr;
-        switch (status) {
-            case MonitorEntry.STATUS_IS_UP:
-                statusStr = "up";
-                break;
-            case MonitorEntry.STATUS_IS_DOWN:
-                statusStr = "down";
-                break;
-            case MonitorEntry.STATUS_IS_NOT_WEBSITE:
-            case MonitorEntry.STATUS_NO_INTERNET:
-            case MonitorEntry.STATUS_NO_INFO:
-            default:
-                // Don't trigger a notification for these.
-                return;
+        if (status == MonitorEntry.STATUS_IS_UP) {
+            statusStr = "up";
+        } else {
+            // If it's not up then it's down.
+            statusStr = "down";
         }
 
         String notificationText = String.format(

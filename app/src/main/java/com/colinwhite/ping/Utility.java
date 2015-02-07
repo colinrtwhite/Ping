@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.colinwhite.ping.data.PingContract;
+import com.colinwhite.ping.data.PingContract.MonitorEntry;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -207,6 +208,19 @@ public class Utility {
             default:
                 // Something went wrong.
                 return R.drawable.down_button;
+        }
+    }
+
+    public static boolean isErrorStatus(int status) {
+        switch (status) {
+            case MonitorEntry.STATUS_IS_UP:
+            case MonitorEntry.STATUS_IS_DOWN:
+                return false;
+            case MonitorEntry.STATUS_NO_INFO:
+            case MonitorEntry.STATUS_IS_NOT_WEBSITE:
+            case MonitorEntry.STATUS_NO_INTERNET:
+            default:
+                return true;
         }
     }
 }
