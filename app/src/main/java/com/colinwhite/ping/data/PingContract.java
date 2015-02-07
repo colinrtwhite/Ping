@@ -20,6 +20,8 @@ public final class PingContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_MONITOR;
         public static final String TABLE_NAME = "monitor";
+
+        // Column names
         public static final String TITLE = "title";
         public static final String URL = "url";
         public static final String PING_FREQUENCY = "ping_frequency";
@@ -35,7 +37,7 @@ public final class PingContract {
         public static final int STATUS_NO_INTERNET = 4;
 
         // Denotes no expiry date.
-        public static final long END_DATE_NONE = 0;
+        public static final long END_TIME_NONE = 0;
 
         // Must match the maximum of ping_frequency_seek_bar.
         public static final int PING_FREQUENCY_MAX = 9;

@@ -38,7 +38,7 @@ public class SyncRemovalService extends IntentService {
         // Turn off the expiry date and set the ping frequency to not update automatically.
         ContentValues values = new ContentValues();
         values.put(MonitorEntry.PING_FREQUENCY, MonitorEntry.PING_FREQUENCY_MAX);
-        values.put(MonitorEntry.END_TIME, MonitorEntry.END_DATE_NONE);
+        values.put(MonitorEntry.END_TIME, MonitorEntry.END_TIME_NONE);
 
         // Remove the periodic sync.
         PingSyncAdapter.removePeriodicSync(

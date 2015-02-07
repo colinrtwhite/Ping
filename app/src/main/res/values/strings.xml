@@ -13,8 +13,8 @@
     <string name="monitor_title_hint">Title (ex. Google)</string>
     <string name="ping_frequency_header">Ping Frequency</string>
     <string name="url_hint">URL (ex. "google.com")</string>
-    <string name="create_button_text">Create</string>
-    <string name="delete_button_text">Delete</string>
+    <string name="create_button_title">Create</string>
+    <string name="delete_button_title">Delete</string>
     <string name="ping_frequency_explanation">Ping every %s, approximately.</string>
     <string name="date_picker_header">Expiration Date</string>
     <string name="date_picker_label">Tap to set date.</string>
@@ -24,7 +24,7 @@
     <string name="sync_account_type">ping.colinwhite.com</string>
     <string name="content_authority">com.colinwhite.ping</string>
     <string name="monitor_detail_activity_title">Edit Monitor</string>
-    <string name="update_button_text">Update</string>
+    <string name="save_button_title">Update</string>
     <string name="last_checked_text">Last checked at %s.</string>
     <string name="last_checked_text_no_info">This website hasn\'t been checked yet!</string>
     <string name="notification_text" formatted="false">As of %s, %s is %s!</string>

@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -25,6 +24,7 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.colinwhite.ping.data.PingContract;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
@@ -56,15 +56,15 @@ public class MonitorDetailActivity extends ActionBarActivity {
     private static TextView mTimePickerOutput;
     private static DatePickerDialog mDatePickerDialog;
     private static TimePickerDialog mTimePickerDialog;
-    private static Button mConfirmButton;
-    private static Button mDeleteButton;
     private static TextView mPingFrequencyExplanation;
     private static Switch mDatePickerSwitch;
     private static TextView mExpirationDateExplanation;
 
     // Only used on DETAIL pages
-    private static Cursor mCursor; // Contains the full database row on the current monitor.
+    private ContentValues mValues;
     private boolean mHasEndDate = false;
+    private boolean mIsTimePickerSet = false;
+    private boolean mIsDatePickerSet = false;
 
     private Intent mStartIntent;
     private SimpleDateFormat mDateFormat;
@@ -89,7 +89,6 @@ public class MonitorDetailActivity extends ActionBarActivity {
         mDatePickerOutput = (TextView) findViewById(R.id.date_picker_output);
         mTimePickerOutput = (TextView) findViewById(R.id.time_picker_output);
         mExpirationDateExplanation = (TextView) findViewById(R.id.expiration_date_explanation);
-        mConfirmButton = (Button) findViewById(R.id.save_button);
         mPingFrequencyExplanation = (TextView) findViewById(R.id.ping_frequency_explanation);
         mDatePickerSwitch = (Switch) findViewById(R.id.date_picker_switch);
         mStatusIcon = (ImageView) findViewById(R.id.status_icon);
@@ -127,10 +126,79 @@ public class MonitorDetailActivity extends ActionBarActivity {
         notificationManager.cancel((int) getIntent().getLongExtra(MonitorEntry._ID, -1));
 
         // Set the expiry date + time section of the page.
-        setExpiryDateElements();
+        setExpirationDateElements();
     }
 
-    private void setExpiryDateElements() {
+    // Build the elements necessary to update a Monitor's details/delete it.
+    private void buildDetailPageElements() {
+        // Change the title.
+        setTitle(R.string.monitor_detail_activity_title);
+
+        // Get the ID of the Monitor.
+        final long monitorId = mStartIntent.getLongExtra(MonitorEntry._ID, -1);
+        if (monitorId == -1) {
+            Log.e(LOG_TAG, "Intent does not contain a Monitor ID.");
+            finish(); // Close the activity.
+        }
+
+        // Get the specific Monitor's data.
+        final String[] projection = {
+                MonitorEntry._ID,
+                MonitorEntry.TITLE,
+                MonitorEntry.URL,
+                MonitorEntry.PING_FREQUENCY,
+                MonitorEntry.END_TIME,
+                MonitorEntry.TIME_LAST_CHECKED,
+                MonitorEntry.STATUS};
+        final String selection = MonitorEntry._ID + " = ?";
+        final String[] selectionArgs = {String.valueOf(monitorId)};
+        Cursor cursor = getContentResolver().query(
+                MonitorEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(monitorId)).build(),
+                projection, selection, selectionArgs, null);
+
+        // Store all the initial values.
+        cursor.moveToFirst();
+        mValues = new ContentValues();
+        mValues.put(MonitorEntry._ID, cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)));
+        mValues.put(MonitorEntry.TITLE, cursor.getString(cursor.getColumnIndex(MonitorEntry.TITLE)));
+        mValues.put(MonitorEntry.URL, cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)));
+        mValues.put(MonitorEntry.PING_FREQUENCY, cursor.getInt(cursor.getColumnIndex(MonitorEntry.PING_FREQUENCY)));
+        mValues.put(MonitorEntry.END_TIME, cursor.getLong(cursor.getColumnIndex(MonitorEntry.END_TIME)));
+        mValues.put(MonitorEntry.TIME_LAST_CHECKED, cursor.getLong(cursor.getColumnIndex(MonitorEntry.TIME_LAST_CHECKED)));
+        mValues.put(MonitorEntry.STATUS, cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS)));
+        cursor.close();
+
+        // Populate all the fields.
+        final String title = (String) mValues.get(MonitorEntry.TITLE);
+        mTitleField.setText(title);
+        final String url = (String) mValues.get(MonitorEntry.URL);
+        mUrlField.setText(url);
+        final int pingFrequency = (int) mValues.get(MonitorEntry.PING_FREQUENCY);
+        mPingFrequency.setProgress(pingFrequency);
+        setPingFrequencyExplanation(pingFrequency);
+
+        // Populate the endDate, only if one already exists.
+        long endDateInMillis = (long) mValues.get(MonitorEntry.END_TIME);
+        if (endDateInMillis != MonitorEntry.END_TIME_NONE) {
+            mSelectedDateTime.setTimeInMillis(endDateInMillis);
+            mDatePickerOutput.setText(mDateFormat.format(mSelectedDateTime.getTime()));
+            mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()) + ", approximately");
+        }
+    }
+
+    // Build the elements for a Monitor creation version of this Activity.
+    private void buildCreatePageElements() {
+        // Set the URL EditText to the value passed in the Intent, if it exists.
+        if (mStartIntent.hasExtra(MonitorEntry.URL)) {
+            mUrlField.setText(mStartIntent.getStringExtra(MonitorEntry.URL));
+        }
+
+        // Set the initial ping frequency values.
+        mPingFrequency.setProgress(PING_FREQUENCY_ON_CREATE);
+        setPingFrequencyExplanation(PING_FREQUENCY_ON_CREATE);
+    }
+
+    private void setExpirationDateElements() {
         // Set the Switch to change the visibility of the pickers and explanation.
         mDatePickerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -145,8 +213,8 @@ public class MonitorDetailActivity extends ActionBarActivity {
 
         // Set the Monitor's preference if this is a DETAIL page.
         if (mStartIntent.getStringExtra(PAGE_TYPE_ID).equals(PAGE_DETAIL)) {
-            mDatePickerSwitch.setChecked(mCursor.getLong(mCursor.getColumnIndex(MonitorEntry.END_TIME))
-                    != MonitorEntry.END_DATE_NONE);
+            mDatePickerSwitch.setChecked(((long)mValues.get(MonitorEntry.END_TIME))
+                    != MonitorEntry.END_TIME_NONE);
         }
 
         // -- TIME PICKER --
@@ -159,6 +227,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
 
                 // Set the output TextView's text.
                 mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()) + ", approximately");
+                mIsTimePickerSet = true;
             }
         };
 
@@ -187,6 +256,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
 
                 // Set the output TextView's text.
                 mDatePickerOutput.setText(mDateFormat.format(mSelectedDateTime.getTime()));
+                mIsDatePickerSet = true;
             }
         };
 
@@ -205,103 +275,6 @@ public class MonitorDetailActivity extends ActionBarActivity {
         });
     }
 
-    // Build the elements necessary to update a Monitor's details/delete it.
-    private void buildDetailPageElements() {
-        // Change the title
-        setTitle(R.string.monitor_detail_activity_title);
-
-        // Get the ID of the Monitor.
-        final long monitorId = mStartIntent.getLongExtra(MonitorEntry._ID, -1);
-        if (monitorId == -1) {
-            Log.e(LOG_TAG, "Intent does not contain a Monitor ID.");
-            finish(); // Close the activity.
-        }
-
-        // Get the specific Monitor's data.
-        final String[] projection = {
-                MonitorEntry._ID,
-                MonitorEntry.TITLE,
-                MonitorEntry.URL,
-                MonitorEntry.PING_FREQUENCY,
-                MonitorEntry.END_TIME};
-        final String selection = MonitorEntry._ID + " = ?";
-        final String[] selectionArgs = {String.valueOf(monitorId)};
-        mCursor = getContentResolver().query(
-                MonitorEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(monitorId)).build(),
-                projection, selection, selectionArgs, null);
-
-        // Show the delete button and make it work.
-        mDeleteButton = (Button) findViewById(R.id.delete_button);
-        mDeleteButton.setVisibility(View.VISIBLE);
-        mDeleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Delete the Monitor's database entry and its sync account then close the activity.
-                getContentResolver().delete(MonitorEntry.CONTENT_URI, selection, selectionArgs);
-                PingSyncAdapter.removePeriodicSync(
-                        v.getContext(),
-                        mStartIntent.getStringExtra(MonitorEntry.URL),
-                        (int) monitorId);
-                // If the Monitor had a removal alarm set, delete it.
-                long endDate = mCursor.getLong(mCursor.getColumnIndex(MonitorEntry.END_TIME));
-                if (endDate != MonitorEntry.END_DATE_NONE) {
-                    Utility.deleteRemovalAlarm(v.getContext(), (int)monitorId, endDate);
-                }
-                finish();
-            }
-        });
-
-        // Populate all the fields.
-        mCursor.moveToFirst();
-        final String title = mCursor.getString(mCursor.getColumnIndex(MonitorEntry.TITLE));
-        mTitleField.setText(title);
-        final String url = mCursor.getString(mCursor.getColumnIndex(MonitorEntry.URL));
-        mUrlField.setText(url);
-        final int pingFrequency = mCursor.getInt(mCursor.getColumnIndex(MonitorEntry.PING_FREQUENCY));
-        mPingFrequency.setProgress(pingFrequency);
-        setPingFrequencyExplanation(pingFrequency);
-
-        // Populate the endDate, only if one already exists.
-        long endDateInMillis = mCursor.getLong(mCursor.getColumnIndex(MonitorEntry.END_TIME));
-        if (endDateInMillis != MonitorEntry.END_DATE_NONE) {
-            mSelectedDateTime.setTimeInMillis(endDateInMillis);
-            mDatePickerOutput.setText(mDateFormat.format(mSelectedDateTime.getTime()));
-            mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()) + ", approximately");
-        }
-
-        // Set the confirm button to update the current Monitor and close the activity.
-        mConfirmButton.setText(R.string.update_button_text);
-        mConfirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Update all fields. Don't bother to check, as it takes more time than to just
-                // update all the possible columns.
-                saveAllFields(PAGE_DETAIL, selection, selectionArgs);
-            }
-        });
-    }
-
-    // Build the elements for a Monitor creation version of this Activity.
-    private void buildCreatePageElements() {
-        // Set the URL EditText to the value passed in the Intent, if it exists.
-        if (mStartIntent.hasExtra(MonitorEntry.URL)) {
-            mUrlField.setText(mStartIntent.getStringExtra(MonitorEntry.URL));
-        }
-
-        // Set the confirm button to create a new entry in the database and close the activity.
-        mConfirmButton.setText(R.string.create_button_text);
-        mConfirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveAllFields(PAGE_CREATE, null, null);
-            }
-        });
-
-        // Set the initial ping frequency values.
-        mPingFrequency.setProgress(PING_FREQUENCY_ON_CREATE);
-        setPingFrequencyExplanation(PING_FREQUENCY_ON_CREATE);
-    }
-
     /**
      * Save all user-accessible fields in the activity, and create a new Monitor/update a current one.
      * Used for the CREATE/UPDATE buttons.
@@ -311,7 +284,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
         values.put(MonitorEntry.TITLE, mTitleField.getText().toString());
         values.put(MonitorEntry.URL, mUrlField.getText().toString());
         values.put(MonitorEntry.PING_FREQUENCY, mPingFrequency.getProgress());
-        long endDate = (mHasEndDate) ? mSelectedDateTime.getTimeInMillis() : MonitorEntry.END_DATE_NONE;
+        long endDate = (mHasEndDate) ? mSelectedDateTime.getTimeInMillis() : MonitorEntry.END_TIME_NONE;
         values.put(MonitorEntry.END_TIME, endDate);
 
         int monitorId = -1;
@@ -327,7 +300,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
                     mStartIntent.getStringExtra(MonitorEntry.URL),
                     monitorId);
             // If the Monitor previously had a removal alarm set, delete it.
-            if (mCursor.getLong(mCursor.getColumnIndex(MonitorEntry.END_TIME)) != MonitorEntry.END_DATE_NONE) {
+            if (((long)mValues.get(MonitorEntry.END_TIME)) != MonitorEntry.END_TIME_NONE) {
                 Utility.deleteRemovalAlarm(this, monitorId, endDate);
             }
         } else {
@@ -348,7 +321,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
                     monitorId,
                     (int) TimeUnit.MINUTES.toSeconds(PING_FREQUENCY_MINUTES[mPingFrequency.getProgress()]));
             // If the Monitor has been set to never ping automatically, don't add a removal alarm.
-            if (endDate != MonitorEntry.END_DATE_NONE) {
+            if (endDate != MonitorEntry.END_TIME_NONE) {
                 Utility.addRemovalAlarm(this, monitorId, endDate);
             }
         } else {
@@ -389,23 +362,88 @@ public class MonitorDetailActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_create_monitor, menu);
+        // Inflate the empty menu.
+        getMenuInflater().inflate(R.menu.menu_detail_monitor, menu);
+
+        // Get the Toolbar button references.
+        Menu toolbarMenu = mToolbar.getMenu();
+        MenuItem saveButton = toolbarMenu.findItem(R.id.action_content_save);
+        MenuItem deleteButton = toolbarMenu.findItem(R.id.action_delete);
+
+        // Set the visibility and titles of the Toolbar buttons depending on the page type.
+        if (PAGE_DETAIL.equals(mStartIntent.getStringExtra(PAGE_TYPE_ID))) {
+            saveButton.setTitle(R.string.save_button_title);
+            deleteButton.setVisible(true);
+        } else {
+            saveButton.setTitle(R.string.create_button_title);
+            deleteButton.setVisible(false);
+        }
 
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_content_save:
+                if (isValidInput()) {
+                    if (PAGE_DETAIL.equals(mStartIntent.getStringExtra(PAGE_TYPE_ID))) {
+                        // Update all fields. Don't bother to check, as it takes more time than to
+                        // just update all the possible columns.
+                        int monitorId = (int) mValues.get(MonitorEntry._ID);
+                        final String selection = MonitorEntry._ID + " = ?";
+                        final String[] selectionArgs = {String.valueOf(monitorId)};
+                        saveAllFields(PAGE_DETAIL, selection, selectionArgs);
+                    } else {
+                        // Create a new entry in the database and close the activity.
+                        saveAllFields(PAGE_CREATE, null, null);
+                    }
+                }
+                return true;
+            case R.id.action_delete:
+                // Delete the Monitor's database entry and its sync account then close the activity.
+                int monitorId = (int) mValues.get(MonitorEntry._ID);
+                final String selection = MonitorEntry._ID + " = ?";
+                final String[] selectionArgs = {String.valueOf(monitorId)};
+                getContentResolver().delete(MonitorEntry.CONTENT_URI, selection, selectionArgs);
+                PingSyncAdapter.removePeriodicSync(
+                        this,
+                        mStartIntent.getStringExtra(MonitorEntry.URL),
+                        (int)monitorId);
+                // If the Monitor had a removal alarm set, delete it.
+                long endDate = (long) mValues.get(MonitorEntry.END_TIME);
+                if (endDate != MonitorEntry.END_TIME_NONE) {
+                    Utility.deleteRemovalAlarm(this, (int)monitorId, endDate);
+                }
+                finish();
+                return true;
+            case R.id.action_settings:
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean isValidInput() {
+        if ("".equals(mTitleField.getText().toString())) {
+            Toast.makeText(this, "Please enter a title.", Toast.LENGTH_LONG).show();
+            return false;
+        } else if ("".equals(mUrlField.getText().toString())) {
+            Toast.makeText(this, "Please enter a URL.", Toast.LENGTH_LONG).show();
+            return false;
+        } else if (mDatePickerSwitch.isChecked()) {
+            // Check both the time field and the date field.
+            if (!mIsTimePickerSet) {
+                Toast.makeText(this, "Please set an expiration time.", Toast.LENGTH_LONG).show();
+                return false;
+            } else if (!mIsDatePickerSet) {
+                Toast.makeText(this, "Please set an expiration date.", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+
+        return true;
     }
 }
