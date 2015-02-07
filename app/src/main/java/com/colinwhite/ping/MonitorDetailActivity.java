@@ -195,8 +195,8 @@ public class MonitorDetailActivity extends ActionBarActivity {
         // NOTE: mLastCheckedField and mStatusIcon do not update if the database changes.
         // Format the time last checked and place it in the resource string.
         long timeLastChecked = (long) mValues.get(MonitorEntry.TIME_LAST_CHECKED);
+        mLastCheckedField.setVisibility(View.VISIBLE);
         if (timeLastChecked > 0) {
-            mLastCheckedField.setVisibility(View.VISIBLE);
             mLastCheckedField.setText(String.format(
                     getString(R.string.last_checked_text),
                     Utility.formatDate(timeLastChecked)));
