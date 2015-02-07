@@ -11,8 +11,8 @@ import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.sync.PingSyncAdapter;
 
 public class SyncRemovalService extends IntentService {
-    final String[] projection = {PingContract.MonitorEntry.URL};
-    final String selection = PingContract.MonitorEntry._ID + " = ?";
+    final String[] mProjection = {PingContract.MonitorEntry.URL};
+    final String mSelection = PingContract.MonitorEntry._ID + " = ?";
 
     public SyncRemovalService() { super(SyncRemovalService.class.getName()); }
     public SyncRemovalService(String name) { super(name); }
@@ -29,8 +29,8 @@ public class SyncRemovalService extends IntentService {
         ContentResolver contentResolver = getContentResolver();
         Cursor cursor = contentResolver.query(
                 MonitorEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(monitorId)).build(),
-                projection,
-                selection,
+                mProjection,
+                mSelection,
                 selectionArgs,
                 null);
         cursor.moveToFirst();
@@ -40,13 +40,17 @@ public class SyncRemovalService extends IntentService {
         values.put(MonitorEntry.PING_FREQUENCY, MonitorEntry.PING_FREQUENCY_MAX);
         values.put(MonitorEntry.END_TIME, MonitorEntry.END_TIME_NONE);
 
+        // Sync one last time.
+        String url = cursor.getString(cursor.getColumnIndex(MonitorEntry.URL));
+        PingSyncAdapter.syncImmediately(this, PingSyncAdapter.getSyncAccount(this), url, monitorId);
+
         // Remove the periodic sync.
         PingSyncAdapter.removePeriodicSync(
                 this,
-                cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)),
+                url,
                 monitorId);
         cursor.close();
 
-        contentResolver.update(MonitorEntry.CONTENT_URI, values, selection, selectionArgs);
+        contentResolver.update(MonitorEntry.CONTENT_URI, values, mSelection, selectionArgs);
     }
 }
