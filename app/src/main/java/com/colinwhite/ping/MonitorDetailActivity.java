@@ -310,13 +310,14 @@ public class MonitorDetailActivity extends ActionBarActivity {
         values.put(MonitorEntry.PING_FREQUENCY, mPingFrequency.getProgress());
         long endDate = (mHasEndDate) ? mSelectedDateTime.getTimeInMillis() : MonitorEntry.END_TIME_NONE;
         values.put(MonitorEntry.END_TIME, endDate);
-        // If the URL has changed, invalidate the last checked time and status.
-        if (!mValues.get(MonitorEntry.URL).equals(url)) {
+        // If this is a detail page and the URL has changed, invalidate the last checked time and status.
+        if (PAGE_DETAIL.equals(mStartIntent.getStringExtra(PAGE_TYPE_ID)) &&
+                !mValues.get(MonitorEntry.URL).equals(url)) {
             values.put(MonitorEntry.TIME_LAST_CHECKED, MonitorEntry.TIME_LAST_CHECKED_NONE);
             values.put(MonitorEntry.STATUS, MonitorEntry.STATUS_NO_INFO);
         }
 
-        int monitorId = -1;
+        int monitorId;
         if (PAGE_DETAIL.equals(pageType)) {
             // This is a detail page.
             getContentResolver().update(MonitorEntry.CONTENT_URI, values, selection, selectionArgs);
@@ -330,7 +331,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
                     monitorId);
             // If the Monitor previously had a removal alarm set, delete it.
             if (((long)mValues.get(MonitorEntry.END_TIME)) != MonitorEntry.END_TIME_NONE) {
-                Utility.deleteRemovalAlarm(this, monitorId, endDate);
+                Utility.deleteRemovalAlarm(this, monitorId);
             }
         } else {
             // This is a create page.
@@ -439,11 +440,11 @@ public class MonitorDetailActivity extends ActionBarActivity {
                 PingSyncAdapter.removePeriodicSync(
                         this,
                         mStartIntent.getStringExtra(MonitorEntry.URL),
-                        (int)monitorId);
+                        monitorId);
                 // If the Monitor had a removal alarm set, delete it.
                 long endDate = (long) mValues.get(MonitorEntry.END_TIME);
                 if (endDate != MonitorEntry.END_TIME_NONE) {
-                    Utility.deleteRemovalAlarm(this, (int)monitorId, endDate);
+                    Utility.deleteRemovalAlarm(this, monitorId);
                 }
                 finish();
                 return true;

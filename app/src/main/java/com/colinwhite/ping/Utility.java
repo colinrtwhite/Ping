@@ -167,8 +167,8 @@ public class Utility {
      * @param endTime Date/time when the SyncRemovalService will be triggered in milliseconds.
      */
     public static void addRemovalAlarm(Context context, int monitorId, long endTime) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, endTime, createPendingRemovalIntent(context, monitorId, endTime));
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, endTime, createPendingRemovalIntent(context, monitorId));
     }
 
     /**
@@ -176,20 +176,18 @@ public class Utility {
      * Note: All the parameters must match the ones originally passed to addRemovalAlarm.
      * @param context Context used to access the AlarmManager.
      * @param monitorId ID of the relevant Monitor in the database.
-     * @param endTime Date/time when the SyncRemovalService will be triggered in milliseconds.
      */
-    public static void deleteRemovalAlarm(Context context, int monitorId, long endTime) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
-        alarmManager.cancel(createPendingRemovalIntent(context, monitorId, endTime));
+    public static void deleteRemovalAlarm(Context context, int monitorId) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(createPendingRemovalIntent(context, monitorId));
     }
 
     /**
      * Helper method to create the pending removal intent.
      * @param context Context used to access get the SyncRemovalService.
      * @param monitorId ID of the relevant Monitor in the database.
-     * @param endTime Date/time when the SyncRemovalService will be triggered in milliseconds.
      */
-    private static PendingIntent createPendingRemovalIntent(Context context, int monitorId, long endTime) {
+    private static PendingIntent createPendingRemovalIntent(Context context, int monitorId) {
         Intent intent = new Intent(context, SyncRemovalService.class);
         intent.putExtra(PingContract.MonitorEntry._ID, monitorId);
         return PendingIntent.getService(context, monitorId, intent, PendingIntent.FLAG_ONE_SHOT);
