@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -36,12 +37,13 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
     // UI elements
     private static Toolbar mToolbar;
-    private static ImageButton mButton;
+    private static ImageButton mPingButton;
     private static ImageButton mFloatingButton;
     private static EditText mEditText;
     private static LinearLayout mActivityContainer;
     private static ListView mMonitorList;
 
+    private Vibrator mVibratorService;
     private MonitorAdapter mAdapter;
     private CursorLoader mCursorLoader;
 
@@ -53,6 +55,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         // Attempt to initialise the SyncAdapter Account for Ping.
         PingSyncAdapter.getSyncAccount(this);
 
+        // Get the top level View of this Activity.
         mActivityContainer = (LinearLayout) findViewById(R.id.activity_container);
 
         // Attach the main_toolbar to the activity.
@@ -61,10 +64,16 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
             setSupportActionBar(mToolbar);
         }
 
+        // Get the service for haptic feedback.
+        mVibratorService = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
         // Set the onClickListener for the ping button to attempt to start the PingService.
-        mButton = (ImageButton) findViewById(R.id.ping_button);
-        mButton.setOnClickListener(new ImageButton.OnClickListener() {
+        mPingButton = (ImageButton) findViewById(R.id.ping_button);
+        mPingButton.setOnClickListener(new ImageButton.OnClickListener() {
             public void onClick(View v) {
+                // Pulse haptic feedback.
+                mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+
                 String inputText = mEditText.getText().toString();
                 if (isValidInput(inputText)) {
                     startPingService(inputText);
@@ -89,6 +98,9 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         mFloatingButton = (ImageButton) findViewById(R.id.add_button);
         mFloatingButton.setOnClickListener(new ImageButton.OnClickListener() {
             public void onClick(View v) {
+                // Pulse haptic feedback.
+                mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+
                 // Pass the value of the EditText to MonitorDetailActivity.
                 Intent monitorDetailActivityIntent = new Intent(getApplicationContext(),
                         MonitorDetailActivity.class);

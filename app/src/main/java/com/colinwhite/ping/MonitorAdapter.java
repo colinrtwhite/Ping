@@ -2,6 +2,7 @@ package com.colinwhite.ping;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
 
 public class MonitorAdapter extends CursorAdapter {
 
+    private Vibrator mVibratorService;
+
     public MonitorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
@@ -24,6 +27,10 @@ public class MonitorAdapter extends CursorAdapter {
         View view = LayoutInflater.from(context).inflate(R.layout.monitor_list_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
+
+        // Get the service for haptic feedback.
+        mVibratorService = (Vibrator) context.getSystemService(context.VIBRATOR_SERVICE);
+
         return view;
     }
 
@@ -36,6 +43,9 @@ public class MonitorAdapter extends CursorAdapter {
         viewHolder.refreshButtonView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Pulse haptic feedback.
+                mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+
                 // Refresh the Monitor right now.
                 PingSyncAdapter.syncImmediately(
                         context,

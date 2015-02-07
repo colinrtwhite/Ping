@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -68,6 +69,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
     private boolean mIsTimePickerSet = false;
     private boolean mIsDatePickerSet = false;
 
+    private Vibrator mVibratorService;
     private Intent mStartIntent;
     private SimpleDateFormat mDateFormat;
     private SimpleDateFormat mTimeFormat;
@@ -102,6 +104,9 @@ public class MonitorDetailActivity extends ActionBarActivity {
         mSelectedDateTime = Calendar.getInstance();
         mSelectedDateTime.set(Calendar.SECOND, 0);
         mSelectedDateTime.set(Calendar.MILLISECOND, 0);
+
+        // Get the service for haptic feedback.
+        mVibratorService = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
         // Set the ping frequency SeekBar to update its explanation TextField when its progress changes.
         mPingFrequency.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -418,6 +423,9 @@ public class MonitorDetailActivity extends ActionBarActivity {
 
         switch (id) {
             case R.id.action_content_save:
+                // Pulse haptic feedback.
+                mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+
                 if (isValidInput()) {
                     if (PAGE_DETAIL.equals(mStartIntent.getStringExtra(PAGE_TYPE_ID))) {
                         // Update all fields. Don't bother to check, as it takes more time than to
@@ -433,6 +441,9 @@ public class MonitorDetailActivity extends ActionBarActivity {
                 }
                 return true;
             case R.id.action_delete:
+                // Pulse haptic feedback.
+                mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+
                 // Delete the Monitor's database entry and its sync account then close the activity.
                 int monitorId = (int) mValues.get(MonitorEntry._ID);
                 final String selection = MonitorEntry._ID + " = ?";

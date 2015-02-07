@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class Utility {
+    public static final long HAPTIC_FEEDBACK_DURATION = 20;
     private static final int MAX_DURATION_PARTS = 2;
     private static final String[] DURATION_SUFFIXES = {
             "day", " days",
@@ -200,17 +201,18 @@ public class Utility {
      */
     public static int getStatusIcon(int status) {
         switch (status) {
-            case PingContract.MonitorEntry.STATUS_NO_INFO:
-                return R.drawable.down_button;
-            case PingContract.MonitorEntry.STATUS_IS_UP:
-                return R.drawable.up_button;
-            case PingContract.MonitorEntry.STATUS_IS_DOWN:
-                return R.drawable.down_button;
-            case PingContract.MonitorEntry.STATUS_NO_INTERNET:
-                return R.drawable.ic_share_variant_white_48dp;
+            case MonitorEntry.STATUS_NO_INFO:
+                return R.drawable.ic_status_no_info;
+            case MonitorEntry.STATUS_IS_UP:
+                return R.drawable.ic_status_is_up;
+            case MonitorEntry.STATUS_IS_DOWN:
             default:
-                // Something went wrong.
-                return R.drawable.down_button;
+                // If default, something went wrong.
+                return R.drawable.ic_status_is_down;
+            case MonitorEntry.STATUS_NO_INTERNET:
+                return R.drawable.ic_status_no_internet;
+            case MonitorEntry.STATUS_IS_NOT_WEBSITE:
+                return R.drawable.ic_status_is_not_website;
         }
     }
 

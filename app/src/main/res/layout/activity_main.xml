@@ -43,9 +43,10 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:background="@android:color/transparent"
-            android:padding="16dp"
-            android:src="@drawable/ic_refresh_white_36dp"
+            android:background="@drawable/ripple_accent"
+            android:hapticFeedbackEnabled="true"
+            android:src="@drawable/ic_navigation_refresh_white"
+            android:scaleType="centerCrop"
             android:layout_weight="0"/>
     </LinearLayout>
 
@@ -71,6 +72,7 @@
             android:elevation="@dimen/elevation_high"
             android:src="@android:drawable/ic_input_add"
             android:tint="@android:color/white"
+            android:hapticFeedbackEnabled="true"
             tools:ignore="RtlCompat" />
 
         <include layout="@layout/empty_list_view" />

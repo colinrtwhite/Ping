@@ -8,13 +8,15 @@
 
     <ImageButton
         android:id="@+id/list_item_refresh_button"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/ic_refresh_white_48dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/ic_navigation_refresh_primary"
         android:layout_gravity="center"
         android:layout_margin="12dp"
         android:layout_weight="0"
-        android:background="@null"
+        android:background="@drawable/ripple_accent"
+        android:hapticFeedbackEnabled="true"
+        android:scaleType="centerCrop"
         android:focusable="false"
         android:focusableInTouchMode="false"/>
 
@@ -54,7 +56,6 @@
         android:id="@+id/list_item_status"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:src="@drawable/up_button"
         android:layout_gravity="center"
         android:layout_weight="0"
         android:layout_margin="20dp"/>
