@@ -55,10 +55,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/url_hint"
-                        android:inputType="textNoSuggestions"
+                        android:inputType="textUri"
                         android:maxLines="1"
                         android:padding="12dp"
-                        android:privateImeOptions="nm"
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/abc_text_size_small_material" />
                 </LinearLayout>

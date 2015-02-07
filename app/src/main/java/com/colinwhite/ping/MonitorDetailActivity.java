@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -460,6 +461,9 @@ public class MonitorDetailActivity extends ActionBarActivity {
             Toast.makeText(this, getString(R.string.invalid_input_title), Toast.LENGTH_LONG).show();
             return false;
         } else if ("".equals(mUrlField.getText().toString())) {
+            Toast.makeText(this, getString(R.string.invalid_input_url_empty), Toast.LENGTH_LONG).show();
+            return false;
+        } else if (!Patterns.WEB_URL.matcher(mUrlField.getText().toString()).matches()) {
             Toast.makeText(this, getString(R.string.invalid_input_url), Toast.LENGTH_LONG).show();
             return false;
         } else if (mDatePickerSwitch.isChecked()) {

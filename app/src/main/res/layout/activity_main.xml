@@ -27,47 +27,26 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp">
 
+        <EditText
+            android:id="@+id/url_text_field_quick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textUri"
+            android:maxLines="1"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:hint="@string/initial_output_text_id"
+            android:textColorHint="@android:color/white"
+            android:layout_weight="1"/>
+
         <ImageButton
             android:id="@+id/ping_button"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:background="@android:color/transparent"
-            android:padding="12dp"
-            android:src="@drawable/ic_refresh_white_48dp" />
-
-        <Space
-            android:layout_width="6dp"
-            android:layout_height="match_parent" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/url_text_field_quick"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textNoSuggestions"
-                android:maxLines="1"
-                android:privateImeOptions="nm"
-                android:textSize="@dimen/abc_text_size_medium_material"
-                android:hint="@string/initial_output_text_id"
-                android:textColorHint="@android:color/white"/>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="10dp" />
-
-            <TextView
-                android:id="@+id/output_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/initial_output_text_id"
-                android:textSize="@dimen/abc_text_size_small_material" />
-        </LinearLayout>
+            android:padding="16dp"
+            android:src="@drawable/ic_refresh_white_36dp"
+            android:layout_weight="0"/>
     </LinearLayout>
 
     <FrameLayout

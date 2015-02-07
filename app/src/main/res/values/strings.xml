@@ -3,8 +3,8 @@
 
     <string name="app_name">Ping</string>
     <string name="action_settings">Settings</string>
-    <string name="is_up">The website looks to be up.</string>
-    <string name="is_down">The website seems to be down!</string>
+    <string name="is_up">The website looks to be UP.</string>
+    <string name="is_down">The website seems to be DOWN!</string>
     <string name="does_not_exist">That doesn\'t look like a website URL...</string>
     <string name="other">Looks like some kind of error occurred while checking!</string>
     <string name="quick_check_title">Quick Check!</string>
@@ -32,10 +32,11 @@
     <string name="ping_explanation_never">Never ping the website automatically.</string>
     <string name="approximately_tag">, approximately</string>
     <string name="invalid_input_title">Please enter a title.</string>
-    <string name="invalid_input_url">Please enter a URL.</string>
+    <string name="invalid_input_url_empty">Please enter a URL.</string>
     <string name="invalid_input_time">Please set an expiration time.</string>
     <string name="invalid_input_date">Please set an expiration date.</string>
     <string name="invalid_input_ping_frequency">You cannot set an expiration date if the Monitor is set to never ping automatically.</string>
     <string name="ping_frequency_warning"><![CDATA[<br><font color=\"#ff0000\">WARNING:</font> This will wake your phone often and can reduce battery life.]]></string>
+    <string name="invalid_input_url">Please enter a valid URL.</string>
 
 </resources>

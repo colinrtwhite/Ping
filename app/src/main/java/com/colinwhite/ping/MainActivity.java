@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.sync.PingSyncAdapter;
@@ -63,7 +65,10 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         mButton = (ImageButton) findViewById(R.id.ping_button);
         mButton.setOnClickListener(new ImageButton.OnClickListener() {
             public void onClick(View v) {
-                startPingService();
+                String inputText = mEditText.getText().toString();
+                if (isValidInput(inputText)) {
+                    startPingService(inputText);
+                }
             }
         });
 
@@ -72,8 +77,9 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean isActionDone = actionId == EditorInfo.IME_ACTION_DONE;
-                if (isActionDone) {
-                    startPingService();
+                String inputText = mEditText.getText().toString();
+                if (isActionDone && isValidInput(inputText)) {
+                    startPingService(inputText);
                 }
                 return isActionDone;
             }
@@ -146,34 +152,39 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         return super.onOptionsItemSelected(item);
     }
 
-    private void startPingService() {
-        // Retrieve the text from the URL input field.
-        String inputText = mEditText.getText().toString();
-
-        // Validate input
-        if (!inputText.isEmpty()) {
-            Intent pingServiceIntent = new Intent(getApplicationContext(),
-                    PingService.class);
-
-            // Add the URL from the text field to the Intent.
-            pingServiceIntent.putExtra(MonitorEntry.URL, inputText);
-
-            // Close the virtual keyboard.
-            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-
-            // Remove focus from mEditText once URL has been entered.
-            mActivityContainer.requestFocus();
-
-            // Instantiate the intent filter and the receiver to receive the output.
-            IntentFilter filter = new IntentFilter(PingServiceReceiver.ACTION_RESPONSE);
-            filter.addCategory(Intent.CATEGORY_DEFAULT);
-            PingServiceReceiver receiver = new PingServiceReceiver();
-            registerReceiver(receiver, filter);
-
-            startService(pingServiceIntent);
+    private boolean isValidInput(String inputText) {
+        if (inputText.isEmpty()) {
+            Toast.makeText(this, getString(R.string.invalid_input_url_empty), Toast.LENGTH_LONG).show();
+            return false;
+        } else if (!Patterns.WEB_URL.matcher(inputText).matches()) {
+            Toast.makeText(this, getString(R.string.invalid_input_url), Toast.LENGTH_LONG).show();
+            return false;
         }
+
+        return true;
+    }
+
+    private void startPingService(String inputText) {
+        Intent pingServiceIntent = new Intent(getApplicationContext(), PingService.class);
+
+        // Add the URL from the text field to the Intent.
+        pingServiceIntent.putExtra(MonitorEntry.URL, inputText);
+
+        // Close the virtual keyboard.
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+
+        // Remove focus from mEditText once URL has been entered.
+        mActivityContainer.requestFocus();
+
+        // Instantiate the intent filter and the receiver to receive the output.
+        IntentFilter filter = new IntentFilter(PingServiceReceiver.ACTION_RESPONSE);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        PingServiceReceiver receiver = new PingServiceReceiver();
+        registerReceiver(receiver, filter);
+
+        startService(pingServiceIntent);
     }
 
     @Override
@@ -219,23 +230,21 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            TextView textView = (TextView) findViewById(R.id.output_text_view);
-
             switch (intent.getIntExtra(PingService.STATUS_ID, -1)) {
                 case MonitorEntry.STATUS_IS_UP:
-                    textView.setText(R.string.is_up);
+                    Toast.makeText(context, R.string.is_up, Toast.LENGTH_LONG).show();
                     break;
                 case MonitorEntry.STATUS_IS_DOWN:
-                    textView.setText(R.string.is_down);
+                    Toast.makeText(context, R.string.is_down, Toast.LENGTH_LONG).show();
                     break;
                 case MonitorEntry.STATUS_IS_NOT_WEBSITE:
-                    textView.setText(R.string.does_not_exist);
+                    Toast.makeText(context, R.string.does_not_exist, Toast.LENGTH_LONG).show();
                     break;
                 case MonitorEntry.STATUS_NO_INTERNET:
-                    textView.setText(R.string.no_internet_connection);
+                    Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
                     break;
                 default:
-                    textView.setText(R.string.other);
+                    Toast.makeText(context, R.string.other, Toast.LENGTH_LONG).show();
                     break;
             }
 
