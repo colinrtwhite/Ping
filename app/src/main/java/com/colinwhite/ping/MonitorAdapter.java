@@ -52,9 +52,9 @@ public class MonitorAdapter extends CursorAdapter {
         // Set the time last checked.
         long timeLastCheckedMillis = cursor.getLong(cursor.getColumnIndex(MonitorEntry.TIME_LAST_CHECKED));
         if (timeLastCheckedMillis > 0) {
-            // Format the duration and place it in the resource string.
+            // Format the time last checked and place it in the resource string.
             viewHolder.lastCheckedView.setText(String.format(
-                    context.getResources().getString(R.string.last_checked_text),
+                    context.getString(R.string.last_checked_text),
                     Utility.formatDate(timeLastCheckedMillis)));
         } else {
             // If timeLastCheckedMillis is 0, it hasn't been checked yet.

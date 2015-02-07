@@ -59,6 +59,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
     private static TextView mPingFrequencyExplanation;
     private static Switch mDatePickerSwitch;
     private static TextView mExpirationDateExplanation;
+    private static TextView mLastCheckedField;
 
     // Only used on DETAIL pages
     private ContentValues mValues;
@@ -92,6 +93,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
         mPingFrequencyExplanation = (TextView) findViewById(R.id.ping_frequency_explanation);
         mDatePickerSwitch = (Switch) findViewById(R.id.date_picker_switch);
         mStatusIcon = (ImageView) findViewById(R.id.status_icon);
+        mLastCheckedField = (TextView) findViewById(R.id.detail_last_checked_text);
 
         // Initialise the formats of the date and time pickers and get the date picker's initial date.
         mDateFormat = new SimpleDateFormat(DATE_FORMAT);
@@ -189,7 +191,19 @@ public class MonitorDetailActivity extends ActionBarActivity {
 
         // Set the status icon.
         mStatusIcon.setImageDrawable(getResources().getDrawable(
-                Utility.getStatusIcon((int)mValues.get(MonitorEntry.STATUS))));
+                Utility.getStatusIcon((int) mValues.get(MonitorEntry.STATUS))));
+        // NOTE: mLastCheckedField and mStatusIcon do not update if the database changes.
+        // Format the time last checked and place it in the resource string.
+        long timeLastChecked = (long) mValues.get(MonitorEntry.TIME_LAST_CHECKED);
+        if (timeLastChecked > 0) {
+            mLastCheckedField.setVisibility(View.VISIBLE);
+            mLastCheckedField.setText(String.format(
+                    getString(R.string.last_checked_text),
+                    Utility.formatDate(timeLastChecked)));
+        } else {
+            // If timeLastChecked is 0, it hasn't been checked yet.
+            mLastCheckedField.setText(getString(R.string.last_checked_text_no_info));
+        }
     }
 
     // Build the elements for a Monitor creation version of this Activity.
@@ -435,18 +449,18 @@ public class MonitorDetailActivity extends ActionBarActivity {
 
     private boolean isValidInput() {
         if ("".equals(mTitleField.getText().toString())) {
-            Toast.makeText(this, "Please enter a title.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.invalid_input_title), Toast.LENGTH_LONG).show();
             return false;
         } else if ("".equals(mUrlField.getText().toString())) {
-            Toast.makeText(this, "Please enter a URL.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.invalid_input_url), Toast.LENGTH_LONG).show();
             return false;
         } else if (mDatePickerSwitch.isChecked()) {
             // Check both the time field and the date field.
             if (!mIsTimePickerSet) {
-                Toast.makeText(this, "Please set an expiration time.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.invalid_input_time), Toast.LENGTH_LONG).show();
                 return false;
             } else if (!mIsDatePickerSet) {
-                Toast.makeText(this, "Please set an expiration date.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.invalid_input_date), Toast.LENGTH_LONG).show();
                 return false;
             }
         }

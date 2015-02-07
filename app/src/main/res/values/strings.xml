@@ -31,5 +31,9 @@
     <string name="expiration_date_explanation">Set the date and time you would like the Monitor to stop pinging automatically.</string>
     <string name="ping_explanation_never">Never ping the website automatically.</string>
     <string name="approximately_tag">, approximately</string>
+    <string name="invalid_input_title">Please enter a title.</string>
+    <string name="invalid_input_url">Please enter a URL.</string>
+    <string name="invalid_input_time">Please set an expiration time.</string>
+    <string name="invalid_input_date">Please set an expiration date.</string>
 
 </resources>
