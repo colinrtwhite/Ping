@@ -46,5 +46,8 @@
     <string name="pref_disable_notifications">Disable all notifications from Ping!</string>
     <string name="pref_key_disable_notifications">pref_key_disable_notifications</string>
     <string name="pref_key_24_hour_clock">pref_key_24_hour_clock</string>
+    <string name="dialog_confirm_delete">Are you sure you want to delete this Monitor?</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

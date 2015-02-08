@@ -1,10 +1,12 @@
 package com.colinwhite.ping;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -66,6 +68,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
     private static TextView mLastCheckedField;
 
     // Only used on DETAIL pages
+    private AlertDialog mConfirmDeleteDialog;
     private ContentValues mValues;
     private boolean mHasEndDate = false;
     private boolean mIsTimePickerSet = false;
@@ -203,6 +206,35 @@ public class MonitorDetailActivity extends ActionBarActivity {
             mIsDatePickerSet = true;
             mIsTimePickerSet = true;
         }
+
+        // Initiate the confirmation dialog for when the delete button is pressed.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final Context context = this;
+        mConfirmDeleteDialog = builder.setMessage(R.string.dialog_confirm_delete)
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Delete the Monitor's database entry and its sync account then close the activity.
+                        int monitorId = (int) mValues.get(MonitorEntry._ID);
+                        final String selection = MonitorEntry._ID + " = ?";
+                        final String[] selectionArgs = {String.valueOf(monitorId)};
+                        getContentResolver().delete(MonitorEntry.CONTENT_URI, selection, selectionArgs);
+                        PingSyncAdapter.removePeriodicSync(
+                                context,
+                                mStartIntent.getStringExtra(MonitorEntry.URL),
+                                monitorId);
+                        // If the Monitor had a removal alarm set, delete it.
+                        long endDate = (long) mValues.get(MonitorEntry.END_TIME);
+                        if (endDate != MonitorEntry.END_TIME_NONE) {
+                            Utility.deleteRemovalAlarm(context, monitorId);
+                        }
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                }).create();
 
         // Set the status icon.
         mStatusIcon.setImageDrawable(getResources().getDrawable(
@@ -454,21 +486,8 @@ public class MonitorDetailActivity extends ActionBarActivity {
                 // Pulse haptic feedback.
                 mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
 
-                // Delete the Monitor's database entry and its sync account then close the activity.
-                int monitorId = (int) mValues.get(MonitorEntry._ID);
-                final String selection = MonitorEntry._ID + " = ?";
-                final String[] selectionArgs = {String.valueOf(monitorId)};
-                getContentResolver().delete(MonitorEntry.CONTENT_URI, selection, selectionArgs);
-                PingSyncAdapter.removePeriodicSync(
-                        this,
-                        mStartIntent.getStringExtra(MonitorEntry.URL),
-                        monitorId);
-                // If the Monitor had a removal alarm set, delete it.
-                long endDate = (long) mValues.get(MonitorEntry.END_TIME);
-                if (endDate != MonitorEntry.END_TIME_NONE) {
-                    Utility.deleteRemovalAlarm(this, monitorId);
-                }
-                finish();
+                // Show confirmation dialog.
+                mConfirmDeleteDialog.show();
                 return true;
             case R.id.action_settings:
                 return true;
