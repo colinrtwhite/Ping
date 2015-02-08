@@ -497,12 +497,14 @@ public class MonitorDetailActivity extends ActionBarActivity {
         }
 
         // If all the previous validations pass perform the more expensive URL uniqueness check.
-        final String[] projection = { MonitorEntry.URL };
+        final String[] projection = { MonitorEntry._ID, MonitorEntry.URL };
         Cursor cursor = getContentResolver().query(MonitorEntry.CONTENT_URI, projection, null, null, null);
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
             do {
-                if (url.equals(cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)))) {
+                if (url.equals(cursor.getString(cursor.getColumnIndex(MonitorEntry.URL))) &&
+                        cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)) !=
+                                (int)mStartIntent.getLongExtra(MonitorEntry._ID, -1)) {
                     Toast.makeText(this, "A Monitor with this URL already exists.", Toast.LENGTH_LONG).show();
                     return false;
                 }
