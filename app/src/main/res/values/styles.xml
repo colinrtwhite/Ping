@@ -15,11 +15,18 @@
         <item name="colorControlActivated">@color/accent</item>
         <item name="colorControlHighlight">@color/accent</item>
         <item name="android:itemTextAppearance">@style/OverflowItemStyle</item>
+        <item name="android:dialogTheme">@style/AppTheme.DialogTheme</item>
     </style>
 
     <!-- Set the Overflow menu's text colour. -->
     <style name="OverflowItemStyle" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
         <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="AppTheme.DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
     </style>
 
 </resources>

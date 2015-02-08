@@ -178,10 +178,11 @@
                     android:textSize="@dimen/abc_text_size_small_material"
                     android:gravity="center"
                     android:background="@drawable/ripple_accent"
+                    android:padding="5dp"
                     android:visibility="gone"/>
 
                 <Space
-                    android:layout_width="30dp"
+                    android:layout_width="20dp"
                     android:layout_height="match_parent" />
 
                 <TextView
@@ -193,6 +194,7 @@
                     android:textSize="@dimen/abc_text_size_small_material"
                     android:gravity="center"
                     android:background="@drawable/ripple_accent"
+                    android:padding="5dp"
                     android:visibility="gone"/>
             </LinearLayout>
         </LinearLayout>
