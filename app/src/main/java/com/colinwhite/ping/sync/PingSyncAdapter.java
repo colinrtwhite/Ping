@@ -12,11 +12,13 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.colinwhite.ping.MonitorDetailActivity;
@@ -33,9 +35,13 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
     // The SQL selection string is always the same.
     private static final String mSelection = MonitorEntry._ID + " = ?";
 
-    Context mContext;
-    Pattern mUpPattern, mDownPattern, mDoesNotExistPattern;
-    ContentResolver mContentResolver;
+
+    private static Context mContext;
+    private static Pattern mUpPattern, mDownPattern, mDoesNotExistPattern;
+    private static ContentResolver mContentResolver;
+    private static SharedPreferences mSharedPref;
+    private static String mClockTypeKey;
+    private static String mDisableNotificationsKey;
 
     public PingSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -45,6 +51,10 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
         mUpPattern = Pattern.compile("It's just you.");
         mDownPattern = Pattern.compile("It's not just you!");
         mDoesNotExistPattern = Pattern.compile("doesn't look like a site on the interwho.");
+
+        mSharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        mClockTypeKey = context.getString(R.string.pref_key_24_hour_clock);
+        mDisableNotificationsKey = context.getString(R.string.pref_key_disable_notifications);
     }
 
     @Override
@@ -86,8 +96,10 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             int lastNonErrorStatus = cursor.getInt(cursor.getColumnIndex(MonitorEntry.LAST_NON_ERROR_STATUS));
 
             // Only trigger a notification if:
-            // The previous status was not "no information."
-            if (previousStatus != 0 &&
+            // The user has not disabled notifications in the preferences.
+            if (!mSharedPref.getBoolean(mDisableNotificationsKey, false) &&
+                    // The previous status was not "no information."
+                    previousStatus != 0 &&
                     // The previous status is not the same as the current one.
                     previousStatus != status &&
                     // The current status is not an error.
@@ -147,7 +159,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
 
         String notificationText = String.format(
                 mContext.getString(R.string.notification_text),
-                Utility.formatDate(timeLastChecked),
+                Utility.formatDate(timeLastChecked, mSharedPref.getBoolean(mClockTypeKey, false)),
                 url,
                 statusStr);
 

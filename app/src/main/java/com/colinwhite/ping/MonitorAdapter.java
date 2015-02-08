@@ -2,8 +2,10 @@ package com.colinwhite.ping;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,9 +74,11 @@ public class MonitorAdapter extends CursorAdapter {
         long timeLastCheckedMillis = (long)values.get(MonitorEntry.TIME_LAST_CHECKED);
         if (timeLastCheckedMillis != MonitorEntry.TIME_LAST_CHECKED_NONE) {
             // Format the time last checked and place it in the resource string.
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            String formattedTime = Utility.formatDate(timeLastCheckedMillis,
+                    sharedPref.getBoolean(context.getString(R.string.pref_key_24_hour_clock), false));
             viewHolder.lastCheckedView.setText(String.format(
-                    context.getString(R.string.last_checked_text),
-                    Utility.formatDate(timeLastCheckedMillis)));
+                    context.getString(R.string.last_checked_text), formattedTime));
         } else {
             // If timeLastCheckedMillis is 0, it hasn't been checked yet.
             viewHolder.lastCheckedView.setText(context.getResources().getString(R.string.last_checked_text_no_info));

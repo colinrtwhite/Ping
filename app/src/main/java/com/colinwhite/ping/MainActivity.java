@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
+import com.colinwhite.ping.pref.SettingsActivity;
 import com.colinwhite.ping.sync.PingSyncAdapter;
 
 
@@ -158,6 +159,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 

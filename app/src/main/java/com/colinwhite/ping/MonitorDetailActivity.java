@@ -6,10 +6,12 @@ import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -100,7 +102,12 @@ public class MonitorDetailActivity extends ActionBarActivity {
 
         // Initialise the formats of the date and time pickers and get the date picker's initial date.
         mDateFormat = new SimpleDateFormat(DATE_FORMAT);
-        mTimeFormat = new SimpleDateFormat(Utility.TIME_FORMAT_12_HOURS);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if (sharedPref.getBoolean(getString(R.string.pref_key_24_hour_clock), false)) {
+            mTimeFormat = new SimpleDateFormat(Utility.TIME_FORMAT_24_HOURS);
+        } else {
+            mTimeFormat = new SimpleDateFormat(Utility.TIME_FORMAT_12_HOURS);
+        }
         mSelectedDateTime = Calendar.getInstance();
         mSelectedDateTime.set(Calendar.SECOND, 0);
         mSelectedDateTime.set(Calendar.MILLISECOND, 0);
@@ -205,9 +212,12 @@ public class MonitorDetailActivity extends ActionBarActivity {
         long timeLastChecked = (long) mValues.get(MonitorEntry.TIME_LAST_CHECKED);
         mLastCheckedField.setVisibility(View.VISIBLE);
         if (timeLastChecked != MonitorEntry.TIME_LAST_CHECKED_NONE) {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            String formattedTime = Utility.formatDate(timeLastChecked,
+                    sharedPref.getBoolean(getString(R.string.pref_key_24_hour_clock), false));
             mLastCheckedField.setText(String.format(
                     getString(R.string.last_checked_text),
-                    Utility.formatDate(timeLastChecked)));
+                    formattedTime));
         } else {
             // If timeLastChecked is 0, it hasn't been checked yet.
             mLastCheckedField.setText(getString(R.string.last_checked_text_no_info));
@@ -510,6 +520,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
                 }
             } while (cursor.moveToNext());
         }
+        cursor.close();
 
         return true;
     }

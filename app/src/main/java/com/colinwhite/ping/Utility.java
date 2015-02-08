@@ -84,16 +84,22 @@ public class Utility {
     /**
      * Convert a date into a formatted string (used for the Monitor ListView).
      * @param date The date in milliseconds from the epoch.
+     * @param usesTwentyFourHourClock Denotes whether or not to use the 24 hour clock format.
      * @return A formatted string of the date (ex. "10:24, yesterday").
      */
-    public static String formatDate(long date) {
+    public static String formatDate(long date, boolean usesTwentyFourHourClock) {
         if (date < 1) {
             // This shouldn't happen, but in case it does...
             return "some time";
         }
 
         // Get the last checked time.
-        SimpleDateFormat dateFormat = new SimpleDateFormat(TIME_FORMAT_12_HOURS);
+        SimpleDateFormat dateFormat;
+        if (usesTwentyFourHourClock) {
+            dateFormat = new SimpleDateFormat(TIME_FORMAT_24_HOURS);
+        } else {
+            dateFormat = new SimpleDateFormat(TIME_FORMAT_12_HOURS);
+        }
         StringBuilder formattedString = new StringBuilder(dateFormat.format(new Date(date)));
 
         Calendar lastCheckedDate = Calendar.getInstance();
