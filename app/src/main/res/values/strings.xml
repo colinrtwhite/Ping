@@ -10,9 +10,9 @@
     <string name="quick_check_title">Quick Check!</string>
     <string name="initial_output_text_id">Enter a website URL to check.</string>
     <string name="create_monitor_activity_title">Create Monitor</string>
-    <string name="monitor_title_hint">Title (ex. Google)</string>
+    <string name="monitor_title_hint">Title (e.g. Google)</string>
     <string name="ping_frequency_header">Ping Frequency</string>
-    <string name="url_hint">URL (ex. "google.com")</string>
+    <string name="url_hint">URL (e.g. "google.com")</string>
     <string name="create_button_title">Create</string>
     <string name="delete_button_title">Delete</string>
     <string name="ping_frequency_explanation">Ping every %s, approximately.</string>
@@ -38,5 +38,6 @@
     <string name="invalid_input_ping_frequency">You cannot set an expiration date if the Monitor is set to never ping automatically.</string>
     <string name="ping_frequency_warning"><![CDATA[<br><font color=\"#ff0000\">WARNING:</font> This will wake your phone often and can reduce battery life.]]></string>
     <string name="invalid_input_url">Please enter a valid URL.</string>
+    <string name="invalid_input_date_before_now">The expiration date cannot come before the current time.</string>
 
 </resources>

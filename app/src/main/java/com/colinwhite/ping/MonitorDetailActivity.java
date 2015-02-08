@@ -468,10 +468,12 @@ public class MonitorDetailActivity extends ActionBarActivity {
     }
 
     private boolean isValidInput() {
+        String url = mUrlField.getText().toString();
+
         if ("".equals(mTitleField.getText().toString())) {
             Toast.makeText(this, getString(R.string.invalid_input_title), Toast.LENGTH_LONG).show();
             return false;
-        } else if ("".equals(mUrlField.getText().toString())) {
+        } else if ("".equals(url)) {
             Toast.makeText(this, getString(R.string.invalid_input_url_empty), Toast.LENGTH_LONG).show();
             return false;
         } else if (!Patterns.WEB_URL.matcher(mUrlField.getText().toString()).matches()) {
@@ -488,7 +490,23 @@ public class MonitorDetailActivity extends ActionBarActivity {
             } else if (!mIsDatePickerSet) {
                 Toast.makeText(this, getString(R.string.invalid_input_date), Toast.LENGTH_LONG).show();
                 return false;
+            } else if (Calendar.getInstance().after(mSelectedDateTime)) {
+                Toast.makeText(this, getString(R.string.invalid_input_date_before_now), Toast.LENGTH_LONG).show();
+                return false;
             }
+        }
+
+        // If all the previous validations pass perform the more expensive URL uniqueness check.
+        final String[] projection = { MonitorEntry.URL };
+        Cursor cursor = getContentResolver().query(MonitorEntry.CONTENT_URI, projection, null, null, null);
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            do {
+                if (url.equals(cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)))) {
+                    Toast.makeText(this, "A Monitor with this URL already exists.", Toast.LENGTH_LONG).show();
+                    return false;
+                }
+            } while (cursor.moveToNext());
         }
 
         return true;

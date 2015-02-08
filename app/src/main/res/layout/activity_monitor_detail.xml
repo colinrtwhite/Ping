@@ -48,7 +48,8 @@
                         android:maxLines="1"
                         android:padding="12dp"
                         android:textColor="@android:color/black"
-                        android:textSize="@dimen/abc_text_size_large_material"/>
+                        android:textSize="@dimen/abc_text_size_large_material"
+                        android:maxLength="30"/>
 
                     <EditText
                         android:id="@+id/url_text_field_create"
@@ -162,26 +163,38 @@
                 android:padding="14dp"
                 android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/time_picker_output"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/time_picker_label"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/abc_text_size_small_material"
-                android:paddingBottom="14dp"
-                android:visibility="gone" />
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="10dp">
+                <TextView
+                    android:id="@+id/time_picker_output"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/time_picker_label"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    android:gravity="center"
+                    android:background="@drawable/ripple_accent"
+                    android:visibility="gone"/>
 
-            <TextView
-                android:id="@+id/date_picker_output"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/date_picker_label"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/abc_text_size_small_material"
-                android:visibility="gone" />
+                <Space
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/date_picker_output"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/date_picker_label"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    android:gravity="center"
+                    android:background="@drawable/ripple_accent"
+                    android:visibility="gone"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
