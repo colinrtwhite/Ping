@@ -68,7 +68,7 @@
                     android:layout_width="90dp"
                     android:layout_height="90dp"
                     android:paddingLeft="12dp"
-                    android:src="@drawable/ic_new_monitor"
+                    android:src="@drawable/ic_monitor"
                     android:layout_gravity="center"
                     android:layout_weight="0"/>
             </LinearLayout>
