@@ -86,12 +86,14 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         mEditText = (EditText) findViewById(R.id.url_text_field_quick);
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean isActionDone = actionId == EditorInfo.IME_ACTION_DONE;
+                boolean isConfirm =
+                        (actionId == EditorInfo.IME_ACTION_DONE) ||
+                        (actionId == EditorInfo.IME_ACTION_NEXT);
                 String inputText = mEditText.getText().toString();
-                if (isActionDone && isValidInput(inputText)) {
+                if (isConfirm && isValidInput(inputText)) {
                     startPingService(inputText);
                 }
-                return isActionDone;
+                return isConfirm;
             }
         });
 
