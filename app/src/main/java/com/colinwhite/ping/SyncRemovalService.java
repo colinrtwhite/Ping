@@ -28,7 +28,7 @@ public class SyncRemovalService extends IntentService {
         final String[] selectionArgs = {String.valueOf(monitorId)};
         ContentResolver contentResolver = getContentResolver();
         Cursor cursor = contentResolver.query(
-                MonitorEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(monitorId)).build(),
+                MonitorEntry.buildUri(monitorId),
                 mProjection,
                 mSelection,
                 selectionArgs,

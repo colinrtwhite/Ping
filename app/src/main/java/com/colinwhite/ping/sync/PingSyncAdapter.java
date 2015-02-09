@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -89,15 +90,23 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             long timeLastChecked = Calendar.getInstance().getTimeInMillis();
 
             // Get the Monitor's previous status to compare.
-            String[] projection = {MonitorEntry.TITLE, MonitorEntry.STATUS, MonitorEntry.LAST_NON_ERROR_STATUS};
-            Cursor cursor = mContentResolver.query(MonitorEntry.CONTENT_URI, projection, mSelection, selectionArgs, null);
+            String[] projection = {
+                    MonitorEntry.TITLE,
+                    MonitorEntry.STATUS,
+                    MonitorEntry.LAST_NON_ERROR_STATUS};
+            Cursor cursor = mContentResolver.query(
+                    MonitorEntry.buildUri(monitorId),
+                    projection,
+                    mSelection,
+                    selectionArgs,
+                    null);
             cursor.moveToFirst();
             int previousStatus = cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS));
             int lastNonErrorStatus = cursor.getInt(cursor.getColumnIndex(MonitorEntry.LAST_NON_ERROR_STATUS));
 
             // Only trigger a notification if:
             // The user has not disabled notifications in the preferences.
-            if (!mSharedPref.getBoolean(mDisableNotificationsKey, false) &&
+            if (true || (!mSharedPref.getBoolean(mDisableNotificationsKey, false) &&
                     // The previous status was not "no information."
                     previousStatus != 0 &&
                     // The previous status is not the same as the current one.
@@ -107,7 +116,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                     // The most recent non-error status is not the same as the current one (this is to
                     // prevent cases, for instance, where we lost internet for a second, but then got it
                     // back and the website status did not change in the meantime).
-                    lastNonErrorStatus != status) {
+                    lastNonErrorStatus != status)) {
                 // If the status has changed, trigger a notification.
                 triggerNotification(
                         monitorId,
@@ -174,8 +183,11 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                 url,
                 statusStr);
 
+        // Set the large notification to the a bitmap of the logo (ish) and the small to be the
+        // Monitor's current status icon.
         Notification.Builder notificationBuilder = new Notification.Builder(mContext)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), Utility.getStatusIcon(status)))
                 .setContentTitle(title)
                 .setContentText(notificationText);
 

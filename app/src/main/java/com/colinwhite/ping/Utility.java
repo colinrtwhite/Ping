@@ -211,10 +211,10 @@ public class Utility {
             case MonitorEntry.STATUS_IS_UP:
                 return R.drawable.ic_status_is_up;
             case MonitorEntry.STATUS_IS_DOWN:
-            default:
-                // If default, something went wrong.
                 return R.drawable.ic_status_is_down;
             case MonitorEntry.STATUS_NO_INTERNET:
+            default:
+                // If default, something went wrong.
                 return R.drawable.ic_status_no_internet;
             case MonitorEntry.STATUS_IS_NOT_WEBSITE:
                 return R.drawable.ic_status_is_not_website;

@@ -185,7 +185,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
         final String selection = MonitorEntry._ID + " = ?";
         final String[] selectionArgs = {String.valueOf(monitorId)};
         Cursor cursor = getContentResolver().query(
-                MonitorEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(monitorId)).build(),
+                MonitorEntry.buildUri(monitorId),
                 projection, selection, selectionArgs, null);
 
         // Store all the initial values.

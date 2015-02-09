@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Ping</string>
+    <string name="app_name">Ping!</string>
     <string name="action_settings">Preferences</string>
     <string name="is_up">The website looks to be UP.</string>
     <string name="is_down">The website seems to be DOWN!</string>
