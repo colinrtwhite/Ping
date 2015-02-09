@@ -121,6 +121,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             // Update the time last checked, the server's status, and the server's last non-error
             // status, if applicable.
             ContentValues values = new ContentValues();
+            values.put(MonitorEntry.IS_LOADING, false);
             values.put(MonitorEntry.TIME_LAST_CHECKED, timeLastChecked);
             values.put(MonitorEntry.STATUS, status);
             if (!Utility.isErrorStatus(status)) {
@@ -132,6 +133,16 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             // If any problems occur while syncing simply record an error in the Log, cancel the sync,
             // and try again next time.
             Log.e(LOG_TAG, "Error occurred while syncing: " + e.toString());
+            try {
+                // Try to at least stop the loading icon from spinning.
+                ContentValues values = new ContentValues();
+                values.put(MonitorEntry.IS_LOADING, false);
+                final String[] selectionArgs = {String.valueOf(extras.getInt(MonitorEntry._ID))};
+                mContentResolver.update(MonitorEntry.CONTENT_URI, values, mSelection, selectionArgs);
+            } catch (Exception eTheSecond) {
+                // :(
+                Log.e(LOG_TAG, "Error occurred while trying to stop loading icon: " + eTheSecond.toString());
+            }
         }
     }
 

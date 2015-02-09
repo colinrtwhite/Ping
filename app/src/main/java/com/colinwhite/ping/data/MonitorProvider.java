@@ -25,7 +25,8 @@ public class MonitorProvider extends ContentProvider {
             MonitorEntry.END_TIME,
             MonitorEntry.TIME_LAST_CHECKED,
             MonitorEntry.STATUS,
-            MonitorEntry.LAST_NON_ERROR_STATUS};
+            MonitorEntry.LAST_NON_ERROR_STATUS,
+            MonitorEntry.IS_LOADING};
     private static final String mSortOrder = PingContract.MonitorEntry._ID + " DESC";
     private static PingDbHelper mDbHelper;
 

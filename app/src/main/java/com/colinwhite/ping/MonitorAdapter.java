@@ -1,5 +1,6 @@
 package com.colinwhite.ping;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
@@ -19,7 +21,8 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
 
 public class MonitorAdapter extends CursorAdapter {
 
-    private Vibrator mVibratorService;
+    private static Vibrator mVibratorService;
+    private static View.OnClickListener mRefreshOnClickListener;
 
     public MonitorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
@@ -38,7 +41,11 @@ public class MonitorAdapter extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, final Context context, final Cursor cursor) {
+    public void bindView(View view, final Context context, Cursor cursor) {
+        // Our ViewHolder already contains references to the relevant views, so set the appropriate
+        // values through the viewHolder references instead of costly findViewById calls.
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
+
         // Store the cursor's elements, as the cursor's information can become unavailable at any time.
         final ContentValues values = new ContentValues();
         values.put(MonitorEntry.URL, cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)));
@@ -46,32 +53,46 @@ public class MonitorAdapter extends CursorAdapter {
         values.put(MonitorEntry.TITLE, cursor.getString(cursor.getColumnIndex(MonitorEntry.TITLE)));
         values.put(MonitorEntry.TIME_LAST_CHECKED, cursor.getLong(cursor.getColumnIndex(MonitorEntry.TIME_LAST_CHECKED)));
         values.put(MonitorEntry.STATUS, cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS)));
+        values.put(MonitorEntry.IS_LOADING, cursor.getInt(cursor.getColumnIndex(MonitorEntry.IS_LOADING)) == 1);
 
-        // Our ViewHolder already contains references to the relevant views, so set the appropriate
-        // values through the viewHolder references instead of costly findViewById calls.
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
+        final ContentResolver contentResolver = context.getContentResolver();
 
-        viewHolder.refreshButtonView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Pulse haptic feedback.
-                mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
 
-                // Refresh the Monitor right now.
-                PingSyncAdapter.syncImmediately(
-                        context,
-                        PingSyncAdapter.getSyncAccount(context),
-                        (String)values.get(MonitorEntry.URL),
-                        (int)values.get(MonitorEntry._ID));
-            }
-        });
+        if (!(boolean) values.get(MonitorEntry.IS_LOADING)) {
+            viewHolder.refreshButtonView.setVisibility(View.VISIBLE);
+            viewHolder.progressSpinner.setVisibility(View.GONE);
+            viewHolder.refreshButtonView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Pulse haptic feedback.
+                    mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+
+                    // Tell the database that we are now loading.
+                    ContentValues isNowLoadingValue = new ContentValues();
+                    isNowLoadingValue.put(MonitorEntry.IS_LOADING, true);
+                    String selection = MonitorEntry._ID + " = ?";
+                    String[] selectionArgs = {String.valueOf(values.get(MonitorEntry._ID))};
+                    contentResolver.update(MonitorEntry.CONTENT_URI, isNowLoadingValue, selection, selectionArgs);
+
+                    // Refresh the Monitor right now.
+                    PingSyncAdapter.syncImmediately(
+                            context,
+                            PingSyncAdapter.getSyncAccount(context),
+                            (String) values.get(MonitorEntry.URL),
+                            (int) values.get(MonitorEntry._ID));
+                }
+            });
+        } else {
+            viewHolder.refreshButtonView.setVisibility(View.GONE);
+            viewHolder.progressSpinner.setVisibility(View.VISIBLE);
+        }
 
         // Set the Title and URL.
-        viewHolder.titleView.setText((String)values.get(MonitorEntry.TITLE));
-        viewHolder.urlView.setText((String)values.get(MonitorEntry.URL));
+        viewHolder.titleView.setText((String) values.get(MonitorEntry.TITLE));
+        viewHolder.urlView.setText((String) values.get(MonitorEntry.URL));
 
         // Set the time last checked.
-        long timeLastCheckedMillis = (long)values.get(MonitorEntry.TIME_LAST_CHECKED);
+        long timeLastCheckedMillis = (long) values.get(MonitorEntry.TIME_LAST_CHECKED);
         if (timeLastCheckedMillis != MonitorEntry.TIME_LAST_CHECKED_NONE) {
             // Format the time last checked and place it in the resource string.
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -85,7 +106,7 @@ public class MonitorAdapter extends CursorAdapter {
         }
 
         // Set the icon based on the Monitor's status.
-        int statusIcon = Utility.getStatusIcon((int)values.get(MonitorEntry.STATUS));
+        int statusIcon = Utility.getStatusIcon((int) values.get(MonitorEntry.STATUS));
         viewHolder.statusView.setImageDrawable(context.getResources().getDrawable(statusIcon));
     }
 
@@ -94,6 +115,7 @@ public class MonitorAdapter extends CursorAdapter {
      */
     public static class ViewHolder {
         public final ImageButton refreshButtonView;
+        public final ProgressBar progressSpinner;
         public final TextView titleView;
         public final TextView urlView;
         public final TextView lastCheckedView;
@@ -101,6 +123,7 @@ public class MonitorAdapter extends CursorAdapter {
 
         public ViewHolder(View view) {
             refreshButtonView = (ImageButton) view.findViewById(R.id.list_item_refresh_button);
+            progressSpinner = (ProgressBar) view.findViewById(R.id.progress_spinner);
             titleView = (TextView) view.findViewById(R.id.list_item_title);
             urlView = (TextView) view.findViewById(R.id.list_item_url);
             lastCheckedView = (TextView) view.findViewById(R.id.list_item_time_last_checked);

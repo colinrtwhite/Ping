@@ -29,6 +29,7 @@ public final class PingContract {
         public static final String TIME_LAST_CHECKED = "time_last_checked";
         public static final String STATUS = "status";
         public static final String LAST_NON_ERROR_STATUS = "last_non_error_status"; // Used for notification purposes.
+        public static final String IS_LOADING = "is_loading";
 
         // Status codes for MonitorEntry.STATUS
         public static final int STATUS_NO_INFO = 0;
