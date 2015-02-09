@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/icon_toolbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:minHeight="?attr/actionBarSize"
+        android:background="@color/primary" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:src="@drawable/ic_status_is_up"
+                    android:layout_width="@dimen/status_icon_size"
+                    android:layout_height="@dimen/status_icon_size"
+                    android:layout_gravity="center"
+                    android:layout_weight="0"
+                    android:layout_margin="@dimen/status_icon_reference_margin"/>
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_margin="@dimen/icon_explanation_margin"
+                    android:layout_weight="0"
+                    android:gravity="center_vertical"
+                    android:text="@string/icon_explanation_is_up"
+                    android:textSize="@dimen/abc_text_size_caption_material"
+                    android:textColor="@android:color/black"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:src="@drawable/ic_status_is_down"
+                    android:layout_width="@dimen/status_icon_size"
+                    android:layout_height="@dimen/status_icon_size"
+                    android:layout_gravity="center"
+                    android:layout_weight="0"
+                    android:layout_margin="@dimen/status_icon_reference_margin"/>
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_margin="@dimen/icon_explanation_margin"
+                    android:layout_weight="0"
+                    android:gravity="center_vertical"
+                    android:text="@string/icon_explanation_is_down"
+                    android:textSize="@dimen/abc_text_size_caption_material"
+                    android:textColor="@android:color/black"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:src="@drawable/ic_status_no_info"
+                    android:layout_width="@dimen/status_icon_size"
+                    android:layout_height="@dimen/status_icon_size"
+                    android:layout_gravity="center"
+                    android:layout_weight="0"
+                    android:layout_margin="@dimen/status_icon_reference_margin"/>
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_margin="@dimen/icon_explanation_margin"
+                    android:layout_weight="0"
+                    android:gravity="center_vertical"
+                    android:text="@string/icon_explanation_no_info"
+                    android:textSize="@dimen/abc_text_size_caption_material"
+                    android:textColor="@android:color/black"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:src="@drawable/ic_status_is_not_website"
+                    android:layout_width="@dimen/status_icon_size"
+                    android:layout_height="@dimen/status_icon_size"
+                    android:layout_gravity="center"
+                    android:layout_weight="0"
+                    android:layout_margin="@dimen/status_icon_reference_margin"/>
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_margin="@dimen/icon_explanation_margin"
+                    android:layout_weight="0"
+                    android:gravity="center_vertical"
+                    android:text="@string/icon_explanation_is_not_website"
+                    android:textSize="@dimen/abc_text_size_caption_material"
+                    android:textColor="@android:color/black"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:src="@drawable/ic_status_no_internet"
+                    android:layout_width="@dimen/status_icon_size"
+                    android:layout_height="@dimen/status_icon_size"
+                    android:layout_gravity="center"
+                    android:layout_weight="0"
+                    android:layout_margin="@dimen/status_icon_reference_margin"/>
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_margin="@dimen/icon_explanation_margin"
+                    android:layout_weight="0"
+                    android:gravity="center_vertical"
+                    android:text="@string/icon_explanation_no_internet"
+                    android:textSize="@dimen/abc_text_size_caption_material"
+                    android:textColor="@android:color/black"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_view_host"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:textSize="@dimen/abc_text_size_small_material"
+                android:textColor="@android:color/black"
+                android:gravity="center" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

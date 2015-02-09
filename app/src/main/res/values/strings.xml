@@ -49,5 +49,16 @@
     <string name="dialog_confirm_delete">Are you sure you want to delete this Monitor?</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="dialog_explain_approximate_okay">Okay</string>
+    <string name="dialog_explain_approximate_message">Ping frequencies and expiration dates are approximate because Ping! uses inexact timers to schedule network processes together. This saves you plenty of battery life!\nUnfortunately, Android 4.3.1 and below can\'t use inexact timers so everything will run in exactly the specified time.</string>
+    <string name="action_explain_approximate_title">Why Approximate?</string>
+    <string name="icon_reference_activity_label">Icon Reference</string>
+    <string name="action_icon_reference">Icon Reference</string>
+    <string name="icon_explanation_is_up">The website is up and responding to network requests.</string>
+    <string name="icon_explanation_no_internet">Ping! couldn\'t complete its last network request to the website. Your internet connection might not be working or you might not be able to access the host.</string>
+    <string name="icon_explanation_is_not_website">According to the host, it didn\'t recieve a valid URL.</string>
+    <string name="icon_explanation_no_info">Ping! hasn\'t checked the website yet. It could be waiting for an internet connection, or will simply check in a second.</string>
+    <string name="icon_explanation_is_down">The website isn\'t responding to network requests from the host and seems to be down.</string>
+    <string name="host_text_prefix"><![CDATA[<b>Host</b>]]></string>
 
 </resources>

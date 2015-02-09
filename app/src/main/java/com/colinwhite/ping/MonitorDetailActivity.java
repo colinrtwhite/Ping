@@ -66,9 +66,10 @@ public class MonitorDetailActivity extends ActionBarActivity {
     private static Switch mDatePickerSwitch;
     private static TextView mExpirationDateExplanation;
     private static TextView mLastCheckedField;
+    private static AlertDialog mWhyApproximateDialog;
 
     // Only used on DETAIL pages
-    private AlertDialog mConfirmDeleteDialog;
+    private static AlertDialog mConfirmDeleteDialog;
     private ContentValues mValues;
     private boolean mHasEndDate = false;
     private boolean mIsTimePickerSet = false;
@@ -138,6 +139,18 @@ public class MonitorDetailActivity extends ActionBarActivity {
         } else {
             buildCreatePageElements();
         }
+
+        // Build the dialog, which explains why ping frequencies and expiration dates can't be exact.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        mWhyApproximateDialog = builder.setMessage(getString(R.string.dialog_explain_approximate_message))
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.dialog_explain_approximate_okay),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).create();
 
         // Hide any notifications for this Monitor.
         NotificationManager notificationManager = ((NotificationManager)
@@ -489,7 +502,8 @@ public class MonitorDetailActivity extends ActionBarActivity {
                 // Show confirmation dialog.
                 mConfirmDeleteDialog.show();
                 return true;
-            case R.id.action_settings:
+            case R.id.action_explain_approximate:
+                mWhyApproximateDialog.show();
                 return true;
         }
 

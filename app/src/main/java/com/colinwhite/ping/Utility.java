@@ -33,8 +33,7 @@ public class Utility {
             "hour", " hours",
             "minute", "minutes",
             "second", "seconds"};
-    private static final String HOST = "http://www.downforeveryoneorjustme.com/";
-
+    public static final String HOST = "http://www.downforeveryoneorjustme.com/";
     public static final String TIME_FORMAT_12_HOURS = "h:mm a";
     public static final String TIME_FORMAT_24_HOURS = "H:mm";
 

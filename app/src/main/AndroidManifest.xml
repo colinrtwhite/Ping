@@ -40,6 +40,10 @@
             android:name=".pref.SettingsActivity"
             android:label="@string/settings_activity_label"/>
 
+        <activity
+            android:name=".IconReferenceActivity"
+            android:label="@string/icon_reference_activity_label"/>
+
         <provider
             android:authorities="@string/content_authority"
             android:name=".data.MonitorProvider"
