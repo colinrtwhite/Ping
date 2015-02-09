@@ -36,7 +36,6 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
     // The SQL selection string is always the same.
     private static final String mSelection = MonitorEntry._ID + " = ?";
 
-
     private static Context mContext;
     private static Pattern mUpPattern, mDownPattern, mDoesNotExistPattern;
     private static ContentResolver mContentResolver;
@@ -78,6 +77,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             int monitorId = extras.getInt(MonitorEntry._ID);
             final String[] selectionArgs = {String.valueOf(monitorId)};
 
+            // Notification at 1, 5, 7
             int status = -1;
             if (mUpPattern.matcher(html).find()) {
                 status = MonitorEntry.STATUS_IS_UP;
@@ -85,6 +85,9 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                 status = MonitorEntry.STATUS_IS_DOWN;
             } else if (mDoesNotExistPattern.matcher(html).find()) {
                 status = MonitorEntry.STATUS_IS_NOT_WEBSITE;
+            } else {
+                // We couldn't complete the network request.
+                status = MonitorEntry.STATUS_NO_INTERNET;
             }
 
             long timeLastChecked = Calendar.getInstance().getTimeInMillis();
@@ -188,8 +191,14 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
         Notification.Builder notificationBuilder = new Notification.Builder(mContext)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), Utility.getStatusIcon(status)))
+                .setPriority(Notification.PRIORITY_HIGH)
                 .setContentTitle(title)
                 .setContentText(notificationText);
+
+        // Set the small icon colour if we are running Lollipop.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            notificationBuilder.setColor(mContext.getResources().getColor(R.color.primary));
+        }
 
         // Construct artificial back stack.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
