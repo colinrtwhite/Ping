@@ -106,7 +106,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
 
             // Only trigger a notification if:
             // The user has not disabled notifications in the preferences.
-            if (true || (!mSharedPref.getBoolean(mDisableNotificationsKey, false) &&
+            if (!mSharedPref.getBoolean(mDisableNotificationsKey, false) &&
                     // The previous status was not "no information."
                     previousStatus != 0 &&
                     // The previous status is not the same as the current one.
@@ -116,7 +116,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                     // The most recent non-error status is not the same as the current one (this is to
                     // prevent cases, for instance, where we lost internet for a second, but then got it
                     // back and the website status did not change in the meantime).
-                    lastNonErrorStatus != status)) {
+                    lastNonErrorStatus != status) {
                 // If the status has changed, trigger a notification.
                 triggerNotification(
                         monitorId,
