@@ -68,6 +68,7 @@
             android:layout_gravity="right|bottom"
             android:layout_marginBottom="@dimen/add_button_margin"
             android:layout_marginEnd="@dimen/add_button_margin"
+            android:layout_marginRight="@dimen/add_button_margin"
             android:background="@drawable/oval"
             android:elevation="@dimen/elevation_high"
             android:src="@android:drawable/ic_input_add"

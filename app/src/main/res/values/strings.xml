@@ -50,7 +50,7 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="dialog_explain_approximate_okay">Okay</string>
-    <string name="dialog_explain_approximate_message">Ping frequencies and expiration dates are approximate because Ping! uses inexact timers to schedule network processes together. This saves you plenty of battery life!\nUnfortunately, Android 4.3.1 and below can\'t use inexact timers so everything will run in exactly the specified time.</string>
+    <string name="dialog_explain_approximate_message">Ping frequencies and expiration dates are approximate because Ping! uses inexact timers to schedule network processes together. This saves you plenty of battery life!\nUnfortunately, Android 4.3.1 and below can\'t use inexact timers so everything will run in/at exactly the specified time.</string>
     <string name="action_explain_approximate_title">Why Approximate?</string>
     <string name="icon_reference_activity_label">Icon Reference</string>
     <string name="action_icon_reference">Icon Reference</string>
