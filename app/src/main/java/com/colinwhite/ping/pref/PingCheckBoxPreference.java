@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 /**
- * Need a separate CheckBoxPreference class to change its title text to black.
+ * Need a separate CheckBoxPreference class to change specifically its title text to black.
  */
 public class PingCheckBoxPreference extends CheckBoxPreference {
     public PingCheckBoxPreference(Context context) {

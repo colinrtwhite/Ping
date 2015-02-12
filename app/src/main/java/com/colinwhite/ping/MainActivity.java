@@ -32,7 +32,10 @@ import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.pref.SettingsActivity;
 import com.colinwhite.ping.sync.PingSyncAdapter;
 
-
+/**
+ * The MainActivity handles the logic for all the UI elements in activity_mail.xml and is the main
+ * landing page for the app.
+ */
 public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -171,6 +174,12 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Verify that the input received from the Toolbar looks like a valid URL that we can ping.
+     *
+     * @param inputText The raw input text from the EditText.
+     * @return Whether the input text looks like a valid URL.
+     */
     private boolean isValidInput(String inputText) {
         if (inputText.isEmpty()) {
             Toast.makeText(this, getString(R.string.invalid_input_url_empty), Toast.LENGTH_LONG).show();
@@ -183,6 +192,11 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         return true;
     }
 
+    /**
+     * Start PingService and send it the passed inputText.
+     *
+     * @param inputText A valid URL that we can ping.
+     */
     private void startPingService(String inputText) {
         Intent pingServiceIntent = new Intent(getApplicationContext(), PingService.class);
 
@@ -206,8 +220,10 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         startService(pingServiceIntent);
     }
 
+    // Required to implement a CursorAdapter on the main ListView.
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        // We need these columns from the database to run the CursorAdapter.
         String[] projection = {
                 MonitorEntry._ID,
                 MonitorEntry.TITLE,
@@ -223,6 +239,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        // Try and show the data.
         if (mAdapter != null && data != null) {
             mAdapter.swapCursor(data);
         } else {
@@ -232,6 +249,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        // Try and show the data.
         if (mAdapter != null) {
             mAdapter.swapCursor(null);
         } else {
@@ -244,12 +262,17 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
      * the main TextView with the returned information.
      */
     public class PingServiceReceiver extends BroadcastReceiver {
+        // Filter value for the receiver.
         public static final String ACTION_RESPONSE =
                 "com.colinwhite.ping.intent.action.CHECK_UP_SERVICE_COMPLETE";
 
+        /**
+         * Handle the status information the PingService broadcasts and display the relevant Toast
+         * to the user.
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
-            switch (intent.getIntExtra(PingService.STATUS_ID, -1)) {
+            switch (intent.getIntExtra(MonitorEntry.STATUS, -1)) {
                 case MonitorEntry.STATUS_IS_UP:
                     Toast.makeText(context, R.string.is_up, Toast.LENGTH_LONG).show();
                     break;
@@ -267,7 +290,8 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                     break;
             }
 
-            // Don't leak the BroadcastReceiver.
+            // Don't leak the BroadcastReceiver. The receiver will be re-registered if/when we launch
+            // PingService again.
             context.unregisterReceiver(this);
         }
     }

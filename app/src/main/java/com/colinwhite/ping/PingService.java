@@ -2,20 +2,20 @@ package com.colinwhite.ping;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 
 import java.util.regex.Pattern;
 
 /**
- * PingService resolves if the HOST can see the user's website and sends its result to
- * PingServiceReceiver.
+ * PingService resolves if the host in Utility.HOST can see the user's website and sends its result
+ * to PingServiceReceiver.
  *
  * @see com.colinwhite.ping.MainActivity.PingServiceReceiver
  */
 public class PingService extends IntentService {
-
-    public static final String STATUS_ID = "WEBSITE_STATUS";
+    public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     public PingService() {
         super(PingService.class.getName());
@@ -37,24 +37,27 @@ public class PingService extends IntentService {
         String url = intent.getStringExtra(MonitorEntry.URL);
         String html = Utility.getHtml(url);
 
+        // Compile the regex patterns.
         Pattern up = Pattern.compile("It's just you.");
         Pattern down = Pattern.compile("It's not just you!");
         Pattern doesNotExist = Pattern.compile("doesn't look like a site on the interwho.");
 
+        // Build the response intent for PingServiceReceiver and parse the HTML to find the
+        // appropriate return stats.
         Intent response = new Intent()
                 .setAction(MainActivity.PingServiceReceiver.ACTION_RESPONSE)
                 .addCategory(Intent.CATEGORY_DEFAULT);
-
         if (!Utility.isNetworkConnected(this)) {
-            response.putExtra(STATUS_ID, MonitorEntry.STATUS_NO_INTERNET);
+            response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_NO_INTERNET);
         } else if (up.matcher(html).find()) {
-            response.putExtra(STATUS_ID, MonitorEntry.STATUS_IS_UP);
+            response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_IS_UP);
         } else if (down.matcher(html).find()) {
-            response.putExtra(STATUS_ID, MonitorEntry.STATUS_IS_DOWN);
+            response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_IS_DOWN);
         } else if (doesNotExist.matcher(html).find()) {
-            response.putExtra(STATUS_ID, MonitorEntry.STATUS_IS_NOT_WEBSITE);
+            response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_IS_NOT_WEBSITE);
         } else {
-            response.putExtra(STATUS_ID, -1);
+            Log.v(LOG_TAG, "Website has an unknown status.");
+            response.putExtra(MonitorEntry.STATUS, -1);
         }
 
         sendBroadcast(response);

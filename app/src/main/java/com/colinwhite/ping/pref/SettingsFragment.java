@@ -9,12 +9,16 @@ import android.widget.ListView;
 
 import com.colinwhite.ping.R;
 
+/**
+ * SettingsFragment loads the preferences from preferences.xml and reduces the in-built padding
+ * on the preferences ListView.
+ */
 public class SettingsFragment extends PreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Load the preferences from an XML resource
+        // Load the preferences from an XML resource.
         addPreferencesFromResource(R.xml.preferences);
     }
 

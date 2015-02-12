@@ -30,12 +30,17 @@ import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
+/**
+ * PingSyncAdapter is Ping!'s implementation of the SyncAdapter framework. This lets Ping!
+ * intelligently schedule network activity together.
+ */
 public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String LOG_TAG = PingSyncAdapter.class.getSimpleName();
 
     // The SQL selection string is always the same.
     private static final String mSelection = MonitorEntry._ID + " = ?";
 
+    // UI elements
     private static Context mContext;
     private static Pattern mUpPattern, mDownPattern, mDoesNotExistPattern;
     private static ContentResolver mContentResolver;
@@ -48,6 +53,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
         mContext = context;
         mContentResolver = context.getContentResolver();
 
+        // Pre-compile the parsing patterns.
         mUpPattern = Pattern.compile("It's just you.");
         mDownPattern = Pattern.compile("It's not just you!");
         mDoesNotExistPattern = Pattern.compile("doesn't look like a site on the interwho.");

@@ -25,6 +25,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The Utility class holds a set of static methods, which are useful throughout the app.
+ */
 public class Utility {
     public static final long HAPTIC_FEEDBACK_DURATION = 20;
     private static final int MAX_DURATION_PARTS = 2;

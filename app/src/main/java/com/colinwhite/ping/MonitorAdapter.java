@@ -19,10 +19,12 @@ import android.widget.TextView;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.sync.PingSyncAdapter;
 
+/**
+ * The MonitorAdapter class is a slightly modified CursorAdapter, which is used in the main ListView
+ * of the MainActivity.
+ */
 public class MonitorAdapter extends CursorAdapter {
-
     private static Vibrator mVibratorService;
-    private static View.OnClickListener mRefreshOnClickListener;
 
     public MonitorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
@@ -57,8 +59,9 @@ public class MonitorAdapter extends CursorAdapter {
 
         final ContentResolver contentResolver = context.getContentResolver();
 
-
         if (!(boolean) values.get(MonitorEntry.IS_LOADING)) {
+            // We are not refreshing right now so hide the loading spinner and show the manual
+            // refresh button.
             viewHolder.refreshButtonView.setVisibility(View.VISIBLE);
             viewHolder.progressSpinner.setVisibility(View.GONE);
             viewHolder.refreshButtonView.setOnClickListener(new View.OnClickListener() {
@@ -83,6 +86,7 @@ public class MonitorAdapter extends CursorAdapter {
                 }
             });
         } else {
+            // We are refreshing right now so hide the button and show the loading spinner.
             viewHolder.refreshButtonView.setVisibility(View.GONE);
             viewHolder.progressSpinner.setVisibility(View.VISIBLE);
         }

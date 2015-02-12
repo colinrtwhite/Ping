@@ -10,9 +10,8 @@ import android.os.Bundle;
 /**
  * Manages "Authentication" to Ping's backend service.  The SyncAdapter framework
  * requires an authenticator object, so syncing to a service that doesn't need authentication
- * typically means creating a stub authenticator like this one.
- * This code is copied directly, in its entirety, from
- * http://developer.android.com/training/sync-adapters/creating-authenticator.html.
+ * typically means creating a stub Authenticator like this one. This code is copied directly, in its
+ * entirety, from http://developer.android.com/training/sync-adapters/creating-authenticator.html.
  */
 public class PingAuthenticator extends AbstractAccountAuthenticator {
 

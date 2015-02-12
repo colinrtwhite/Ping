@@ -10,6 +10,10 @@ import android.net.Uri;
 
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 
+/**
+ * Monitor Provider is the ContentProvider for Monitors. It should be accessed through the
+ * ContentResolver using MonitorEntry.CONTENT_URI as a base URI.
+ */
 public class MonitorProvider extends ContentProvider {
     // The URI Matcher used by this content provider.
     private static final UriMatcher mUriMatcher = buildUriMatcher();

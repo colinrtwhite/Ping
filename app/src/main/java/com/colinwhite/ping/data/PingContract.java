@@ -4,6 +4,10 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+/**
+ * PingContract is a highly important class that is the database contract for all tables. It is the
+ * authority on all table names, column names, URIs, and Monitor states.
+ */
 public final class PingContract {
     public static final String PATH_MONITOR = "monitor";
     public static final String CONTENT_AUTHORITY = "com.colinwhite.ping";

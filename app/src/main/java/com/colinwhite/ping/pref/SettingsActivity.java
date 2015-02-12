@@ -8,6 +8,9 @@ import android.view.MenuItem;
 import com.colinwhite.ping.MainActivity;
 import com.colinwhite.ping.R;
 
+/**
+ * Loads the SettingsFragment and manages the back button.
+ */
 public class SettingsActivity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {

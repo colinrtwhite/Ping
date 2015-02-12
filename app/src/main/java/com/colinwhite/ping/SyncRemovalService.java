@@ -10,6 +10,13 @@ import com.colinwhite.ping.data.PingContract;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.sync.PingSyncAdapter;
 
+/**
+ * SyncRemovalService is scheduled in MonitorDetailActivity to run at a user-set date and time. When
+ * run, it sets the Monitor with the ID given in its starting intent to the maximum ping frequency
+ * SeekBar value (i.e. don't automatically ping), resets any expiration date data to "no expiration
+ * date", removes the periodic sync set in PingSyncAdapter, and finally triggers a PingSyncAdapter
+ * manual refresh.
+ */
 public class SyncRemovalService extends IntentService {
     final String[] mProjection = {PingContract.MonitorEntry.URL};
     final String mSelection = PingContract.MonitorEntry._ID + " = ?";
@@ -19,6 +26,7 @@ public class SyncRemovalService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        // If we're not given a Monitor ID then there is nothing we can do.
         int monitorId = intent.getIntExtra(PingContract.MonitorEntry._ID, -1);
         if (monitorId < 0) {
             return;

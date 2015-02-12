@@ -40,14 +40,24 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The MonitorDetailActivity handles the layouts and logic for both when the user wants to
+ * create a new Monitor and when the select an additional Monitor to see its info/edit it. Thus,
+ * this activity requires that it receive a valid PAGE_TYPE_ID from its starting Intent.
+ *
+ * If passed a URL, when PAGE_TYPE_ID == PAGE_CREATE it will set this as the URL EditText's text.
+ * When PAGE_TYPE_ID == PAGE_DETAIL, the Activity must be passed a valid Monitor ID.
+ */
 public class MonitorDetailActivity extends ActionBarActivity {
     public static final String LOG_TAG = MonitorDetailActivity.class.getSimpleName();
     public static final String PAGE_TYPE_ID = "PAGE_TYPE_ID";
-    public static final String PAGE_CREATE = "PAGE_CREATE";
-    public static final String PAGE_DETAIL = "PAGE_DETAIL";
     private static final int PING_FREQUENCY_ON_CREATE = 4;
     private static final String DATE_FORMAT = "EEEE, d MMMM, y";
     public static final int[] PING_FREQUENCY_MINUTES = {1, 5, 15, 30, 60, 120, 240, 720, 1440};
+
+    // Valid values for PAGE_TYPE_ID.
+    public static final String PAGE_CREATE = "PAGE_CREATE";
+    public static final String PAGE_DETAIL = "PAGE_DETAIL";
 
     // Fields that are used in the database.
     private static EditText mTitleField;
@@ -161,7 +171,9 @@ public class MonitorDetailActivity extends ActionBarActivity {
         setExpirationDateElements();
     }
 
-    // Build the elements necessary to update a Monitor's details/delete it.
+    /**
+     * Build the elements necessary to update a Monitor's details/delete it.
+     */
     private void buildDetailPageElements() {
         // Change the title.
         setTitle(R.string.monitor_detail_activity_title);
@@ -269,7 +281,9 @@ public class MonitorDetailActivity extends ActionBarActivity {
         }
     }
 
-    // Build the elements for a Monitor creation version of this Activity.
+    /**
+     * Build the elements for a Monitor creation version of this Activity.
+     */
     private void buildCreatePageElements() {
         // Set the URL EditText to the value passed in the Intent, if it exists.
         if (mStartIntent.hasExtra(MonitorEntry.URL)) {
@@ -281,6 +295,9 @@ public class MonitorDetailActivity extends ActionBarActivity {
         setPingFrequencyExplanation(PING_FREQUENCY_ON_CREATE);
     }
 
+    /**
+     * Build the UI elements that handle setting/editing an expiration date for a Monitor.
+     */
     private void setExpirationDateElements() {
         // Set the Switch to change the visibility of the pickers and explanation.
         mDatePickerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -362,8 +379,10 @@ public class MonitorDetailActivity extends ActionBarActivity {
     /**
      * Save all user-accessible fields in the activity, and create a new Monitor/update a current one.
      * Used for the CREATE/UPDATE buttons.
+     * @param pageType The current page type. Either PAGE_DETAIL or PAGE_CREATE.
+     * @param monitorId Only needed for PAGE_DETAIL. The ID of the Monitor this page is displaying.
      */
-    private void saveAllFields(String pageType, String selection, String[] selectionArgs) {
+    private void saveAllFields(String pageType, int monitorId) {
         ContentValues values = new ContentValues();
         values.put(MonitorEntry.TITLE, mTitleField.getText().toString());
         String url = mUrlField.getText().toString();
@@ -379,13 +398,12 @@ public class MonitorDetailActivity extends ActionBarActivity {
             values.put(MonitorEntry.STATUS, MonitorEntry.STATUS_NO_INFO);
         }
 
-        int monitorId;
         if (PAGE_DETAIL.equals(pageType)) {
             // This is a detail page.
+            final String selection = MonitorEntry._ID + " = ?";
+            final String[] selectionArgs = {String.valueOf(monitorId)};
             getContentResolver().update(MonitorEntry.CONTENT_URI, values, selection, selectionArgs);
 
-            // The only selection arg should be the Monitor ID.
-            monitorId = Integer.parseInt(selectionArgs[0]);
             // Remove the current periodic sync timer for this Monitor, later we create a new one.
             PingSyncAdapter.removePeriodicSync(
                     this,
@@ -428,6 +446,11 @@ public class MonitorDetailActivity extends ActionBarActivity {
         finish();
     }
 
+    /**
+     * Given the current progress of the ping frequency SeekBar, set the text of
+     * mPingFrequencyExplanation to match.
+     * @param progress A valid progress value from mPingFrequencyExplanation.
+     */
     private void setPingFrequencyExplanation(int progress) {
         if (progress == mPingFrequency.getMax()) {
             mPingFrequencyExplanation.setText(R.string.ping_explanation_never);
@@ -486,13 +509,10 @@ public class MonitorDetailActivity extends ActionBarActivity {
                     if (PAGE_DETAIL.equals(mStartIntent.getStringExtra(PAGE_TYPE_ID))) {
                         // Update all fields. Don't bother to check, as it takes more time than to
                         // just update all the possible columns.
-                        int monitorId = (int) mValues.get(MonitorEntry._ID);
-                        final String selection = MonitorEntry._ID + " = ?";
-                        final String[] selectionArgs = {String.valueOf(monitorId)};
-                        saveAllFields(PAGE_DETAIL, selection, selectionArgs);
+                        saveAllFields(PAGE_DETAIL, (int) mValues.get(MonitorEntry._ID));
                     } else {
                         // Create a new entry in the database and close the activity.
-                        saveAllFields(PAGE_CREATE, null, null);
+                        saveAllFields(PAGE_CREATE, -1);
                     }
                 }
                 return true;
@@ -511,6 +531,10 @@ public class MonitorDetailActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Validate the input of every user-accessible field on the page.
+     * @return Whether all input on the page is valid.
+     */
     private boolean isValidInput() {
         String url = mUrlField.getText().toString();
 
@@ -540,16 +564,19 @@ public class MonitorDetailActivity extends ActionBarActivity {
             }
         }
 
-        // If all the previous validations pass perform the more expensive URL uniqueness check.
+        // If all the previous validations pass perform the more computationally expensive URL
+        // uniqueness check.
         final String[] projection = { MonitorEntry._ID, MonitorEntry.URL };
         Cursor cursor = getContentResolver().query(MonitorEntry.CONTENT_URI, projection, null, null, null);
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
             do {
+                // Check if a Monitor has the same URL as the current one. If so, make sure it has
+                // a different ID from the current one (i.e. they are not the same Monitor).
                 if (url.equals(cursor.getString(cursor.getColumnIndex(MonitorEntry.URL))) &&
                         cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)) !=
                                 (int)mStartIntent.getLongExtra(MonitorEntry._ID, -1)) {
-                    Toast.makeText(this, "A Monitor with this URL already exists.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(R.string.invalid_input_url_uniqueness), Toast.LENGTH_LONG).show();
                     return false;
                 }
             } while (cursor.moveToNext());

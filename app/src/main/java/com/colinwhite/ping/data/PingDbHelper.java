@@ -6,6 +6,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 
+/**
+ * PingDbHelper manages the creation of the database and any subsequent upgrades and downgrades.
+ */
 public class PingDbHelper extends SQLiteOpenHelper {
     // If we change the database schema, need to increment the database version.
     public static final int DATABASE_VERSION = 1;
