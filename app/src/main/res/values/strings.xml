@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Ping!</string>
+    <string name="app_name" translatable="false">Ping!</string>
     <string name="action_settings">Preferences</string>
     <string name="is_up">The website looks to be UP.</string>
     <string name="is_down">The website seems to be DOWN!</string>
     <string name="does_not_exist">That doesn\'t look like a website URL...</string>
     <string name="other">Looks like some kind of error occurred while checking.</string>
-    <string name="quick_check_title">Quick Check!</string>
     <string name="initial_output_text_id">Enter a website URL to check.</string>
     <string name="create_monitor_activity_title">Create Monitor</string>
     <string name="monitor_title_hint">Title (e.g. Google)</string>
@@ -21,8 +19,8 @@
     <string name="time_picker_label">Tap to set time.</string>
     <string name="no_internet_connection">You don\'t have an internet connection!</string>
     <string name="empty_list_view_message">This is where your Monitors would go\n...if you had any.</string>
-    <string name="sync_account_type">ping.colinwhite.com</string>
-    <string name="content_authority">com.colinwhite.ping</string>
+    <string name="sync_account_type" translatable="false">ping.colinwhite.com</string>
+    <string name="content_authority" translatable="false">com.colinwhite.ping</string>
     <string name="monitor_detail_activity_title">Edit Monitor</string>
     <string name="save_button_title">Update</string>
     <string name="last_checked_text">Last checked at %s.</string>
@@ -44,8 +42,8 @@
     <string name="settings_activity_label">Preferences</string>
     <string name="pref_disable_notifications_title">Disable Notifications</string>
     <string name="pref_disable_notifications">Disable all notifications from Ping!</string>
-    <string name="pref_key_disable_notifications">pref_key_disable_notifications</string>
-    <string name="pref_key_24_hour_clock">pref_key_24_hour_clock</string>
+    <string name="pref_key_disable_notifications" translatable="false">pref_key_disable_notifications</string>
+    <string name="pref_key_24_hour_clock" translatable="false">pref_key_24_hour_clock</string>
     <string name="dialog_confirm_delete">Are you sure you want to delete this Monitor?</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
