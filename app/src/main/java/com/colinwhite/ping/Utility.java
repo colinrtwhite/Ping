@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 import com.colinwhite.ping.data.PingContract;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
@@ -15,6 +14,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,6 +33,8 @@ import java.util.concurrent.TimeUnit;
 public class Utility {
     public static final long HAPTIC_FEEDBACK_DURATION = 20;
     private static final int MAX_DURATION_PARTS = 2;
+    private static final int HTTP_REQUEST_CONNECTION_TIMEOUT = 5000; // Set in milliseconds
+    private static final int HTTP_REQUEST_SOCKET_TIMEOUT = 10000; // Set in milliseconds
     private static final String[] DURATION_SUFFIXES = {
             "day", " days",
             "hour", " hours",
@@ -133,27 +137,29 @@ public class Utility {
      * @param url The URL the check through the HOST.
      * @return A long string of HTML all on one line. On error, returns an empty string.
      */
-    public static String getHtml(String url) {
-        try {
-            // Build the client and the request
-            HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet(HOST + url);
-            HttpResponse response = client.execute(request);
+    public static String getHtml(String url) throws IOException {
+        // Set timeout values for the request.
+        HttpParams httpParams = new BasicHttpParams();
+        // Set the maximum time to connect.
+        HttpConnectionParams.setConnectionTimeout(httpParams, HTTP_REQUEST_CONNECTION_TIMEOUT);
+        // Set the socket timeout.
+        HttpConnectionParams.setSoTimeout(httpParams, HTTP_REQUEST_SOCKET_TIMEOUT);
 
-            // Read and store the result line by line then return the entire string.
-            InputStream in = response.getEntity().getContent();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder html = new StringBuilder();
-            for (String line; (line = reader.readLine()) != null; ) {
-                html.append(line);
-            }
-            in.close();
+        // Build the client and the request
+        HttpClient client = new DefaultHttpClient(httpParams);
+        HttpGet request = new HttpGet(HOST + url);
+        HttpResponse response = client.execute(request);
 
-            return html.toString();
-        } catch (IOException e) {
-            Log.e("PingService", "getHtml failed; error: " + e.toString());
-            return "";
+        // Read and store the result line by line then return the entire string.
+        InputStream in = response.getEntity().getContent();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        StringBuilder html = new StringBuilder();
+        for (String line; (line = reader.readLine()) != null; ) {
+            html.append(line);
         }
+        in.close();
+
+        return html.toString();
     }
 
     /**

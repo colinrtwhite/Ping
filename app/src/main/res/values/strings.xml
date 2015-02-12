@@ -59,5 +59,6 @@
     <string name="icon_explanation_is_down">The website isn\'t responding to network requests from the host and seems to be down.</string>
     <string name="host_text_prefix"><![CDATA[<b>Host</b>]]></string>
     <string name="invalid_input_url_uniqueness">A Monitor with this URL already exists.</string>
+    <string name="error_poor_connection">Ping! couldn\'t connect to the host. Check your internet connection.</string>
 
 </resources>

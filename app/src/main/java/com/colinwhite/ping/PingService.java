@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.regex.Pattern;
 
 /**
@@ -35,28 +37,37 @@ public class PingService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         // Recover the URL from the intent and get the returned HTML from our request.
         String url = intent.getStringExtra(MonitorEntry.URL);
-        String html = Utility.getHtml(url);
 
-        // Compile the regex patterns.
-        Pattern up = Pattern.compile("It's just you.");
-        Pattern down = Pattern.compile("It's not just you!");
-        Pattern doesNotExist = Pattern.compile("doesn't look like a site on the interwho.");
-
-        // Build the response intent for PingServiceReceiver and parse the HTML to find the
-        // appropriate return stats.
+        // Build the response intent for PingServiceReceiver.
         Intent response = new Intent()
                 .setAction(MainActivity.PingServiceReceiver.ACTION_RESPONSE)
                 .addCategory(Intent.CATEGORY_DEFAULT);
-        if (!Utility.isNetworkConnected(this)) {
+        try {
+            String html = Utility.getHtml(url);
+
+            // Compile the regex patterns.
+            Pattern up = Pattern.compile("It's just you.");
+            Pattern down = Pattern.compile("It's not just you!");
+            Pattern doesNotExist = Pattern.compile("doesn't look like a site on the interwho.");
+
+            // Parse the HTML to find the appropriate return stats.
+            if (!Utility.isNetworkConnected(this)) {
+                response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_NO_INTERNET);
+            } else if (up.matcher(html).find()) {
+                response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_IS_UP);
+            } else if (down.matcher(html).find()) {
+                response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_IS_DOWN);
+            } else if (doesNotExist.matcher(html).find()) {
+                response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_IS_NOT_WEBSITE);
+            } else {
+                Log.v(LOG_TAG, "Website has an unknown status.");
+                response.putExtra(MonitorEntry.STATUS, -1);
+            }
+        } catch (SocketTimeoutException e) {
+            Log.v(LOG_TAG, "Was unable to connect to the host.");
             response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_NO_INTERNET);
-        } else if (up.matcher(html).find()) {
-            response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_IS_UP);
-        } else if (down.matcher(html).find()) {
-            response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_IS_DOWN);
-        } else if (doesNotExist.matcher(html).find()) {
-            response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_IS_NOT_WEBSITE);
-        } else {
-            Log.v(LOG_TAG, "Website has an unknown status.");
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "An error occurred while fetching a parsing the host's HTML.");
             response.putExtra(MonitorEntry.STATUS, -1);
         }
 
