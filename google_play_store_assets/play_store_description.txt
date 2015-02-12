@@ -1,0 +1,13 @@
+Unsure why you can't access a website? Ping! is a sleek, lightweight app that lets you see if a website is actually down or if your connection is the problem. Ping! sends requests to an independent host to determine whether the website you are trying to access is actually down or not.<br />
+
+<b>Monitors</b>
+Create monitors to watch the status of your favourite websites and notify you if they go down or come back up. Set up expiration dates so they stop running automatically when you no longer need them. Simply set them and forget - Ping! will intelligently let you know if their status changes.
+
+<b>Material Design</b>
+Ping! was written to take full advantage of the visual elements provided in Android 5.0 Lollipop with material design. Plenty of ripple effects, elevated views, bright colours, and elegant icons are present.
+
+<b>Efficiency</b>
+Designed from the bottom up with efficiency in mind, Ping! intelligently schedules its network activity and processes together with the rest of your device to use minimal battery life. Data use, as well, is kept to an absolute minimum so those with very small data plans won't even notice Ping!'s usage.
+
+<b>Open source</b>
+The source code and assets for Ping! are fully available online (https://github.com/colinrtwhite/Ping). Whether you think you can learn something about android development or want to improve Ping!, you should go take a look!
