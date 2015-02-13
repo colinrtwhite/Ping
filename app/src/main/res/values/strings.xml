@@ -24,7 +24,7 @@
     <string name="monitor_detail_activity_title">Edit Monitor</string>
     <string name="save_button_title">Update</string>
     <string name="last_checked_text">Last checked at %s.</string>
-    <string name="last_checked_text_no_info">This hasn\'t been checked yet.</string>
+    <string name="last_checked_text_no_info">This will be checked soon.</string>
     <string name="notification_text" formatted="false">As of %s, %s is %s!</string>
     <string name="expiration_date_explanation">Set the date and time you would like the Monitor to stop pinging automatically.</string>
     <string name="ping_explanation_never">Never ping the website automatically.</string>

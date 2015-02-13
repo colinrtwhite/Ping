@@ -51,7 +51,7 @@ public class PingService extends IntentService {
             Pattern doesNotExist = Pattern.compile("doesn't look like a site on the interwho.");
 
             // Parse the HTML to find the appropriate return stats.
-            if (!Utility.isNetworkConnected(this)) {
+            if (!Utility.hasNetworkConnection(this)) {
                 response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_NO_INTERNET);
             } else if (up.matcher(html).find()) {
                 response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_IS_UP);

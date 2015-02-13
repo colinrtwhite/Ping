@@ -390,7 +390,6 @@ public class MonitorDetailActivity extends ActionBarActivity {
         values.put(MonitorEntry.PING_FREQUENCY, mPingFrequency.getProgress());
         long endDate = (mHasEndDate) ? mSelectedDateTime.getTimeInMillis() : MonitorEntry.END_TIME_NONE;
         values.put(MonitorEntry.END_TIME, endDate);
-        values.put(MonitorEntry.IS_LOADING, true);
         // If this is a detail page and the URL has changed, invalidate the last checked time and status.
         if (PAGE_DETAIL.equals(mStartIntent.getStringExtra(PAGE_TYPE_ID)) &&
                 !mValues.get(MonitorEntry.URL).equals(url)) {

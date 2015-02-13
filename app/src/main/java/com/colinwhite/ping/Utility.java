@@ -167,7 +167,7 @@ public class Utility {
      * to the Internet).
      * @param context The Context used to access the ConnectivityManager.
      */
-    public static boolean isNetworkConnected(Context context) {
+    public static boolean hasNetworkConnection(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = connectivityManager.getActiveNetworkInfo();
 

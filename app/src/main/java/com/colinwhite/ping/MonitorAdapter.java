@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.sync.PingSyncAdapter;
@@ -70,19 +71,18 @@ public class MonitorAdapter extends CursorAdapter {
                     // Pulse haptic feedback.
                     mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
 
-                    // Tell the database that we are now loading.
-                    ContentValues isNowLoadingValue = new ContentValues();
-                    isNowLoadingValue.put(MonitorEntry.IS_LOADING, true);
-                    String selection = MonitorEntry._ID + " = ?";
-                    String[] selectionArgs = {String.valueOf(values.get(MonitorEntry._ID))};
-                    contentResolver.update(MonitorEntry.CONTENT_URI, isNowLoadingValue, selection, selectionArgs);
-
-                    // Refresh the Monitor right now.
-                    PingSyncAdapter.syncImmediately(
-                            context,
-                            PingSyncAdapter.getSyncAccount(context),
-                            (String) values.get(MonitorEntry.URL),
-                            (int) values.get(MonitorEntry._ID));
+                    if (Utility.hasNetworkConnection(context)) {
+                        // Refresh the Monitor right now.
+                        PingSyncAdapter.syncImmediately(
+                                context,
+                                PingSyncAdapter.getSyncAccount(context),
+                                (String) values.get(MonitorEntry.URL),
+                                (int) values.get(MonitorEntry._ID));
+                    } else {
+                        Toast.makeText(context,
+                                context.getResources().getString(R.string.error_poor_connection),
+                                Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         } else {

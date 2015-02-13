@@ -71,19 +71,24 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                               String authority,
                               ContentProviderClient provider,
                               SyncResult syncResult) {
+        // TODO: Fix bug where onPerformSync is called with an empty Bundle after the first Monitor is created.
         try {
-            // Simply return if we're not given ID nor URL.
-            // TODO: Fix bug where onPerformSync is called with an empty Bundle after the first Monitor is created.
+            // Simply return if we're not given an ID nor URL.
             if (extras.isEmpty()) {
                 return;
             }
 
+            // Tell the database that we are now loading.
+            int monitorId = extras.getInt(MonitorEntry._ID);
+            ContentValues isNowLoadingValue = new ContentValues();
+            isNowLoadingValue.put(MonitorEntry.IS_LOADING, true);
+            String selection = MonitorEntry._ID + " = ?";
+            String[] selectionArgs = {String.valueOf(monitorId)};
+            mContentResolver.update(MonitorEntry.CONTENT_URI, isNowLoadingValue, selection, selectionArgs);
+
             // Recover the URL from the intent and get the returned HTML from our request.
             String url = extras.getString(MonitorEntry.URL);
             String html = Utility.getHtml(url);
-
-            int monitorId = extras.getInt(MonitorEntry._ID);
-            final String[] selectionArgs = {String.valueOf(monitorId)};
 
             // Notification at 1, 5, 7
             int status = -1;
