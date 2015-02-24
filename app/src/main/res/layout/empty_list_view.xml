@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:orientation="vertical"
-    android:layout_marginBottom="20dp">
+    android:layout_marginBottom="10dp">
 
     <ImageView
         android:layout_width="80dp"
@@ -20,6 +20,8 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="@string/empty_list_view_message"
-        android:textColor="@android:color/black"/>
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/abc_text_size_small_material"
+        android:padding="20dp"/>
 
 </LinearLayout>

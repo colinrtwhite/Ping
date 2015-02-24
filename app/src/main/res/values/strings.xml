@@ -18,7 +18,7 @@
     <string name="date_picker_label">Tap to set date.</string>
     <string name="time_picker_label">Tap to set time.</string>
     <string name="no_internet_connection">You don\'t have an internet connection!</string>
-    <string name="empty_list_view_message">This is where your Monitors would go\n...if you had any.</string>
+    <string name="empty_list_view_message">Add Monitors to track the status of your favourite websites. Ping! will automatically notify you if they go down or come back up. Click the plus button to get started.\n\nJust set them and forget!</string>
     <string name="sync_account_type" translatable="false">ping.colinwhite.com</string>
     <string name="content_authority" translatable="false">com.colinwhite.ping</string>
     <string name="monitor_detail_activity_title">Edit Monitor</string>
