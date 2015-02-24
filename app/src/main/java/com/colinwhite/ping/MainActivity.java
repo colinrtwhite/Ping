@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -31,6 +30,7 @@ import android.widget.Toast;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.pref.SettingsActivity;
 import com.colinwhite.ping.sync.PingSyncAdapter;
+import com.colinwhite.ping.widget.ClearableEditText;
 
 /**
  * The MainActivity handles the logic for all the UI elements in activity_mail.xml and is the main
@@ -43,7 +43,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     private static Toolbar mToolbar;
     private static ImageButton mPingButton;
     private static ImageButton mFloatingButton;
-    private static EditText mEditText;
+    private static ClearableEditText mClearableTextField;
     private static LinearLayout mActivityContainer;
     private static ListView mMonitorList;
 
@@ -78,7 +78,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                 // Pulse haptic feedback.
                 mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
 
-                String inputText = mEditText.getText().toString();
+                String inputText = mClearableTextField.getText().toString();
                 if (isValidInput(inputText)) {
                     startPingService(inputText);
                 }
@@ -86,13 +86,13 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         });
 
         // Give the same logic to the "enter" key on the soft keyboard while in the EditText.
-        mEditText = (EditText) findViewById(R.id.url_text_field_quick);
-        mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mClearableTextField = (ClearableEditText) findViewById(R.id.url_text_field_quick);
+        mClearableTextField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean isConfirm =
                         (actionId == EditorInfo.IME_ACTION_DONE) ||
-                        (actionId == EditorInfo.IME_ACTION_NEXT);
-                String inputText = mEditText.getText().toString();
+                                (actionId == EditorInfo.IME_ACTION_NEXT);
+                String inputText = mClearableTextField.getText().toString();
                 if (isConfirm && isValidInput(inputText)) {
                     startPingService(inputText);
                 }
@@ -110,7 +110,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                 // Pass the value of the EditText to MonitorDetailActivity.
                 Intent monitorDetailActivityIntent = new Intent(getApplicationContext(),
                         MonitorDetailActivity.class);
-                String text = mEditText.getText().toString();
+                String text = mClearableTextField.getText().toString();
                 if (!text.isEmpty()) {
                     monitorDetailActivityIntent.putExtra(MonitorEntry.URL, text);
                 }
@@ -206,9 +206,9 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         // Close the virtual keyboard.
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(
                 Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+        inputMethodManager.hideSoftInputFromWindow(mClearableTextField.getWindowToken(), 0);
 
-        // Remove focus from mEditText once URL has been entered.
+        // Remove focus from mClearableTextField once URL has been entered.
         mActivityContainer.requestFocus();
 
         // Instantiate the intent filter and the receiver to receive the output.

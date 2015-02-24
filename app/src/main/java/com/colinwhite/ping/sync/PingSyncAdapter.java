@@ -90,7 +90,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             String url = extras.getString(MonitorEntry.URL);
             String html = Utility.getHtml(url);
 
-            // Notification at 1, 5, 7
+            // Match the HTML returned from the host.
             int status = -1;
             if (mUpPattern.matcher(html).find()) {
                 status = MonitorEntry.STATUS_IS_UP;
@@ -202,9 +202,9 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
 
         String notificationText = String.format(
                 mContext.getString(R.string.notification_text),
-                Utility.formatDate(timeLastChecked, mSharedPref.getBoolean(mClockTypeKey, false)),
-                url,
-                statusStr);
+                title,
+                statusStr,
+                Utility.formatDate(timeLastChecked, mSharedPref.getBoolean(mClockTypeKey, false)));
 
         // Set the large notification to the a bitmap of the logo (ish) and the small to be the
         // Monitor's current status icon.
@@ -212,7 +212,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), Utility.getStatusIcon(status)))
                 .setPriority(Notification.PRIORITY_HIGH)
-                .setContentTitle(title)
+                .setContentTitle(url)
                 .setContentText(notificationText);
 
         // Set the small icon colour if we are running Lollipop.

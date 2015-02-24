@@ -27,15 +27,10 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp">
 
-        <EditText
+        <com.colinwhite.ping.widget.ClearableEditText
             android:id="@+id/url_text_field_quick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textUri"
-            android:maxLines="1"
-            android:textSize="@dimen/abc_text_size_medium_material"
-            android:hint="@string/initial_output_text_id"
-            android:textColorHint="@android:color/white"
             android:layout_weight="1"/>
 
         <ImageButton
