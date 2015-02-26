@@ -21,14 +21,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.colinwhite.ping.MonitorDetailActivity;
 import com.colinwhite.ping.R;
 import com.colinwhite.ping.Utility;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 
-import java.net.SocketTimeoutException;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
@@ -154,27 +152,18 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             }
 
             mContentResolver.update(MonitorEntry.CONTENT_URI, values, mSelection, selectionArgs);
-        } catch (SocketTimeoutException e) {
-            // Handle SocketTimeoutExceptions separately because they indicate a poor Internet
-            // connection and the user should be notified.
-            Log.v(LOG_TAG, "Was unable to connect to the host.");
-            Toast.makeText(mContext, mContext.getString(R.string.error_poor_connection),
-                    Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             // If any problems occur while syncing simply record an error in the Log, cancel the sync,
             // and try again next time.
             Log.e(LOG_TAG, "Error occurred while syncing: " + e.toString());
-        }
 
-        try {
-            // Try to at least stop the loading icon from spinning.
+            // Set the Monitor's status to errored/uncertain.
             ContentValues values = new ContentValues();
             values.put(MonitorEntry.IS_LOADING, false);
-            final String[] selectionArgs = {String.valueOf(extras.getInt(MonitorEntry._ID))};
+            values.put(MonitorEntry.TIME_LAST_CHECKED, Calendar.getInstance().getTimeInMillis());
+            values.put(MonitorEntry.STATUS, MonitorEntry.STATUS_NO_INTERNET);
+            String[] selectionArgs = {String.valueOf(extras.getInt(MonitorEntry._ID))};
             mContentResolver.update(MonitorEntry.CONTENT_URI, values, mSelection, selectionArgs);
-        } catch (Exception e1) {
-            // Couldn't stop the loading icon from spinning. :(
-            Log.e(LOG_TAG, "Error occurred while trying to stop loading icon: " + e1.toString());
         }
     }
 
