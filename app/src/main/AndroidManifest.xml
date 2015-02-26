@@ -24,9 +24,17 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
+            <!-- Required to designate as main activity -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- Required to designate as share action handler -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:mimeType="text/plain"></data>
             </intent-filter>
         </activity>
 

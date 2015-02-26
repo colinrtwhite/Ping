@@ -100,6 +100,22 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
             }
         });
 
+        // If passed a URL (normally through a share action), check it.
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String url = (String) extras.get(Intent.EXTRA_TEXT); // Key used by Chrome.
+            if (url != null) {
+                // Get rid of everything before www.
+                int index = url.indexOf("//");
+                if (index != -1) {
+                    url = url.substring(index + 2);
+                }
+
+                startPingService(url);
+                mClearableTextField.setText(url);
+            }
+        }
+
         // Set the floating button to open the MonitorDetailActivity.
         mFloatingButton = (ImageButton) findViewById(R.id.add_button);
         mFloatingButton.setOnClickListener(new ImageButton.OnClickListener() {

@@ -85,4 +85,8 @@ public class ClearableEditText extends RelativeLayout {
     public void setOnEditorActionListener(TextView.OnEditorActionListener onEditorActionListener) {
         mEditText.setOnEditorActionListener(onEditorActionListener);
     }
+
+    public void setText(String text) {
+        mEditText.setText(text);
+    }
 }

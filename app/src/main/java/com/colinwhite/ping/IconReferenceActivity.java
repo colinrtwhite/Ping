@@ -30,7 +30,7 @@ public class IconReferenceActivity extends ActionBarActivity {
 
         // Set the host text.
         TextView hostText = (TextView) findViewById(R.id.text_view_host);
-        hostText.setText(Html.fromHtml(getString(R.string.host_text_prefix) + "Create monitors to watch the status of your favourite websites and notify you if they go down or come back up.: " + Utility.HOST));
+        hostText.setText(Html.fromHtml(getString(R.string.host_text_prefix) + ": " + Utility.HOST));
     }
 
     @Override
