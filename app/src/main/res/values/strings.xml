@@ -18,7 +18,7 @@
     <string name="date_picker_label">Tap to set date.</string>
     <string name="time_picker_label">Tap to set time.</string>
     <string name="no_internet_connection">You don\'t have an internet connection!</string>
-    <string name="empty_list_view_message">Add Monitors to track the status of your favourite websites. Ping! will automatically notify you if they go down or come back up. Click the plus button to get started.\n\nJust set them and forget!</string>
+    <string name="empty_list_view_message">Add a Monitor to track the status of your favourite websites. Ping! will automatically notify you if they go down or come back up. Click the plus button to get started!</string>
     <string name="sync_account_type" translatable="false">ping.colinwhite.com</string>
     <string name="content_authority" translatable="false">com.colinwhite.ping</string>
     <string name="monitor_detail_activity_title">Edit Monitor</string>
@@ -48,7 +48,7 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="dialog_explain_approximate_okay">Okay</string>
-    <string name="dialog_explain_approximate_message">Ping frequencies and expiration dates are approximate because Ping! uses inexact timers to schedule network processes together. This saves you plenty of battery life!\nUnfortunately, Android 4.3.1 and below can\'t use inexact timers so everything will run in/at exactly the specified time.</string>
+    <string name="dialog_explain_approximate_message">Ping frequencies and expiration dates are approximate because Ping! uses inexact timers to schedule network processes together. This saves you plenty of battery life!\n\nUnfortunately, Android 4.3.1 and below cannot use inexact timers so everything will run in/at exactly the specified time.</string>
     <string name="action_explain_approximate_title">Why Approximate?</string>
     <string name="icon_reference_activity_label">Icon Reference</string>
     <string name="action_icon_reference">Icon Reference</string>
@@ -60,5 +60,6 @@
     <string name="host_text_prefix"><![CDATA[<b>Host</b>]]></string>
     <string name="invalid_input_url_uniqueness">A Monitor with this URL already exists.</string>
     <string name="error_poor_connection">Ping! couldn\'t connect to the host. Check your internet connection.</string>
+    <string name="empty_list_view_header">What\'s a Monitor?</string>
 
 </resources>
