@@ -29,7 +29,6 @@ import android.widget.Toast;
 
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.pref.SettingsActivity;
-import com.colinwhite.ping.sync.PingSyncAdapter;
 import com.colinwhite.ping.widget.ClearableEditText;
 
 /**
@@ -55,9 +54,6 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Attempt to initialise the SyncAdapter Account for Ping.
-        PingSyncAdapter.getSyncAccount(this);
 
         // Get the top level View of this Activity.
         mActivityContainer = (LinearLayout) findViewById(R.id.activity_container);

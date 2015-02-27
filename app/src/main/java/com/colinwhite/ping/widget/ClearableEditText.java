@@ -67,7 +67,7 @@ public class ClearableEditText extends RelativeLayout {
                 if (s.length() > 0) {
                     mClearButton.setVisibility(RelativeLayout.VISIBLE);
                 } else {
-                    mClearButton.setVisibility(RelativeLayout.GONE);
+                    mClearButton.setVisibility(RelativeLayout.INVISIBLE);
                 }
             }
             @Override

@@ -71,8 +71,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                               String authority,
                               ContentProviderClient provider,
                               SyncResult syncResult) {
-        // TODO: Fix bug where onPerformSync is called with an empty Bundle after the first Monitor is created.
-        triggerNotification(extras.getInt(MonitorEntry._ID), "Test Title", "google.com/asdfasdfasdf/asdfasdfasdf", MonitorEntry.STATUS_IS_DOWN, Calendar.getInstance().getTimeInMillis());
+        // TODO: Fix bug where onPerformSync is called with empty Bundle after first Monitor created.
         try {
             // Simply return if we're not given an ID nor URL.
             if (extras.isEmpty()) {
@@ -199,7 +198,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
         // Scale the large icon to prevent cropping if we are running any version below Lollipop.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-            float multiplier = (float)(metrics.density / 3f * 0.8);
+            float multiplier = (float)(metrics.density / 3f * 0.5);
             largeIcon = Bitmap.createScaledBitmap(largeIcon, (int)(largeIcon.getWidth() * multiplier), (int)(largeIcon.getHeight() * multiplier), false);
         }
 
