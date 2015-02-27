@@ -16,10 +16,12 @@ import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.colinwhite.ping.MonitorDetailActivity;
@@ -70,6 +72,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                               ContentProviderClient provider,
                               SyncResult syncResult) {
         // TODO: Fix bug where onPerformSync is called with an empty Bundle after the first Monitor is created.
+        triggerNotification(extras.getInt(MonitorEntry._ID), "Test Title", "google.com/asdfasdfasdf/asdfasdfasdf", MonitorEntry.STATUS_IS_DOWN, Calendar.getInstance().getTimeInMillis());
         try {
             // Simply return if we're not given an ID nor URL.
             if (extras.isEmpty()) {
@@ -176,11 +179,6 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
      * @param timeLastChecked The time the status was checked at in milliseconds.
      */
     private void triggerNotification(int monitorId, String title, String url, int status, long timeLastChecked) {
-        // Don't trigger a notification for an internally errored status.
-        if (Utility.isErrorStatus(status)) {
-            return;
-        }
-
         String statusStr;
         if (status == MonitorEntry.STATUS_IS_UP) {
             statusStr = "up";
@@ -195,11 +193,21 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                 statusStr,
                 Utility.formatDate(timeLastChecked, mSharedPref.getBoolean(mClockTypeKey, false)));
 
+        // Get the Monitor's status icon.
+        Bitmap largeIcon = BitmapFactory.decodeResource(mContext.getResources(),
+                Utility.getStatusIcon(status));
+        // Scale the large icon to prevent cropping if we are running any version below Lollipop.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+            float multiplier = (float)(metrics.density / 3f * 0.8);
+            largeIcon = Bitmap.createScaledBitmap(largeIcon, (int)(largeIcon.getWidth() * multiplier), (int)(largeIcon.getHeight() * multiplier), false);
+        }
+
         // Set the large notification to the a bitmap of the logo (ish) and the small to be the
         // Monitor's current status icon.
         Notification.Builder notificationBuilder = new Notification.Builder(mContext)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), Utility.getStatusIcon(status)))
+                .setLargeIcon(largeIcon)
                 .setPriority(Notification.PRIORITY_HIGH)
                 .setContentTitle(url)
                 .setContentText(notificationText);
