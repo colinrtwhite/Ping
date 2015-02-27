@@ -272,6 +272,11 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
         // Without calling setSyncAutomatically, our periodic sync will not be enabled.
         ContentResolver.setSyncAutomatically(account, context.getString(R.string.content_authority),
                 true);
+
+        // Run an immediate sync if we are on Lollipop.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            syncImmediately(context, account, url, monitorId);
+        }
     }
 
     /**

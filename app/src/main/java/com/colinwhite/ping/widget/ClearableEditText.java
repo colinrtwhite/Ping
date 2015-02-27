@@ -41,6 +41,7 @@ public class ClearableEditText extends EditText implements View.OnTouchListener,
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (getCompoundDrawables()[2] != null) {
+            // Only clear the field if we touched the clear icon.
             boolean tappedX = event.getX() > (getWidth() - getLineHeight());
             if (tappedX) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -75,6 +76,7 @@ public class ClearableEditText extends EditText implements View.OnTouchListener,
     protected void setClearIconVisible(boolean visible) {
         boolean wasVisible = (getCompoundDrawables()[2] != null);
         if (visible != wasVisible) {
+            // Show the visual elements (including the clear button) of the EditText.
             Drawable x = visible ? mIcon : null;
             setCompoundDrawables(getCompoundDrawables()[0], getCompoundDrawables()[1], x,
                     getCompoundDrawables()[3]);
