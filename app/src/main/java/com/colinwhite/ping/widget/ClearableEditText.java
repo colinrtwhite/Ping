@@ -1,15 +1,11 @@
 package com.colinwhite.ping.widget;
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.colinwhite.ping.R;
 
@@ -17,76 +13,71 @@ import com.colinwhite.ping.R;
  * ClearableEditText extends the functionality of EditText to show a clear icon, which simply gets
  * rid of all the text in the field. Used for the URL field in MainActivity.
  */
-public class ClearableEditText extends RelativeLayout {
-    LayoutInflater mInflater = null;
-    EditText mEditText;
-    Button mClearButton;
+public class ClearableEditText extends EditText implements View.OnTouchListener,
+        View.OnFocusChangeListener, TextWatcherAdapter.TextWatcherListener {
+    private Drawable mIcon;
+    private OnTouchListener mOnTouchListener;
 
-    public ClearableEditText(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        initViews();
+    public ClearableEditText(Context context) {
+        super(context);
+        initialiseClearButton();
     }
 
     public ClearableEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initViews();
-
+        initialiseClearButton();
     }
 
-    public ClearableEditText(Context context) {
-        super(context);
-        initViews();
+    public ClearableEditText(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        initialiseClearButton();
     }
 
-    void initViews() {
-        mInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mInflater.inflate(R.layout.clearable_edit_text, this, true);
-        mEditText = (EditText) findViewById(R.id.clearable_edit);
-        mClearButton = (Button) findViewById(R.id.clearable_button_clear);
-        mClearButton.setVisibility(RelativeLayout.INVISIBLE);
-        clearText();
-        showHideClearButton();
+    @Override
+    public void setOnTouchListener(OnTouchListener listener) {
+        this.mOnTouchListener = listener;
     }
 
-    void clearText() {
-        mClearButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Set the EditText to blank, but don't modify the state of the keyboard (open/close
-                // it).
-                mEditText.setText("");
-            }
-        });
-    }
-
-    void showHideClearButton() {
-        mEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Show/hide the clear button depending on if there is any text in mEditText.
-                if (s.length() > 0) {
-                    mClearButton.setVisibility(RelativeLayout.VISIBLE);
-                } else {
-                    mClearButton.setVisibility(RelativeLayout.INVISIBLE);
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (getCompoundDrawables()[2] != null) {
+            boolean tappedX = event.getX() > (getWidth() - getLineHeight());
+            if (tappedX) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    setText("");
                 }
+                return true;
             }
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { /* Do nothing. */ }
-            @Override
-            public void afterTextChanged(Editable s) { /* Do nothing. */ }
-        });
+        }
+        if (mOnTouchListener != null) {
+            return mOnTouchListener.onTouch(v, event);
+        }
+        return false;
     }
 
-    public Editable getText() {
-        Editable text = mEditText.getText();
-        return text;
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) { /* Do nothing */ }
+
+    @Override
+    public void onTextChanged(EditText view, String text) {
+        setClearIconVisible(!(text == null || text.length() == 0));
     }
 
-    public void setOnEditorActionListener(TextView.OnEditorActionListener onEditorActionListener) {
-        mEditText.setOnEditorActionListener(onEditorActionListener);
+    private void initialiseClearButton() {
+        mIcon = getResources().getDrawable(R.drawable.ic_content_clear);
+        mIcon.setBounds(0, 0, getLineHeight(), getLineHeight());
+        setClearIconVisible(false);
+        super.setOnTouchListener(this);
+        super.setOnFocusChangeListener(this);
+        addTextChangedListener(new TextWatcherAdapter(this, this));
     }
 
-    public void setText(String text) {
-        mEditText.setText(text);
+    protected void setClearIconVisible(boolean visible) {
+        boolean wasVisible = (getCompoundDrawables()[2] != null);
+        if (visible != wasVisible) {
+            Drawable x = visible ? mIcon : null;
+            setCompoundDrawables(getCompoundDrawables()[0], getCompoundDrawables()[1], x,
+                    getCompoundDrawables()[3]);
+        }
     }
 }
