@@ -71,7 +71,6 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                               String authority,
                               ContentProviderClient provider,
                               SyncResult syncResult) {
-        // TODO: Fix bug where onPerformSync is called with empty Bundle after first Monitor created.
         try {
             // Simply return if we're not given an ID nor URL.
             if (extras.isEmpty()) {
