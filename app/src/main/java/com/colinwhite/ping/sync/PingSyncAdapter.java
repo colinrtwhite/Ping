@@ -273,9 +273,6 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
         // Without calling setSyncAutomatically, our periodic sync will not be enabled.
         ContentResolver.setSyncAutomatically(account, context.getString(R.string.content_authority),
                 true);
-
-        // Perform an initial sync.
-        syncImmediately(context, account, url, monitorId);
     }
 
     /**
