@@ -115,7 +115,7 @@ public class MonitorAdapter extends CursorAdapter {
     }
 
     /**
-     * Cache of the children views for a forecast list item.
+     * Cache of the children views for a Monitor list item.
      */
     public static class ViewHolder {
         public final ImageButton refreshButtonView;

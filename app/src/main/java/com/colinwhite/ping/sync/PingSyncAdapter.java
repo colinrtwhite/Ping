@@ -201,8 +201,8 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             largeIcon = Bitmap.createScaledBitmap(largeIcon, (int)(largeIcon.getWidth() * multiplier), (int)(largeIcon.getHeight() * multiplier), false);
         }
 
-        // Set the large notification to the a bitmap of the logo (ish) and the small to be the
-        // Monitor's current status icon.
+        // Set the large notification icon to the Monitor's current status and small icon to the
+        // bitmap of the app logo.
         Notification.Builder notificationBuilder = new Notification.Builder(mContext)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(largeIcon)
