@@ -17,6 +17,17 @@ Efficiency
 ----------
 Designed from the bottom up with efficiency in mind, Ping! intelligently schedules its network activity and processes together with the rest of your device to use minimal battery life.
 
+Screenshots
+-----------
+
+<img src="/google_play_store_assets/screenshot_1.png" alt="Screenshot 1" width="270" height="480">
+<img src="/google_play_store_assets/screenshot_2.png" alt="Screenshot 2" width="270" height="480">
+<img src="/google_play_store_assets/screenshot_3.png" alt="Screenshot 3" width="270" height="480">
+<img src="/google_play_store_assets/screenshot_4.png" alt="Screenshot 4" width="270" height="480">
+<img src="/google_play_store_assets/screenshot_5.png" alt="Screenshot 5" width="270" height="480">
+
 Version History
 ---------------
+1.1 - 27 Febrary, 2015
+
 1.0 - 9 February, 2015
