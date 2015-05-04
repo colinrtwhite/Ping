@@ -97,7 +97,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_monitor_detail);
 
         // Set up the Toolbar.
-        mToolbar = (Toolbar) findViewById(R.id.create_monitor_toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
         }
@@ -183,7 +183,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
         final long monitorId = mStartIntent.getLongExtra(MonitorEntry._ID, -1);
         if (monitorId == -1) {
             Log.e(LOG_TAG, "Intent does not contain a Monitor ID.");
-            finish(); // Close the activity.
+            onBackPressed(); // Close the activity.
         }
 
         // Get the specific Monitor's data.
@@ -253,7 +253,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
                         if (endDate != MonitorEntry.END_TIME_NONE) {
                             Utility.deleteRemovalAlarm(context, monitorId);
                         }
-                        finish();
+                        onBackPressed();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -443,7 +443,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
                     monitorId);
         }
 
-        finish();
+        onBackPressed();
     }
 
     /**

@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mActivityContainer = (LinearLayout) findViewById(R.id.activity_container);
 
         // Attach the main_toolbar to the activity.
-        mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
         }
