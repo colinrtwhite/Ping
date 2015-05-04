@@ -13,8 +13,7 @@ import android.os.Bundle;
  * typically means creating a stub Authenticator like this one. This code is copied directly, in its
  * entirety, from http://developer.android.com/training/sync-adapters/creating-authenticator.html.
  */
-public class PingAuthenticator extends AbstractAccountAuthenticator {
-
+class PingAuthenticator extends AbstractAccountAuthenticator {
     public PingAuthenticator(Context context) {
         super(context);
     }

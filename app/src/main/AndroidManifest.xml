@@ -34,7 +34,7 @@
                 <action android:name="android.intent.action.SEND"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:mimeType="text/plain"></data>
+                <data android:mimeType="text/plain"/>
             </intent-filter>
         </activity>
 
@@ -68,7 +68,9 @@
 
         <!-- SyncAdapter's dummy authentication service -->
         <service
-            android:name=".sync.PingAuthenticatorService">
+            android:name=".sync.PingAuthenticatorService"
+            android:exported="true"
+            android:permission="android.permission.ACCOUNT_MANAGER">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -80,13 +82,14 @@
         <!-- The SyncAdapter service -->
         <service
             android:name=".sync.PingSyncService"
-            android:exported="true">
+            android:exported="true"
+            android:permission="android.permission.ACCOUNT_MANAGER">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
             <meta-data
                 android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter" />
+                android:resource="@xml/sync_adapter" />
         </service>
     </application>
 

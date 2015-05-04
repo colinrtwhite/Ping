@@ -1,12 +1,12 @@
 package com.colinwhite.ping;
 
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +24,7 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
  * The MonitorAdapter class is a slightly modified CursorAdapter, which is used in the main ListView
  * of the MainActivity.
  */
-public class MonitorAdapter extends CursorAdapter {
+class MonitorAdapter extends CursorAdapter {
     private static Vibrator mVibratorService;
 
     public MonitorAdapter(Context context, Cursor c, int flags) {
@@ -38,7 +38,7 @@ public class MonitorAdapter extends CursorAdapter {
         view.setTag(viewHolder);
 
         // Get the service for haptic feedback.
-        mVibratorService = (Vibrator) context.getSystemService(context.VIBRATOR_SERVICE);
+        mVibratorService = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
         return view;
     }
@@ -57,8 +57,6 @@ public class MonitorAdapter extends CursorAdapter {
         values.put(MonitorEntry.TIME_LAST_CHECKED, cursor.getLong(cursor.getColumnIndex(MonitorEntry.TIME_LAST_CHECKED)));
         values.put(MonitorEntry.STATUS, cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS)));
         values.put(MonitorEntry.IS_LOADING, cursor.getInt(cursor.getColumnIndex(MonitorEntry.IS_LOADING)) == 1);
-
-        final ContentResolver contentResolver = context.getContentResolver();
 
         if (!(boolean) values.get(MonitorEntry.IS_LOADING)) {
             // We are not refreshing right now so hide the loading spinner and show the manual
@@ -111,7 +109,7 @@ public class MonitorAdapter extends CursorAdapter {
 
         // Set the icon based on the Monitor's status.
         int statusIcon = Utility.getStatusIcon((int) values.get(MonitorEntry.STATUS));
-        viewHolder.statusView.setImageDrawable(context.getResources().getDrawable(statusIcon));
+        viewHolder.statusView.setImageDrawable(ContextCompat.getDrawable(context, statusIcon));
     }
 
     /**

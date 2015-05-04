@@ -4,7 +4,7 @@
     <string name="action_settings">Preferences</string>
     <string name="is_up">The website looks to be UP.</string>
     <string name="is_down">The website seems to be DOWN!</string>
-    <string name="does_not_exist">That doesn\'t look like a website URL...</string>
+    <string name="does_not_exist">That doesn\'t look like a website URL…</string>
     <string name="other">Looks like some kind of error occurred while checking.</string>
     <string name="initial_output_text_id">Enter a website URL to check.</string>
     <string name="create_monitor_activity_title">Create Monitor</string>
@@ -54,7 +54,7 @@
     <string name="action_icon_reference">Icon Reference</string>
     <string name="icon_explanation_is_up">The website is up and responding to network requests.</string>
     <string name="icon_explanation_no_internet">Ping! couldn\'t complete its last network request to the website. Your internet connection might not be working or you might not be able to access the host.</string>
-    <string name="icon_explanation_is_not_website">According to the host, it didn\'t recieve a valid URL.</string>
+    <string name="icon_explanation_is_not_website">According to the host, it didn\'t receive a valid URL.</string>
     <string name="icon_explanation_no_info">Ping! hasn\'t checked the website yet. It could be waiting for an internet connection, or will simply check in a second.</string>
     <string name="icon_explanation_is_down">The website isn\'t responding to network requests from the host and seems to be down.</string>
     <string name="host_text_prefix"><![CDATA[<b>Host</b>]]></string>

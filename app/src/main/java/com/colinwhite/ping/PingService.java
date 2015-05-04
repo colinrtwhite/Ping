@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * @see com.colinwhite.ping.MainActivity.PingServiceReceiver
  */
 public class PingService extends IntentService {
-    public static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     public PingService() {
         super(PingService.class.getName());

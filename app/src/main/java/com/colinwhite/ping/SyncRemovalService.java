@@ -18,8 +18,8 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
  * manual refresh.
  */
 public class SyncRemovalService extends IntentService {
-    final String[] mProjection = {PingContract.MonitorEntry.URL};
-    final String mSelection = PingContract.MonitorEntry._ID + " = ?";
+    private final String[] mProjection = {PingContract.MonitorEntry.URL};
+    private final String mSelection = PingContract.MonitorEntry._ID + " = ?";
 
     public SyncRemovalService() { super(SyncRemovalService.class.getName()); }
     public SyncRemovalService(String name) { super(name); }

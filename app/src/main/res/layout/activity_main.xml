@@ -14,14 +14,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary"
-        android:elevation="@dimen/elevation_medium"
         android:minHeight="?attr/actionBarSize" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary"
-        android:elevation="@dimen/elevation_medium"
         android:orientation="horizontal"
         android:paddingBottom="10dp"
         android:paddingLeft="10dp"
@@ -65,12 +63,11 @@
             android:id="@+id/add_button"
             android:layout_width="@dimen/round_button_diameter"
             android:layout_height="@dimen/round_button_diameter"
-            android:layout_gravity="right|bottom"
+            android:layout_gravity="end|bottom"
             android:layout_marginBottom="@dimen/add_button_margin"
             android:layout_marginEnd="@dimen/add_button_margin"
             android:layout_marginRight="@dimen/add_button_margin"
             android:background="@drawable/oval"
-            android:elevation="@dimen/elevation_high"
             android:src="@android:drawable/ic_input_add"
             android:tint="@android:color/white"
             android:hapticFeedbackEnabled="true"

@@ -124,7 +124,7 @@ public class Utility {
             return formattedString.append(", yesterday").toString();
         } else if (numDaysDifference < 7) {
             // Append the day name of the last checked date.
-            return formattedString.append(", " + (new SimpleDateFormat("EEEE")).format(
+            return formattedString.append(", ").append((new SimpleDateFormat("EEEE")).format(
                     lastCheckedDate.getTime())).toString();
         } else {
             return formattedString.append(String.format(", %d days ago", numDaysDifference)).toString();
@@ -231,21 +231,21 @@ public class Utility {
     }
 
     /**
-     * Return true if the status denotes some kind of error that we shouldn't bother to notify the
+     * Return false if the status denotes some kind of error that we shouldn't bother to notify the
      * user about, as it is often temporary.
      * @param status A valid Monitor's status.
      * @return Whether the status denotes some kind of error.
      */
-    public static boolean isErrorStatus(int status) {
+    public static boolean isNonErrorStatus(int status) {
         switch (status) {
             case MonitorEntry.STATUS_IS_UP:
             case MonitorEntry.STATUS_IS_DOWN:
-                return false;
+                return true;
             case MonitorEntry.STATUS_NO_INFO:
             case MonitorEntry.STATUS_IS_NOT_WEBSITE:
             case MonitorEntry.STATUS_NO_INTERNET:
             default:
-                return true;
+                return false;
         }
     }
 }

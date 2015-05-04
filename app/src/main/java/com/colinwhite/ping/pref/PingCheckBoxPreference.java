@@ -3,6 +3,7 @@ package com.colinwhite.ping.pref;
 import android.content.Context;
 import android.graphics.Color;
 import android.preference.CheckBoxPreference;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
@@ -23,7 +24,7 @@ public class PingCheckBoxPreference extends CheckBoxPreference {
     }
 
     @Override
-    protected void onBindView(View view) {
+    protected void onBindView(@NonNull View view) {
         super.onBindView(view);
         TextView title = (TextView) view.findViewById(android.R.id.title);
         title.setTextColor(Color.BLACK);

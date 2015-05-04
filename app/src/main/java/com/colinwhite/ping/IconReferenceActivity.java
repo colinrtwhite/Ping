@@ -2,7 +2,7 @@ package com.colinwhite.ping;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
@@ -12,9 +12,7 @@ import android.widget.TextView;
  * The IconReferenceActivity class holds an almost static layout that simply displays all the icons
  * and their descriptions. The host text is the only text/image set at runtime.
  */
-public class IconReferenceActivity extends ActionBarActivity {
-    // UI elements
-    private static Toolbar mToolbar;
+public class IconReferenceActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,9 +20,9 @@ public class IconReferenceActivity extends ActionBarActivity {
         setContentView(R.layout.activity_icon_reference);
 
         // Set up the Toolbar.
-        mToolbar = (Toolbar) findViewById(R.id.icon_toolbar);
-        if (mToolbar != null) {
-            setSupportActionBar(mToolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.icon_toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

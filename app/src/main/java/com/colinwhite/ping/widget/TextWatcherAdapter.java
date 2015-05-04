@@ -7,7 +7,7 @@ import android.widget.EditText;
 /**
  * TextWatcherAdapter is used to add an onTextChanged listener to an EditText.
  */
-public class TextWatcherAdapter implements TextWatcher {
+class TextWatcherAdapter implements TextWatcher {
     private final EditText mView;
     private final TextWatcherListener mListener;
 

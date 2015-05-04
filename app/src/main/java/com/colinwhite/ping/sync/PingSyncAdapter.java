@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
  * intelligently schedule network activity together.
  */
 public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
-    public static final String LOG_TAG = PingSyncAdapter.class.getSimpleName();
+    private static final String LOG_TAG = PingSyncAdapter.class.getSimpleName();
 
     // The SQL selection string is always the same.
     private static final String mSelection = MonitorEntry._ID + " = ?";
@@ -90,7 +90,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             String html = Utility.getHtml(url);
 
             // Match the HTML returned from the host.
-            int status = -1;
+            int status;
             if (mUpPattern.matcher(html).find()) {
                 status = MonitorEntry.STATUS_IS_UP;
             } else if (mDownPattern.matcher(html).find()) {
@@ -127,7 +127,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                     // The previous status is not the same as the current one.
                     previousStatus != status &&
                     // The current status is not an error.
-                    !Utility.isErrorStatus(status) &&
+                    Utility.isNonErrorStatus(status) &&
                     // The most recent non-error status is not the same as the current one (this is to
                     // prevent cases, for instance, where we lost internet for a second, but then got it
                     // back and the website status did not change in the meantime).
@@ -148,7 +148,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             values.put(MonitorEntry.IS_LOADING, false);
             values.put(MonitorEntry.TIME_LAST_CHECKED, timeLastChecked);
             values.put(MonitorEntry.STATUS, status);
-            if (!Utility.isErrorStatus(status)) {
+            if (Utility.isNonErrorStatus(status)) {
                 values.put(MonitorEntry.LAST_NON_ERROR_STATUS, status);
             }
 

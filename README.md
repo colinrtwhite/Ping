@@ -28,6 +28,6 @@ Screenshots
 
 Version History
 ---------------
-1.1 - 27 Febrary, 2015
+1.1 - 27 February, 2015
 
 1.0 - 9 February, 2015

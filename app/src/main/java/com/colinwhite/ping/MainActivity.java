@@ -10,7 +10,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.Patterns;
@@ -35,8 +35,8 @@ import com.colinwhite.ping.widget.ClearableEditText;
  * The MainActivity handles the logic for all the UI elements in activity_mail.xml and is the main
  * landing page for the app.
  */
-public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-    public static final String LOG_TAG = MainActivity.class.getSimpleName();
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     // UI elements
     private static Toolbar mToolbar;

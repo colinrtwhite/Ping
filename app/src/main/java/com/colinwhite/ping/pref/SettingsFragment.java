@@ -2,6 +2,7 @@ package com.colinwhite.ping.pref;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,7 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Remove the padding on the preferences fragment.
         View view = super.onCreateView(inflater, container, savedInstanceState);
         if (view != null) {

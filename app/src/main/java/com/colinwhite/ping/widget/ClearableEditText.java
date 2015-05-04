@@ -2,6 +2,7 @@ package com.colinwhite.ping.widget;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -50,10 +51,7 @@ public class ClearableEditText extends EditText implements View.OnTouchListener,
                 return true;
             }
         }
-        if (mOnTouchListener != null) {
-            return mOnTouchListener.onTouch(v, event);
-        }
-        return false;
+        return mOnTouchListener != null && mOnTouchListener.onTouch(v, event);
     }
 
     @Override
@@ -65,7 +63,7 @@ public class ClearableEditText extends EditText implements View.OnTouchListener,
     }
 
     private void initialiseClearButton() {
-        mIcon = getResources().getDrawable(R.drawable.ic_content_clear);
+        mIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_content_clear);
         mIcon.setBounds(0, 0, getLineHeight(), getLineHeight());
         setClearIconVisible(false);
         super.setOnTouchListener(this);
@@ -73,7 +71,7 @@ public class ClearableEditText extends EditText implements View.OnTouchListener,
         addTextChangedListener(new TextWatcherAdapter(this, this));
     }
 
-    protected void setClearIconVisible(boolean visible) {
+    private void setClearIconVisible(boolean visible) {
         boolean wasVisible = (getCompoundDrawables()[2] != null);
         if (visible != wasVisible) {
             // Show the visual elements (including the clear button) of the EditText.

@@ -14,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary"
-        android:elevation="@dimen/elevation_low"
         android:minHeight="?attr/actionBarSize" />
 
     <ScrollView
@@ -24,7 +23,7 @@
         <LinearLayout
             android:id="@+id/content_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="10dp">
 
@@ -83,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/abc_text_size_caption_material"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:visibility="gone"/>
 
                 <Space

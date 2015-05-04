@@ -14,7 +14,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
@@ -48,12 +49,12 @@ import java.util.concurrent.TimeUnit;
  * If passed a URL, when PAGE_TYPE_ID == PAGE_CREATE it will set this as the URL EditText's text.
  * When PAGE_TYPE_ID == PAGE_DETAIL, the Activity must be passed a valid Monitor ID.
  */
-public class MonitorDetailActivity extends ActionBarActivity {
-    public static final String LOG_TAG = MonitorDetailActivity.class.getSimpleName();
+public class MonitorDetailActivity extends AppCompatActivity {
+    private static final String LOG_TAG = MonitorDetailActivity.class.getSimpleName();
     public static final String PAGE_TYPE_ID = "PAGE_TYPE_ID";
     private static final int PING_FREQUENCY_ON_CREATE = 4;
     private static final String DATE_FORMAT = "EEEE, d MMMM, y";
-    public static final int[] PING_FREQUENCY_MINUTES = {1, 5, 15, 30, 60, 120, 240, 720, 1440};
+    private static final int[] PING_FREQUENCY_MINUTES = {1, 5, 15, 30, 60, 120, 240, 720, 1440};
 
     // Valid values for PAGE_TYPE_ID.
     public static final String PAGE_CREATE = "PAGE_CREATE";
@@ -262,7 +263,7 @@ public class MonitorDetailActivity extends ActionBarActivity {
                 }).create();
 
         // Set the status icon.
-        mStatusIcon.setImageDrawable(getResources().getDrawable(
+        mStatusIcon.setImageDrawable(ContextCompat.getDrawable(context,
                 Utility.getStatusIcon((int) mValues.get(MonitorEntry.STATUS))));
         // NOTE: mLastCheckedField and mStatusIcon do not update if the database changes.
         // Format the time last checked and place it in the resource string.
