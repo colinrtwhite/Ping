@@ -1,12 +1,12 @@
 package com.colinwhite.ping;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * The IconReferenceActivity class holds an almost static layout that simply displays all the icons
@@ -20,11 +20,14 @@ public class IconReferenceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_icon_reference);
 
         // Set up the Toolbar.
-        Toolbar toolbar = (Toolbar) findViewById(R.id.icon_toolbar);
-        if (toolbar != null) {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        try {
             setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (NullPointerException e) {
+            Toast.makeText(this, getString(R.string.error), Toast.LENGTH_LONG).show();
+            finish();
         }
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Set the host text.
         TextView hostText = (TextView) findViewById(R.id.text_view_host);
@@ -34,8 +37,7 @@ public class IconReferenceActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Only the back button exists in the menu so we go back to MainActivity.
-        Intent goBackIntent = new Intent(this, MainActivity.class);
-        startActivity(goBackIntent);
+        onBackPressed();
         return true;
     }
 }

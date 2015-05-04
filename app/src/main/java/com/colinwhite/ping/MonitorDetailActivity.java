@@ -98,10 +98,13 @@ public class MonitorDetailActivity extends AppCompatActivity {
 
         // Set up the Toolbar.
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (mToolbar != null) {
+        try {
             setSupportActionBar(mToolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (NullPointerException e) {
+            Toast.makeText(this, getString(R.string.error), Toast.LENGTH_LONG).show();
+            finish();
         }
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Initialise some UI elements.
         mUrlField = (EditText) findViewById(R.id.url_text_field_create);
@@ -525,6 +528,9 @@ public class MonitorDetailActivity extends AppCompatActivity {
                 return true;
             case R.id.action_explain_approximate:
                 mWhyApproximateDialog.show();
+                return true;
+            case android.R.id.home:
+                onBackPressed();
                 return true;
         }
 
