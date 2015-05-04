@@ -9,16 +9,9 @@
 
     <!-- Common elements between base and v21 AppTheme. -->
     <style name="AppTheme.Common" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textColorPrimary">@android:color/white</item>
         <item name="colorControlNormal">@color/accent</item>
         <item name="colorControlActivated">@color/accent</item>
         <item name="colorControlHighlight">@color/accent</item>
-        <item name="android:itemTextAppearance">@style/OverflowItemStyle</item>
-    </style>
-
-    <!-- Set the Overflow menu's text colour. -->
-    <style name="OverflowItemStyle" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
         <item name="android:textColor">@android:color/black</item>
     </style>
 
