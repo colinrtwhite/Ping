@@ -3,7 +3,7 @@
     <dimen name="elevation_low">2dp</dimen>
     <dimen name="elevation_medium">6dp</dimen>
     <dimen name="elevation_high">10dp</dimen>
-    <dimen name="round_button_diameter">56sp</dimen>
+    <dimen name="round_button_diameter">56dp</dimen>
     <dimen name="add_button_margin">16dp</dimen>
     <dimen name="status_icon_size">48dp</dimen>
     <dimen name="status_icon_reference_margin">16dp</dimen>

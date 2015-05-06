@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.pref.SettingsActivity;
 import com.colinwhite.ping.widget.ClearableEditText;
+import com.melnykov.fab.FloatingActionButton;
 
 /**
  * The MainActivity handles the logic for all the UI elements in activity_mail.xml and is the main
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     // UI elements
     private static Toolbar mToolbar;
     private static ImageButton mPingButton;
-    private static ImageButton mFloatingButton;
+    private static FloatingActionButton mFloatingButton;
     private static ClearableEditText mClearableTextField;
     private static LinearLayout mActivityContainer;
     private static ListView mMonitorList;
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         // Set the floating button to open the MonitorDetailActivity.
-        mFloatingButton = (ImageButton) findViewById(R.id.add_button);
+        mFloatingButton = (FloatingActionButton) findViewById(R.id.add_button);
         mFloatingButton.setOnClickListener(new ImageButton.OnClickListener() {
             public void onClick(View v) {
                 // Pulse haptic feedback.

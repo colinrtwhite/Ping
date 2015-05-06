@@ -19,24 +19,16 @@
         android:orientation="horizontal"
         android:paddingBottom="10dp"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:paddingRight="10dp"
+        android:gravity="center"
+        android:elevation="@dimen/elevation_medium">
 
-        <com.colinwhite.ping.widget.ClearableEditText
-            android:id="@+id/url_text_field_quick"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="@string/initial_output_text_id"
-            android:inputType="textUri"
-            android:maxLines="1"
-            android:textSize="@dimen/abc_text_size_medium_material"
-            android:textColorHint="@android:color/white"/>
+        <include layout="@layout/url_quick_check_field"/>
 
         <ImageButton
             android:id="@+id/ping_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:background="@drawable/ripple_accent"
             android:hapticFeedbackEnabled="true"
             android:src="@drawable/ic_navigation_refresh_white"
@@ -46,8 +38,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:foreground="?android:windowContentOverlay">
         <ListView
             android:id="@+id/monitor_list"
             android:layout_width="match_parent"
@@ -55,19 +47,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true" />
 
-        <ImageButton
-            android:id="@+id/add_button"
-            android:layout_width="@dimen/round_button_diameter"
-            android:layout_height="@dimen/round_button_diameter"
-            android:layout_gravity="end|bottom"
-            android:layout_marginBottom="@dimen/add_button_margin"
-            android:layout_marginEnd="@dimen/add_button_margin"
-            android:layout_marginRight="@dimen/add_button_margin"
-            android:background="@drawable/oval"
-            android:src="@android:drawable/ic_input_add"
-            android:tint="@android:color/white"
-            android:hapticFeedbackEnabled="true"
-            tools:ignore="RtlCompat" />
+        <include layout="@layout/floating_action_button"/>
 
         <include layout="@layout/empty_list_view" />
     </FrameLayout>

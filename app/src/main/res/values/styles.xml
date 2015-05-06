@@ -5,14 +5,13 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
+        <item name="colorControlNormal">@color/accent</item>
+        <item name="colorControlActivated">@color/accent</item>
+        <item name="colorControlHighlight">@color/accent</item>
     </style>
 
     <!-- Common elements between base and v21 AppTheme. -->
     <style name="AppTheme.Common" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorControlNormal">@color/accent</item>
-        <item name="colorControlActivated">@color/accent</item>
-        <item name="colorControlHighlight">@color/accent</item>
-        <item name="android:textColor">@android:color/black</item>
     </style>
 
 </resources>
