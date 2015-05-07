@@ -10,18 +10,12 @@ import android.net.NetworkInfo;
 import com.colinwhite.ping.data.PingContract;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -138,20 +132,14 @@ public class Utility {
      * @return A long string of HTML all on one line. On error, returns an empty string.
      */
     public static String getHtml(String url) throws IOException {
-        // Set timeout values for the request.
-        HttpParams httpParams = new BasicHttpParams();
-        // Set the maximum time to connect.
-        HttpConnectionParams.setConnectionTimeout(httpParams, HTTP_REQUEST_CONNECTION_TIMEOUT);
-        // Set the socket timeout.
-        HttpConnectionParams.setSoTimeout(httpParams, HTTP_REQUEST_SOCKET_TIMEOUT);
-
-        // Build the client and the request
-        HttpClient client = new DefaultHttpClient(httpParams);
-        HttpGet request = new HttpGet(HOST + url);
-        HttpResponse response = client.execute(request);
+        // Bulid and set timeout values for the request.
+        URLConnection connection = (new URL(HOST + url)).openConnection();
+        connection.setConnectTimeout(HTTP_REQUEST_CONNECTION_TIMEOUT);
+        connection.setReadTimeout(HTTP_REQUEST_SOCKET_TIMEOUT);
+        connection.connect();
 
         // Read and store the result line by line then return the entire string.
-        InputStream in = response.getEntity().getContent();
+        InputStream in = connection.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         StringBuilder html = new StringBuilder();
         for (String line; (line = reader.readLine()) != null; ) {
