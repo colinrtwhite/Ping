@@ -3,7 +3,6 @@ package com.colinwhite.ping.data;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -77,18 +76,7 @@ public class MonitorProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown URI: " + uri);
         }
 
-        // Register a content observer so the Cursor can re-query when the database changes.
-        retCursor.registerContentObserver(new ContentObserver(null) {
-            @Override
-            public void onChange(boolean selfChange) {
-                retCursor.requery();
-            }
-
-            @Override
-            public boolean deliverSelfNotifications() {
-                return true;
-            }
-        });
+        // Set the notification URI so the Cursor can re-query when the database changes.
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
 
         return retCursor;

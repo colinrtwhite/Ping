@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private Vibrator mVibratorService;
     private MonitorAdapter mAdapter;
-    private CursorLoader mCursorLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -246,8 +245,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 MonitorEntry.TIME_LAST_CHECKED,
                 MonitorEntry.STATUS};
 
-        mCursorLoader = new CursorLoader(this, MonitorEntry.CONTENT_URI, projection, null, null, null);
-        return mCursorLoader;
+        return new CursorLoader(this, MonitorEntry.CONTENT_URI, projection, null, null, null);
     }
 
     @Override
