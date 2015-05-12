@@ -31,7 +31,7 @@
             android:layout_height="32dp"
             android:background="@drawable/ripple_accent"
             android:hapticFeedbackEnabled="true"
-            android:src="@drawable/ic_navigation_refresh_white"
+            android:src="@drawable/ic_action_search"
             android:scaleType="centerCrop"
             android:layout_weight="0"/>
     </LinearLayout>
