@@ -1,14 +1,14 @@
 package com.colinwhite.ping;
 
 import android.app.LoaderManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -38,6 +38,8 @@ import com.melnykov.fab.FloatingActionButton;
  */
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
+    private final PingServiceReceiver resultReceiver = new PingServiceReceiver(new Handler());
 
     // UI elements
     private static Toolbar mToolbar;
@@ -212,8 +214,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void startPingService(String inputText) {
         Intent pingServiceIntent = new Intent(getApplicationContext(), PingService.class);
 
-        // Add the URL from the text field to the Intent.
+        // Add the URL from the text field and the ResultReciever to the Intent.
         pingServiceIntent.putExtra(MonitorEntry.URL, inputText);
+        pingServiceIntent.putExtra(PingService.RESULT_RECEIVER_KEY, resultReceiver);
 
         // Close the virtual keyboard.
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(
@@ -222,12 +225,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         // Remove focus from mClearableTextField once URL has been entered.
         mActivityContainer.requestFocus();
-
-        // Instantiate the intent filter and the receiver to receive the output.
-        IntentFilter filter = new IntentFilter(PingServiceReceiver.ACTION_RESPONSE);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        PingServiceReceiver receiver = new PingServiceReceiver();
-        registerReceiver(receiver, filter);
 
         startService(pingServiceIntent);
     }
@@ -272,38 +269,32 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      * Simple BroadcastReceiver that is notified when the background PingService finishes and updates
      * the main TextView with the returned information.
      */
-    public class PingServiceReceiver extends BroadcastReceiver {
-        // Filter value for the receiver.
-        public static final String ACTION_RESPONSE =
-                "com.colinwhite.ping.intent.action.CHECK_UP_SERVICE_COMPLETE";
+    public class PingServiceReceiver extends ResultReceiver {
+        public PingServiceReceiver(Handler handler) { super(handler); }
 
         /**
          * Handle the status information the PingService broadcasts and display the relevant Toast
          * to the user.
          */
         @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getIntExtra(MonitorEntry.STATUS, -1)) {
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            switch (resultCode) {
                 case MonitorEntry.STATUS_IS_UP:
-                    Toast.makeText(context, R.string.is_up, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, R.string.is_up, Toast.LENGTH_LONG).show();
                     break;
                 case MonitorEntry.STATUS_IS_DOWN:
-                    Toast.makeText(context, R.string.is_down, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, R.string.is_down, Toast.LENGTH_LONG).show();
                     break;
                 case MonitorEntry.STATUS_IS_NOT_WEBSITE:
-                    Toast.makeText(context, R.string.does_not_exist, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, R.string.does_not_exist, Toast.LENGTH_LONG).show();
                     break;
                 case MonitorEntry.STATUS_NO_INTERNET:
-                    Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
                     break;
                 default:
-                    Toast.makeText(context, R.string.other, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, R.string.other, Toast.LENGTH_LONG).show();
                     break;
             }
-
-            // Don't leak the BroadcastReceiver. The receiver will be re-registered if/when we launch
-            // PingService again.
-            context.unregisterReceiver(this);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.colinwhite.ping;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.ResultReceiver;
 import android.util.Log;
 
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
  */
 public class PingService extends IntentService {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    public static final String RESULT_RECEIVER_KEY = "result_receiver";
 
     public PingService() {
         super(PingService.class.getName());
@@ -35,13 +37,16 @@ public class PingService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
-        // Recover the URL from the intent and get the returned HTML from our request.
-        String url = intent.getStringExtra(MonitorEntry.URL);
+        // Check that we have all the necessary data.
+        if (!intent.hasExtra(MonitorEntry.URL) || !intent.hasExtra(RESULT_RECEIVER_KEY)) {
+            Log.e(LOG_TAG, "Missing a ResultsReceiver or URL.");
+            return;
+        }
 
-        // Build the response intent for PingServiceReceiver.
-        Intent response = new Intent()
-                .setAction(MainActivity.PingServiceReceiver.ACTION_RESPONSE)
-                .addCategory(Intent.CATEGORY_DEFAULT);
+        String url = intent.getStringExtra(MonitorEntry.URL);
+        ResultReceiver resultReceiver = intent.getParcelableExtra(RESULT_RECEIVER_KEY);
+        int status = -1;
+
         try {
             String html = Utility.getHtml(url);
 
@@ -52,25 +57,25 @@ public class PingService extends IntentService {
 
             // Parse the HTML to find the appropriate return stats.
             if (!Utility.hasNetworkConnection(this)) {
-                response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_NO_INTERNET);
+                status =  MonitorEntry.STATUS_NO_INTERNET;
             } else if (up.matcher(html).find()) {
-                response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_IS_UP);
+                status =  MonitorEntry.STATUS_IS_UP;
             } else if (down.matcher(html).find()) {
-                response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_IS_DOWN);
+                status =  MonitorEntry.STATUS_IS_DOWN;
             } else if (doesNotExist.matcher(html).find()) {
-                response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_IS_NOT_WEBSITE);
+                status =  MonitorEntry.STATUS_IS_NOT_WEBSITE;
             } else {
                 Log.v(LOG_TAG, "Website has an unknown status.");
-                response.putExtra(MonitorEntry.STATUS, -1);
+                status = -1;
             }
         } catch (SocketTimeoutException e) {
             Log.v(LOG_TAG, "Was unable to connect to the host.");
-            response.putExtra(MonitorEntry.STATUS, MonitorEntry.STATUS_NO_INTERNET);
+            status = MonitorEntry.STATUS_NO_INTERNET;
         } catch (IOException e) {
             Log.e(LOG_TAG, "An error occurred while fetching a parsing the host's HTML.");
-            response.putExtra(MonitorEntry.STATUS, -1);
+            status = -1;
         }
 
-        sendBroadcast(response);
+        resultReceiver.send(status, null);
     }
 }
