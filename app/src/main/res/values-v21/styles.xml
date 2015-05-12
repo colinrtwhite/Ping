@@ -17,6 +17,7 @@
         <item name="android:colorAccent">@color/accent</item>
     </style>
 
+    <!-- Set the CardView selector appropriately for the OS version. -->
     <style name="CardViewStyle" parent="android:Widget.TextView">
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
     </style>

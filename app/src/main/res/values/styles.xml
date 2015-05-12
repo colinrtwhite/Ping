@@ -8,12 +8,23 @@
         <item name="colorControlNormal">@color/accent</item>
         <item name="colorControlActivated">@color/accent</item>
         <item name="colorControlHighlight">@color/accent</item>
+        <item name="android:scrollViewStyle">@style/ScrollViewStyle</item>
+        <item name="android:listViewStyle">@style/ListViewStyle</item>
     </style>
 
     <!-- Common elements between base and v21 AppTheme. -->
     <style name="AppTheme.Common" parent="Theme.AppCompat.Light.NoActionBar">
     </style>
 
+    <!-- Used to colour the scrollbar in pre-Lollipop devices. -->
+    <style name="ScrollViewStyle" parent="android:Widget.ScrollView">
+        <item name="android:scrollbarThumbVertical">@drawable/scrollbar_vertical_thumb</item>
+    </style>
+    <style name="ListViewStyle" parent="android:Widget.ListView">
+        <item name="android:scrollbarThumbVertical">@drawable/scrollbar_vertical_thumb</item>
+    </style>
+
+    <!-- Set the CardView selector appropriately for the OS version. -->
     <style name="CardViewStyle" parent="android:Widget.TextView">
         <item name="android:foreground">@drawable/ripple_accent</item>
     </style>
