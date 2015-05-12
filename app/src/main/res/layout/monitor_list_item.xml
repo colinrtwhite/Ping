@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_height="match_parent">
     <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:layout_marginLeft="4dp"
@@ -16,7 +16,6 @@
         card_view:cardUseCompatPadding="true"
         style="@style/CardViewStyle">
         <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:orientation="horizontal"
@@ -26,10 +25,10 @@
                 android:id="@+id/list_item_refresh_button"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:src="@drawable/ic_navigation_refresh_primary"
+                android:layout_margin="10dp"
                 android:layout_gravity="center"
-                android:layout_margin="12dp"
                 android:layout_weight="0"
+                android:src="@drawable/ic_navigation_refresh_primary"
                 android:background="@drawable/ripple_accent"
                 android:hapticFeedbackEnabled="true"
                 android:scaleType="centerCrop"
@@ -38,13 +37,15 @@
 
             <ProgressBar
                 android:id="@+id/progress_spinner"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_margin="12dp"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_margin="15dp"
                 style="?android:attr/progressBarStyleLarge"
                 android:visibility="gone"
                 android:scaleType="centerCrop"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/primary"
+                android:indeterminateTintMode="src_in"/>
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -57,9 +58,10 @@
                     android:id="@+id/list_item_title"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/abc_text_size_small_material"
+                    android:textSize="16sp"
                     android:padding="4dp"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:textColor="@color/accent"/>
 
                 <TextView
                     android:id="@+id/list_item_url"
@@ -67,7 +69,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/abc_text_size_caption_material"
                     android:padding="4dp"
-                    android:maxLines="1" />
+                    android:maxLines="1"/>
 
                 <TextView
                     android:id="@+id/list_item_time_last_checked"
@@ -84,7 +86,7 @@
                 android:layout_height="48dp"
                 android:layout_gravity="center"
                 android:layout_weight="0"
-                android:layout_margin="20dp"/>
+                android:layout_margin="16dp"/>
 
         </LinearLayout>
     </android.support.v7.widget.CardView>

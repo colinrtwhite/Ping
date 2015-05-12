@@ -20,6 +20,9 @@ import android.widget.Toast;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.sync.PingSyncAdapter;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * The MonitorAdapter class is a slightly modified CursorAdapter, which is used in the main ListView
  * of the MainActivity.
@@ -116,20 +119,15 @@ class MonitorAdapter extends CursorAdapter {
      * Cache of the children views for a Monitor list item.
      */
     public static class ViewHolder {
-        public final ImageButton refreshButtonView;
-        public final ProgressBar progressSpinner;
-        public final TextView titleView;
-        public final TextView urlView;
-        public final TextView lastCheckedView;
-        public final ImageView statusView;
+        @InjectView(R.id.list_item_refresh_button) ImageButton refreshButtonView;
+        @InjectView(R.id.progress_spinner) ProgressBar progressSpinner;
+        @InjectView(R.id.list_item_title) TextView titleView;
+        @InjectView(R.id.list_item_url) TextView urlView;
+        @InjectView(R.id.list_item_time_last_checked) TextView lastCheckedView;
+        @InjectView(R.id.list_item_status) ImageView statusView;
 
         public ViewHolder(View view) {
-            refreshButtonView = (ImageButton) view.findViewById(R.id.list_item_refresh_button);
-            progressSpinner = (ProgressBar) view.findViewById(R.id.progress_spinner);
-            titleView = (TextView) view.findViewById(R.id.list_item_title);
-            urlView = (TextView) view.findViewById(R.id.list_item_url);
-            lastCheckedView = (TextView) view.findViewById(R.id.list_item_time_last_checked);
-            statusView = (ImageView) view.findViewById(R.id.list_item_status);
+            ButterKnife.inject(this, view);
         }
     }
 }

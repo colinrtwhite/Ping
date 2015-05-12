@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.pref.SettingsActivity;
 import com.colinwhite.ping.widget.ClearableEditText;
+import com.melnykov.fab.FloatingActionButton;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -113,6 +114,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mAdapter = new MonitorAdapter(this, null, 0);
         monitorList.setAdapter(mAdapter);
         getLoaderManager().initLoader(1, null, this);
+
+        // Attach the FAB to the ListView.
+        FloatingActionButton addButton = (FloatingActionButton) findViewById(R.id.add_button);
+        addButton.attachToListView(monitorList);
     }
 
     @Override
