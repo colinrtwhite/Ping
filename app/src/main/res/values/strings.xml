@@ -62,5 +62,10 @@
     <string name="error_poor_connection">Ping! couldn\'t connect to the host. Check your internet connection.</string>
     <string name="empty_list_view_header">What\'s a Monitor?</string>
     <string name="error">An internal error occurred.</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sort_by_date_created">Sort by date created</string>
+    <string name="sort_by_last_checked">Sort by last checked</string>
+    <string name="sort_by_name">Sort by name</string>
+    <string name="sort_by_current_state">Sort by current state</string>
 
 </resources>

@@ -17,23 +17,26 @@
         android:layout_height="wrap_content"
         android:background="@color/primary"
         android:orientation="horizontal"
+        android:paddingTop="2dp"
         android:paddingBottom="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:gravity="center"
         android:elevation="@dimen/elevation_medium">
 
-        <include layout="@layout/url_quick_check_field"/>
-
         <ImageButton
             android:id="@+id/ping_button"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="3dp"
             android:background="@drawable/ripple_accent"
             android:hapticFeedbackEnabled="true"
-            android:src="@drawable/ic_action_search"
+            android:src="@drawable/ic_navigation_refresh_white"
             android:scaleType="centerCrop"
             android:layout_weight="0"/>
+
+        <include layout="@layout/url_quick_check_field"/>
     </LinearLayout>
 
     <FrameLayout

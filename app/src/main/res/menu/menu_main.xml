@@ -2,15 +2,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
+
+    <item
+        android:icon="@drawable/ic_action_content_sort"
+        android:title="@string/sort_by"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/sort_by_date_created"
+                android:title="@string/sort_by_date_created" />
+            <item
+                android:id="@+id/sort_by_last_checked"
+                android:title="@string/sort_by_last_checked" />
+            <item
+                android:id="@+id/sort_by_name"
+                android:title="@string/sort_by_name" />
+            <item
+                android:id="@+id/sort_by_state"
+                android:title="@string/sort_by_current_state" />
+        </menu>
+    </item>
+
     <item
         android:id="@+id/action_icon_reference"
-        android:orderInCategory="100"
         android:title="@string/action_icon_reference"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="200"
         android:title="@string/action_settings"
         app:showAsAction="never" />
 </menu>

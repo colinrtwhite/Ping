@@ -41,12 +41,12 @@
                 android:layout_width="46dp"
                 android:layout_height="46dp"
                 android:layout_margin="15dp"
-                style="?android:attr/progressBarStyleLarge"
                 android:visibility="gone"
                 android:scaleType="centerCrop"
                 android:layout_gravity="center"
                 android:indeterminateTint="@color/primary"
-                android:indeterminateTintMode="src_in"/>
+                android:indeterminateTintMode="src_in"
+                style="?android:attr/progressBarStyleLarge"/>
 
             <LinearLayout
                 android:layout_width="fill_parent"

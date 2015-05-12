@@ -30,7 +30,6 @@ public class MonitorProvider extends ContentProvider {
             MonitorEntry.STATUS,
             MonitorEntry.LAST_NON_ERROR_STATUS,
             MonitorEntry.IS_LOADING};
-    private static final String sortOrder = PingContract.MonitorEntry._ID + " DESC";
     private static PingDbHelper dbHelper;
 
     private static UriMatcher buildUriMatcher() {
@@ -61,7 +60,7 @@ public class MonitorProvider extends ContentProvider {
                         PingContract.MonitorEntry.TABLE_NAME,
                         MonitorProvider.projection,
                         null, null, null, null,
-                        MonitorProvider.sortOrder);
+                        sortOrder);
                 break;
             case MONITOR_BY_ID:
                 retCursor = dbHelper.getReadableDatabase().query(
@@ -70,7 +69,7 @@ public class MonitorProvider extends ContentProvider {
                         selection,
                         selectionArgs,
                         null, null,
-                        MonitorProvider.sortOrder);
+                        sortOrder);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown URI: " + uri);

@@ -8,7 +8,7 @@
     android:hint="@string/initial_output_text_id"
     android:inputType="textUri"
     android:maxLines="1"
-    android:textSize="@dimen/abc_text_size_medium_material"
+    android:textSize="@dimen/text_size_large"
     android:textColor="@android:color/white"
     android:textColorHint="@android:color/white"
     android:drawableRight="@drawable/ic_content_clear" />

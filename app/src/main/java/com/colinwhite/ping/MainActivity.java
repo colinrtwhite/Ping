@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -41,10 +43,13 @@ import butterknife.OnClick;
  */
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String PREF_SORT_ORDER_ID = "sort_order_pref";
+    private static final String PREF_SORT_ORDER_DEFAULT_VALUE = MonitorEntry._ID + " DESC";
 
     private final PingServiceReceiver resultReceiver = new PingServiceReceiver(new Handler());
-    private Vibrator mVibratorService;
-    private MonitorAdapter mAdapter;
+    private SharedPreferences sharedPref;
+    private Vibrator vibratorService;
+    private MonitorAdapter monitorAdapter;
 
     // UI elements
     @InjectView(R.id.toolbar) Toolbar toolbar;
@@ -58,8 +63,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         ButterKnife.inject(this);
         setSupportActionBar(toolbar);
 
-        // Get the service for haptic feedback.
-        mVibratorService = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        // Get classes for vibration and preferences.
+        vibratorService = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Give the same logic to the "enter" key on the soft keyboard while in the EditText.
         clearableEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -111,9 +117,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         });
 
         // Initialise the Loader for the ListView.
-        mAdapter = new MonitorAdapter(this, null, 0);
-        monitorList.setAdapter(mAdapter);
-        getLoaderManager().initLoader(1, null, this);
+        monitorAdapter = new MonitorAdapter(this, null, 0);
+        monitorList.setAdapter(monitorAdapter);
+        getLoaderManager().initLoader(0, null, this);
 
         // Attach the FAB to the ListView.
         FloatingActionButton addButton = (FloatingActionButton) findViewById(R.id.add_button);
@@ -130,17 +136,29 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (id == R.id.action_icon_reference) {
-            startActivity(new Intent(this, IconReferenceActivity.class));
-            return true;
-        } else if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
+        switch (item.getItemId()) {
+            case R.id.sort_by_date_created:
+                sharedPref.edit().putString(PREF_SORT_ORDER_ID, MonitorEntry._ID + " DESC").apply();
+                getLoaderManager().restartLoader(0, null, this);
+                return true;
+            case R.id.sort_by_name:
+                sharedPref.edit().putString(PREF_SORT_ORDER_ID, MonitorEntry.TITLE + " ASC").apply();
+                getLoaderManager().restartLoader(0, null, this);
+                return true;
+            case R.id.sort_by_last_checked:
+                sharedPref.edit().putString(PREF_SORT_ORDER_ID, MonitorEntry.TIME_LAST_CHECKED + " DESC").apply();
+                getLoaderManager().restartLoader(0, null, this);
+                return true;
+            case R.id.sort_by_state:
+                sharedPref.edit().putString(PREF_SORT_ORDER_ID, MonitorEntry.STATUS + " DESC").apply();
+                getLoaderManager().restartLoader(0, null, this);
+                return true;
+            case R.id.action_icon_reference:
+                startActivity(new Intent(this, IconReferenceActivity.class));
+                return true;
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -200,26 +218,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 MonitorEntry.TIME_LAST_CHECKED,
                 MonitorEntry.STATUS};
 
-        return new CursorLoader(this, MonitorEntry.CONTENT_URI, projection, null, null, null);
+        return new CursorLoader(this, MonitorEntry.CONTENT_URI, projection, null, null,
+                sharedPref.getString(PREF_SORT_ORDER_ID, PREF_SORT_ORDER_DEFAULT_VALUE));
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Try and show the data.
-        if (mAdapter != null && data != null) {
-            mAdapter.swapCursor(data);
+        if (monitorAdapter != null && data != null) {
+            monitorAdapter.swapCursor(data);
         } else {
-            Log.v(LOG_TAG, "OnLoadFinished: mAdapter is null.");
+            Log.v(LOG_TAG, "OnLoadFinished: monitorAdapter is null.");
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         // Try and show the data.
-        if (mAdapter != null) {
-            mAdapter.swapCursor(null);
+        if (monitorAdapter != null) {
+            monitorAdapter.swapCursor(null);
         } else {
-            Log.v(LOG_TAG, "OnLoadFinished: mAdapter is null.");
+            Log.v(LOG_TAG, "OnLoadFinished: monitorAdapter is null.");
         }
     }
 
@@ -259,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @OnClick(R.id.ping_button)
     public void onPingButtonClick() {
         // Pulse haptic feedback.
-        mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+        vibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
 
         String inputText = clearableEditText.getText().toString();
         if (isValidInput(inputText)) {
@@ -270,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @OnClick(R.id.add_button)
     public void onFabClick() {
         // Pulse haptic feedback.
-        mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+        vibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
 
         // Pass the value of the EditText to MonitorDetailActivity.
         Intent monitorDetailActivityIntent = new Intent(getApplicationContext(),
