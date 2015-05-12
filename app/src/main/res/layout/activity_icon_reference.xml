@@ -31,11 +31,20 @@
                     android:layout_weight="0"
                     android:layout_margin="@dimen/status_icon_reference_margin"/>
 
+                <ImageView
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/primary"/>
+
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_margin="@dimen/icon_explanation_margin"
                     android:layout_weight="0"
+                    android:paddingLeft="4dp"
                     android:gravity="center_vertical"
                     android:text="@string/icon_explanation_is_up"
                     android:textSize="@dimen/abc_text_size_caption_material"/>
@@ -54,11 +63,20 @@
                     android:layout_weight="0"
                     android:layout_margin="@dimen/status_icon_reference_margin"/>
 
+                <ImageView
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/primary"/>
+
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_margin="@dimen/icon_explanation_margin"
                     android:layout_weight="0"
+                    android:paddingLeft="4dp"
                     android:gravity="center_vertical"
                     android:text="@string/icon_explanation_is_down"
                     android:textSize="@dimen/abc_text_size_caption_material"/>
@@ -77,11 +95,20 @@
                     android:layout_weight="0"
                     android:layout_margin="@dimen/status_icon_reference_margin"/>
 
+                <ImageView
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/primary"/>
+
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_margin="@dimen/icon_explanation_margin"
                     android:layout_weight="0"
+                    android:paddingLeft="4dp"
                     android:gravity="center_vertical"
                     android:text="@string/icon_explanation_no_info"
                     android:textSize="@dimen/abc_text_size_caption_material"/>
@@ -100,11 +127,20 @@
                     android:layout_weight="0"
                     android:layout_margin="@dimen/status_icon_reference_margin"/>
 
+                <ImageView
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/primary"/>
+
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_margin="@dimen/icon_explanation_margin"
                     android:layout_weight="0"
+                    android:paddingLeft="4dp"
                     android:gravity="center_vertical"
                     android:text="@string/icon_explanation_is_not_website"
                     android:textSize="@dimen/abc_text_size_caption_material"/>
@@ -123,21 +159,36 @@
                     android:layout_weight="0"
                     android:layout_margin="@dimen/status_icon_reference_margin"/>
 
+                <ImageView
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/primary"/>
+
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_margin="@dimen/icon_explanation_margin"
                     android:layout_weight="0"
+                    android:paddingLeft="4dp"
                     android:gravity="center_vertical"
                     android:text="@string/icon_explanation_no_internet"
                     android:textSize="@dimen/abc_text_size_caption_material"/>
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_margin="10dp"
+                android:background="@color/primary"/>
+
             <TextView
                 android:id="@+id/text_view_host"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="20dp"
                 android:textSize="@dimen/abc_text_size_small_material"
                 android:gravity="center" />
