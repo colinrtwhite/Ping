@@ -41,7 +41,7 @@ import butterknife.OnClick;
  * The MainActivity handles the logic for all the UI elements in activity_mail.xml and is the main
  * landing page for the app.
  */
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final String PREF_SORT_ORDER_ID = "sort_order_pref";
     private static final String PREF_SORT_ORDER_DEFAULT_VALUE = MonitorEntry._ID + " DESC";
@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Get classes for vibration and preferences.
         vibratorService = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        sharedPref.registerOnSharedPreferenceChangeListener(this);
 
         // Give the same logic to the "enter" key on the soft keyboard while in the EditText.
         clearableEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -127,6 +129,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(PREF_SORT_ORDER_ID)) {
+            getLoaderManager().restartLoader(0, null, MainActivity.this);
+        } else if (key.equals(getString(R.string.pref_key_24_hour_clock))) {
+            monitorAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -139,19 +150,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         switch (item.getItemId()) {
             case R.id.sort_by_date_created:
                 sharedPref.edit().putString(PREF_SORT_ORDER_ID, MonitorEntry._ID + " DESC").apply();
-                getLoaderManager().restartLoader(0, null, this);
                 return true;
             case R.id.sort_by_name:
                 sharedPref.edit().putString(PREF_SORT_ORDER_ID, MonitorEntry.TITLE + " ASC").apply();
-                getLoaderManager().restartLoader(0, null, this);
                 return true;
             case R.id.sort_by_last_checked:
                 sharedPref.edit().putString(PREF_SORT_ORDER_ID, MonitorEntry.TIME_LAST_CHECKED + " DESC").apply();
-                getLoaderManager().restartLoader(0, null, this);
                 return true;
             case R.id.sort_by_state:
                 sharedPref.edit().putString(PREF_SORT_ORDER_ID, MonitorEntry.STATUS + " DESC").apply();
-                getLoaderManager().restartLoader(0, null, this);
                 return true;
             case R.id.action_icon_reference:
                 startActivity(new Intent(this, IconReferenceActivity.class));
