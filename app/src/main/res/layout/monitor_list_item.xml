@@ -36,17 +36,7 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"/>
 
-            <ProgressBar
-                android:id="@+id/progress_spinner"
-                android:layout_width="46dp"
-                android:layout_height="46dp"
-                android:layout_margin="15dp"
-                android:visibility="gone"
-                android:scaleType="centerCrop"
-                android:layout_gravity="center"
-                android:indeterminateTint="@color/primary"
-                android:indeterminateTintMode="src_in"
-                style="?android:attr/progressBarStyleLarge"/>
+            <include layout="@layout/progress_bar"/>
 
             <LinearLayout
                 android:layout_width="fill_parent"

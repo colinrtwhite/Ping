@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -120,7 +119,7 @@ class MonitorAdapter extends CursorAdapter {
      */
     public static class ViewHolder {
         @InjectView(R.id.list_item_refresh_button) ImageButton refreshButtonView;
-        @InjectView(R.id.progress_spinner) ProgressBar progressSpinner;
+        @InjectView(R.id.progress_bar) View progressSpinner;
         @InjectView(R.id.list_item_title) TextView titleView;
         @InjectView(R.id.list_item_url) TextView urlView;
         @InjectView(R.id.list_item_time_last_checked) TextView lastCheckedView;
