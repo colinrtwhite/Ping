@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -39,6 +40,7 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
@@ -169,6 +171,18 @@ public class MonitorDetailActivity extends AppCompatActivity {
     }
 
     /**
+     * Simple helper method that sets the output of time picker with respect to the user's Android
+     * version.
+     */
+    private void setTimePickerOutput(Date time) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            timePickerOutput.setText(timeFormat.format(time) + getString(R.string.approximately_tag));
+        } else {
+            timePickerOutput.setText(timeFormat.format(time));
+        }
+    }
+
+    /**
      * Build the elements necessary to update a Monitor's details/delete it.
      */
     private void buildDetailPageElements() {
@@ -223,7 +237,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
         if (endDateInMillis != MonitorEntry.END_TIME_NONE) {
             selectedDateTime.setTimeInMillis(endDateInMillis);
             datePickerOutput.setText(dateFormat.format(selectedDateTime.getTime()));
-            timePickerOutput.setText(timeFormat.format(selectedDateTime.getTime()) + getString(R.string.approximately_tag));
+            setTimePickerOutput(selectedDateTime.getTime());
             isDatePickerSet = true;
             isTimePickerSet = true;
         }
@@ -322,8 +336,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
                 selectedDateTime.set(Calendar.MINUTE, minute);
 
                 // Set the output TextView's text.
-                timePickerOutput.setText(timeFormat.format(selectedDateTime.getTime()) +
-                        getString(R.string.approximately_tag));
+                setTimePickerOutput(selectedDateTime.getTime());
                 isTimePickerSet = true;
             }
         };
