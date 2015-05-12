@@ -9,12 +9,12 @@ import android.os.IBinder;
  */
 public class PingAuthenticatorService extends Service {
     // Instance field that stores the authenticator object.
-    private PingAuthenticator mAuthenticator;
+    private PingAuthenticator authenticator;
 
     @Override
     public void onCreate() {
         // Create a new authenticator object.
-        mAuthenticator = new PingAuthenticator(this);
+        authenticator = new PingAuthenticator(this);
     }
 
     /*
@@ -22,6 +22,6 @@ public class PingAuthenticatorService extends Service {
      */
     @Override
     public IBinder onBind(Intent intent) {
-        return mAuthenticator.getIBinder();
+        return authenticator.getIBinder();
     }
 }

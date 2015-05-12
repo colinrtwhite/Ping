@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,7 +29,10 @@ import android.widget.Toast;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.pref.SettingsActivity;
 import com.colinwhite.ping.widget.ClearableEditText;
-import com.melnykov.fab.FloatingActionButton;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * The MainActivity handles the logic for all the UI elements in activity_mail.xml and is the main
@@ -40,57 +42,31 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private final PingServiceReceiver resultReceiver = new PingServiceReceiver(new Handler());
-
-    // UI elements
-    private static Toolbar mToolbar;
-    private static ImageButton mPingButton;
-    private static FloatingActionButton mFloatingButton;
-    private static ClearableEditText mClearableTextField;
-    private static LinearLayout mActivityContainer;
-    private static ListView mMonitorList;
-
     private Vibrator mVibratorService;
     private MonitorAdapter mAdapter;
+
+    // UI elements
+    @InjectView(R.id.toolbar) Toolbar toolbar;
+    @InjectView(R.id.url_text_field_quick) ClearableEditText clearableEditText;
+    @InjectView(R.id.activity_container) LinearLayout activityContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Get the top level View of this Activity.
-        mActivityContainer = (LinearLayout) findViewById(R.id.activity_container);
-
-        // Attach the main_toolbar to the activity.
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (mToolbar != null) {
-            setSupportActionBar(mToolbar);
-        }
+        ButterKnife.inject(this);
+        setSupportActionBar(toolbar);
 
         // Get the service for haptic feedback.
         mVibratorService = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
-        // Set the onClickListener for the ping button to attempt to start the PingService.
-        mPingButton = (ImageButton) findViewById(R.id.ping_button);
-        mPingButton.setOnClickListener(new ImageButton.OnClickListener() {
-            public void onClick(View v) {
-                // Pulse haptic feedback.
-                mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
-
-                String inputText = mClearableTextField.getText().toString();
-                if (isValidInput(inputText)) {
-                    startPingService(inputText);
-                }
-            }
-        });
-
         // Give the same logic to the "enter" key on the soft keyboard while in the EditText.
-        mClearableTextField = (ClearableEditText) findViewById(R.id.url_text_field_quick);
-        mClearableTextField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        clearableEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean isConfirm =
                         (actionId == EditorInfo.IME_ACTION_DONE) ||
                                 (actionId == EditorInfo.IME_ACTION_NEXT);
-                String inputText = mClearableTextField.getText().toString();
+                String inputText = clearableEditText.getText().toString();
                 if (isConfirm && isValidInput(inputText)) {
                     startPingService(inputText);
                 }
@@ -110,55 +86,32 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 }
 
                 startPingService(url);
-                mClearableTextField.setText(url);
+                clearableEditText.setText(url);
             }
         }
 
-        // Set the floating button to open the MonitorDetailActivity.
-        mFloatingButton = (FloatingActionButton) findViewById(R.id.add_button);
-        mFloatingButton.setOnClickListener(new ImageButton.OnClickListener() {
-            public void onClick(View v) {
-                // Pulse haptic feedback.
-                mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
-
-                // Pass the value of the EditText to MonitorDetailActivity.
-                Intent monitorDetailActivityIntent = new Intent(getApplicationContext(),
-                        MonitorDetailActivity.class);
-                String text = mClearableTextField.getText().toString();
-                if (!text.isEmpty()) {
-                    monitorDetailActivityIntent.putExtra(MonitorEntry.URL, text);
-                }
-
-                // Show that we are creating a new Monitor.
-                monitorDetailActivityIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
-                        MonitorDetailActivity.PAGE_CREATE);
-
-                startActivity(monitorDetailActivityIntent);
-            }
-        });
-
         // Set the text that is shown when the list of monitors is empty.
-        mMonitorList = (ListView) findViewById(R.id.monitor_list);
-        mMonitorList.setEmptyView(findViewById(R.id.empty_monitor_list));
+        ListView monitorList = (ListView) findViewById(R.id.monitor_list);
+        monitorList.setEmptyView(findViewById(R.id.empty_monitor_list));
 
         // Set the any items in the Monitor ListView to open up their detail activity.
-        mMonitorList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        monitorList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent monitorDetailActivityIntent = new Intent(getApplicationContext(), MonitorDetailActivity.class);
+                Intent monitorDetailIntent = new Intent(getApplicationContext(), MonitorDetailActivity.class);
                 // Show that we are looking at an existing Monitor.
-                monitorDetailActivityIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
+                monitorDetailIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
                         MonitorDetailActivity.PAGE_DETAIL);
-                monitorDetailActivityIntent.putExtra(MonitorEntry._ID, id);
-                monitorDetailActivityIntent.putExtra(MonitorEntry.URL, ((TextView) view.findViewById(R.id.list_item_url)).getText());
+                monitorDetailIntent.putExtra(MonitorEntry._ID, id);
+                monitorDetailIntent.putExtra(MonitorEntry.URL, ((TextView) view.findViewById(R.id.list_item_url)).getText());
 
-                startActivity(monitorDetailActivityIntent);
+                startActivity(monitorDetailIntent);
             }
         });
 
         // Initialise the Loader for the ListView.
         mAdapter = new MonitorAdapter(this, null, 0);
-        mMonitorList.setAdapter(mAdapter);
+        monitorList.setAdapter(mAdapter);
         getLoaderManager().initLoader(1, null, this);
     }
 
@@ -221,10 +174,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Close the virtual keyboard.
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(
                 Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(mClearableTextField.getWindowToken(), 0);
+        inputMethodManager.hideSoftInputFromWindow(clearableEditText.getWindowToken(), 0);
 
-        // Remove focus from mClearableTextField once URL has been entered.
-        mActivityContainer.requestFocus();
+        // Remove focus from clearableEditText once URL has been entered.
+        activityContainer.requestFocus();
 
         startService(pingServiceIntent);
     }
@@ -296,5 +249,36 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     break;
             }
         }
+    }
+
+    @OnClick(R.id.ping_button)
+    public void onPingButtonClick() {
+        // Pulse haptic feedback.
+        mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+
+        String inputText = clearableEditText.getText().toString();
+        if (isValidInput(inputText)) {
+            startPingService(inputText);
+        }
+    }
+
+    @OnClick(R.id.add_button)
+    public void onFabClick() {
+        // Pulse haptic feedback.
+        mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+
+        // Pass the value of the EditText to MonitorDetailActivity.
+        Intent monitorDetailActivityIntent = new Intent(getApplicationContext(),
+                MonitorDetailActivity.class);
+        String text = clearableEditText.getText().toString();
+        if (!text.isEmpty()) {
+            monitorDetailActivityIntent.putExtra(MonitorEntry.URL, text);
+        }
+
+        // Show that we are creating a new Monitor.
+        monitorDetailActivityIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
+                MonitorDetailActivity.PAGE_CREATE);
+
+        startActivity(monitorDetailActivityIntent);
     }
 }

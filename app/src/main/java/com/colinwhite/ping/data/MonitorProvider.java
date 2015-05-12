@@ -15,12 +15,12 @@ import com.colinwhite.ping.data.PingContract.MonitorEntry;
  */
 public class MonitorProvider extends ContentProvider {
     // The URI Matcher used by this content provider.
-    private static final UriMatcher mUriMatcher = buildUriMatcher();
+    private static final UriMatcher uriMatcher = buildUriMatcher();
     private static final int MONITOR = 0;
     private static final int MONITOR_BY_ID = 1;
 
     // SQL-related objects (needs to follow what is laid out in MonitorEntry),
-    private static final String[] mProjection = {
+    private static final String[] projection = {
             MonitorEntry._ID,
             MonitorEntry.TITLE,
             MonitorEntry.URL,
@@ -30,8 +30,8 @@ public class MonitorProvider extends ContentProvider {
             MonitorEntry.STATUS,
             MonitorEntry.LAST_NON_ERROR_STATUS,
             MonitorEntry.IS_LOADING};
-    private static final String mSortOrder = PingContract.MonitorEntry._ID + " DESC";
-    private static PingDbHelper mDbHelper;
+    private static final String sortOrder = PingContract.MonitorEntry._ID + " DESC";
+    private static PingDbHelper dbHelper;
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -45,7 +45,7 @@ public class MonitorProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        mDbHelper = new PingDbHelper(getContext());
+        dbHelper = new PingDbHelper(getContext());
         return true;
     }
 
@@ -55,22 +55,22 @@ public class MonitorProvider extends ContentProvider {
         // and query the database accordingly.
         final Cursor retCursor;
 
-        switch (mUriMatcher.match(uri)) {
+        switch (uriMatcher.match(uri)) {
             case MONITOR:
-                retCursor = mDbHelper.getReadableDatabase().query(
+                retCursor = dbHelper.getReadableDatabase().query(
                         PingContract.MonitorEntry.TABLE_NAME,
-                        mProjection,
+                        MonitorProvider.projection,
                         null, null, null, null,
-                        mSortOrder);
+                        MonitorProvider.sortOrder);
                 break;
             case MONITOR_BY_ID:
-                retCursor = mDbHelper.getReadableDatabase().query(
+                retCursor = dbHelper.getReadableDatabase().query(
                         PingContract.MonitorEntry.TABLE_NAME,
-                        mProjection,
+                        MonitorProvider.projection,
                         selection,
                         selectionArgs,
                         null, null,
-                        mSortOrder);
+                        MonitorProvider.sortOrder);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown URI: " + uri);
@@ -85,7 +85,7 @@ public class MonitorProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         // Use the Uri Matcher to determine what kind of URI this is.
-        final int match = mUriMatcher.match(uri);
+        final int match = uriMatcher.match(uri);
 
         switch (match) {
             case MONITOR:
@@ -99,8 +99,8 @@ public class MonitorProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        final int match = mUriMatcher.match(uri);
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+        final int match = uriMatcher.match(uri);
         Uri returnUri;
 
         switch (match) {
@@ -118,8 +118,8 @@ public class MonitorProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        final int match = mUriMatcher.match(uri);
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+        final int match = uriMatcher.match(uri);
         int rowsDeleted;
 
         switch (match) {
@@ -139,8 +139,8 @@ public class MonitorProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        final int match = mUriMatcher.match(uri);
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+        final int match = uriMatcher.match(uri);
         int rowsUpdated;
 
         switch (match) {

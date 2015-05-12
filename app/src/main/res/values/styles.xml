@@ -14,4 +14,8 @@
     <style name="AppTheme.Common" parent="Theme.AppCompat.Light.NoActionBar">
     </style>
 
+    <style name="CardViewStyle" parent="android:Widget.TextView">
+        <item name="android:foreground">@drawable/ripple_accent</item>
+    </style>
+
 </resources>

@@ -45,7 +45,7 @@ public class PingService extends IntentService {
 
         String url = intent.getStringExtra(MonitorEntry.URL);
         ResultReceiver resultReceiver = intent.getParcelableExtra(RESULT_RECEIVER_KEY);
-        int status = -1;
+        int status;
 
         try {
             String html = Utility.getHtml(url);

@@ -44,8 +44,16 @@
             android:id="@+id/monitor_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:visibility="gone"
+            android:clipToPadding="false"
+            android:listSelector="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
             android:focusable="true"
-            android:focusableInTouchMode="true" />
+            android:focusableInTouchMode="true"/>
 
         <include layout="@layout/floating_action_button"/>
 

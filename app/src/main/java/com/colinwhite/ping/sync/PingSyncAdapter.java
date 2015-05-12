@@ -40,29 +40,29 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String LOG_TAG = PingSyncAdapter.class.getSimpleName();
 
     // The SQL selection string is always the same.
-    private static final String mSelection = MonitorEntry._ID + " = ?";
+    private static final String selection = MonitorEntry._ID + " = ?";
 
     // UI elements
-    private static Context mContext;
-    private static Pattern mUpPattern, mDownPattern, mDoesNotExistPattern;
-    private static ContentResolver mContentResolver;
-    private static SharedPreferences mSharedPref;
-    private static String mClockTypeKey;
-    private static String mDisableNotificationsKey;
+    private static Context context;
+    private static Pattern upPattern, downPattern, doesNotExistPattern;
+    private static ContentResolver contentResolver;
+    private static SharedPreferences sharedPref;
+    private static String clockTypeKey;
+    private static String disableNotificationsKey;
 
     public PingSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
-        mContext = context;
-        mContentResolver = context.getContentResolver();
+        PingSyncAdapter.context = context;
+        contentResolver = context.getContentResolver();
 
         // Pre-compile the parsing patterns.
-        mUpPattern = Pattern.compile("It's just you.");
-        mDownPattern = Pattern.compile("It's not just you!");
-        mDoesNotExistPattern = Pattern.compile("doesn't look like a site on the interwho.");
+        upPattern = Pattern.compile("It's just you.");
+        downPattern = Pattern.compile("It's not just you!");
+        doesNotExistPattern = Pattern.compile("doesn't look like a site on the interwho.");
 
-        mSharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        mClockTypeKey = context.getString(R.string.pref_key_24_hour_clock);
-        mDisableNotificationsKey = context.getString(R.string.pref_key_disable_notifications);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        clockTypeKey = context.getString(R.string.pref_key_24_hour_clock);
+        disableNotificationsKey = context.getString(R.string.pref_key_disable_notifications);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             isNowLoadingValue.put(MonitorEntry.IS_LOADING, true);
             String selection = MonitorEntry._ID + " = ?";
             String[] selectionArgs = {String.valueOf(monitorId)};
-            mContentResolver.update(MonitorEntry.CONTENT_URI, isNowLoadingValue, selection, selectionArgs);
+            contentResolver.update(MonitorEntry.CONTENT_URI, isNowLoadingValue, selection, selectionArgs);
 
             // Recover the URL from the intent and get the returned HTML from our request.
             String url = extras.getString(MonitorEntry.URL);
@@ -91,11 +91,11 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
 
             // Match the HTML returned from the host.
             int status;
-            if (mUpPattern.matcher(html).find()) {
+            if (upPattern.matcher(html).find()) {
                 status = MonitorEntry.STATUS_IS_UP;
-            } else if (mDownPattern.matcher(html).find()) {
+            } else if (downPattern.matcher(html).find()) {
                 status = MonitorEntry.STATUS_IS_DOWN;
-            } else if (mDoesNotExistPattern.matcher(html).find()) {
+            } else if (doesNotExistPattern.matcher(html).find()) {
                 status = MonitorEntry.STATUS_IS_NOT_WEBSITE;
             } else {
                 // We couldn't complete the network request.
@@ -109,10 +109,10 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                     MonitorEntry.TITLE,
                     MonitorEntry.STATUS,
                     MonitorEntry.LAST_NON_ERROR_STATUS};
-            Cursor cursor = mContentResolver.query(
+            Cursor cursor = contentResolver.query(
                     MonitorEntry.buildUri(monitorId),
                     projection,
-                    mSelection,
+                    PingSyncAdapter.selection,
                     selectionArgs,
                     null);
             cursor.moveToFirst();
@@ -121,7 +121,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
 
             // Only trigger a notification if:
             // The user has not disabled notifications in the preferences.
-            if (!mSharedPref.getBoolean(mDisableNotificationsKey, false) &&
+            if (!sharedPref.getBoolean(disableNotificationsKey, false) &&
                     // The previous status was not "no information."
                     previousStatus != 0 &&
                     // The previous status is not the same as the current one.
@@ -152,7 +152,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                 values.put(MonitorEntry.LAST_NON_ERROR_STATUS, status);
             }
 
-            mContentResolver.update(MonitorEntry.CONTENT_URI, values, mSelection, selectionArgs);
+            contentResolver.update(MonitorEntry.CONTENT_URI, values, PingSyncAdapter.selection, selectionArgs);
         } catch (Exception e) {
             // If any problems occur while syncing simply record an error in the Log, cancel the sync,
             // and try again next time.
@@ -164,7 +164,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             values.put(MonitorEntry.TIME_LAST_CHECKED, Calendar.getInstance().getTimeInMillis());
             values.put(MonitorEntry.STATUS, MonitorEntry.STATUS_NO_INTERNET);
             String[] selectionArgs = {String.valueOf(extras.getInt(MonitorEntry._ID))};
-            mContentResolver.update(MonitorEntry.CONTENT_URI, values, mSelection, selectionArgs);
+            contentResolver.update(MonitorEntry.CONTENT_URI, values, selection, selectionArgs);
         }
     }
 
@@ -186,24 +186,24 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
         }
 
         String notificationText = String.format(
-                mContext.getString(R.string.notification_text),
+                context.getString(R.string.notification_text),
                 title,
                 statusStr,
-                Utility.formatDate(timeLastChecked, mSharedPref.getBoolean(mClockTypeKey, false)));
+                Utility.formatDate(timeLastChecked, sharedPref.getBoolean(clockTypeKey, false)));
 
         // Get the Monitor's status icon.
-        Bitmap largeIcon = BitmapFactory.decodeResource(mContext.getResources(),
+        Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(),
                 Utility.getStatusIcon(status));
         // Scale the large icon to prevent cropping if we are running any version below Lollipop.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+            DisplayMetrics metrics = context.getResources().getDisplayMetrics();
             float multiplier = (float)(metrics.density / 3f * 0.5);
             largeIcon = Bitmap.createScaledBitmap(largeIcon, (int)(largeIcon.getWidth() * multiplier), (int)(largeIcon.getHeight() * multiplier), false);
         }
 
         // Set the large notification icon to the Monitor's current status and small icon to the
         // bitmap of the app logo.
-        Notification.Builder notificationBuilder = new Notification.Builder(mContext)
+        Notification.Builder notificationBuilder = new Notification.Builder(context)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(largeIcon)
                 .setPriority(Notification.PRIORITY_HIGH)
@@ -212,12 +212,12 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
 
         // Set the small icon colour if we are running Lollipop.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            notificationBuilder.setColor(mContext.getResources().getColor(R.color.primary));
+            notificationBuilder.setColor(context.getResources().getColor(R.color.primary));
         }
 
         // Construct artificial back stack.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
-        Intent monitorDetailActivityIntent = new Intent(mContext, MonitorDetailActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        Intent monitorDetailActivityIntent = new Intent(context, MonitorDetailActivity.class);
         monitorDetailActivityIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
                 MonitorDetailActivity.PAGE_DETAIL);
         monitorDetailActivityIntent.putExtra(MonitorEntry._ID, (long) monitorId);
@@ -228,7 +228,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
         notificationBuilder.setContentIntent(detailPendingIntent);
 
         // Send the notification.
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(monitorId, notificationBuilder.build());
     }
 

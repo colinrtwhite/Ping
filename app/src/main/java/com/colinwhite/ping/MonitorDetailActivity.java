@@ -41,6 +41,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * The MonitorDetailActivity handles the layouts and logic for both when the user wants to
  * create a new Monitor and when the select an additional Monitor to see its info/edit it. Thus,
@@ -61,94 +64,84 @@ public class MonitorDetailActivity extends AppCompatActivity {
     public static final String PAGE_DETAIL = "PAGE_DETAIL";
 
     // Fields that are used in the database.
-    private static EditText mTitleField;
-    private static EditText mUrlField;
-    private static SeekBar mPingFrequency;
-    private static Calendar mSelectedDateTime;
+    @InjectView(R.id.create_monitor_title) EditText titleField;
+    @InjectView(R.id.url_text_field_create) EditText urlField;
+    @InjectView(R.id.ping_frequency_seek_bar) SeekBar pingFrequency;
+    private Calendar selectedDateTime;
 
     // Other UI elements
-    private static Toolbar mToolbar;
-    private static ImageView mStatusIcon;
-    private static TextView mDatePickerOutput;
-    private static TextView mTimePickerOutput;
-    private static DatePickerDialog mDatePickerDialog;
-    private static TimePickerDialog mTimePickerDialog;
-    private static TextView mPingFrequencyExplanation;
-    private static Switch mDatePickerSwitch;
-    private static TextView mExpirationDateExplanation;
-    private static TextView mLastCheckedField;
-    private static AlertDialog mWhyApproximateDialog;
+    @InjectView(R.id.toolbar) Toolbar toolbar;
+    @InjectView(R.id.status_icon) ImageView statusIcon;
+    @InjectView(R.id.date_picker_output) TextView datePickerOutput;
+    @InjectView(R.id.time_picker_output) TextView timePickerOutput;
+    @InjectView(R.id.ping_frequency_explanation) TextView pingFrequencyExplanation;
+    @InjectView(R.id.date_picker_switch) Switch datePickerSwitch;
+    @InjectView(R.id.expiration_date_explanation) TextView expirationDateExplanation;
+    @InjectView(R.id.detail_last_checked_text) TextView lastCheckedField;
+    private DatePickerDialog datePickerDialog;
+    private TimePickerDialog timePickerDialog;
+    private AlertDialog whyApproximateDialog;
 
     // Only used on DETAIL pages
-    private static AlertDialog mConfirmDeleteDialog;
-    private ContentValues mValues;
-    private boolean mHasEndDate = false;
-    private boolean mIsTimePickerSet = false;
-    private boolean mIsDatePickerSet = false;
+    private AlertDialog confirmDeleteDialog;
+    private ContentValues values;
+    private boolean hasEndDate = false;
+    private boolean isTimePickerSet = false;
+    private boolean isDatePickerSet = false;
 
-    private Vibrator mVibratorService;
-    private Intent mStartIntent;
-    private SimpleDateFormat mDateFormat;
-    private SimpleDateFormat mTimeFormat;
+    private Vibrator vibratorService;
+    private Intent startIntent;
+    private SimpleDateFormat dateFormat;
+    private SimpleDateFormat timeFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor_detail);
+        ButterKnife.inject(this);
 
-        // Set up the Toolbar.
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         try {
-            setSupportActionBar(mToolbar);
+            // Set up the Toolbar.
+            setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (NullPointerException e) {
             Toast.makeText(this, getString(R.string.error), Toast.LENGTH_LONG).show();
             finish();
         }
 
-        // Initialise some UI elements.
-        mUrlField = (EditText) findViewById(R.id.url_text_field_create);
-        mTitleField = (EditText) findViewById(R.id.create_monitor_title);
-        mPingFrequency = (SeekBar) findViewById(R.id.ping_frequency_seek_bar);
-        mDatePickerOutput = (TextView) findViewById(R.id.date_picker_output);
-        mTimePickerOutput = (TextView) findViewById(R.id.time_picker_output);
-        mExpirationDateExplanation = (TextView) findViewById(R.id.expiration_date_explanation);
-        mPingFrequencyExplanation = (TextView) findViewById(R.id.ping_frequency_explanation);
-        mDatePickerSwitch = (Switch) findViewById(R.id.date_picker_switch);
-        mStatusIcon = (ImageView) findViewById(R.id.status_icon);
-        mLastCheckedField = (TextView) findViewById(R.id.detail_last_checked_text);
+        // Get the service for haptic feedback.
+        vibratorService = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
         // Initialise the formats of the date and time pickers and get the date picker's initial date.
-        mDateFormat = new SimpleDateFormat(DATE_FORMAT);
+        dateFormat = new SimpleDateFormat(DATE_FORMAT);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPref.getBoolean(getString(R.string.pref_key_24_hour_clock), false)) {
-            mTimeFormat = new SimpleDateFormat(Utility.TIME_FORMAT_24_HOURS);
+            timeFormat = new SimpleDateFormat(Utility.TIME_FORMAT_24_HOURS);
         } else {
-            mTimeFormat = new SimpleDateFormat(Utility.TIME_FORMAT_12_HOURS);
+            timeFormat = new SimpleDateFormat(Utility.TIME_FORMAT_12_HOURS);
         }
-        mSelectedDateTime = Calendar.getInstance();
-        mSelectedDateTime.set(Calendar.SECOND, 0);
-        mSelectedDateTime.set(Calendar.MILLISECOND, 0);
-
-        // Get the service for haptic feedback.
-        mVibratorService = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        selectedDateTime = Calendar.getInstance();
+        selectedDateTime.set(Calendar.SECOND, 0);
+        selectedDateTime.set(Calendar.MILLISECOND, 0);
 
         // Set the ping frequency SeekBar to update its explanation TextField when its progress changes.
-        mPingFrequency.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        pingFrequency.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 setPingFrequencyExplanation(progress);
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) { /* Do nothing. */ }
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) { /* Do nothing. */ }
         });
 
         // Change UI elements and data whether we are creating or updating/looking at a Monitor.
         // Default to a creation activity.
-        mStartIntent = getIntent();
-        if (mStartIntent.getStringExtra(PAGE_TYPE_ID).equals(PAGE_DETAIL)) {
+        startIntent = getIntent();
+        if (startIntent.getStringExtra(PAGE_TYPE_ID).equals(PAGE_DETAIL)) {
             buildDetailPageElements();
         } else {
             buildCreatePageElements();
@@ -156,7 +149,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
 
         // Build the dialog, which explains why ping frequencies and expiration dates can't be exact.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        mWhyApproximateDialog = builder.setMessage(getString(R.string.dialog_explain_approximate_message))
+        whyApproximateDialog = builder.setMessage(getString(R.string.dialog_explain_approximate_message))
                 .setCancelable(false)
                 .setPositiveButton(getString(R.string.dialog_explain_approximate_okay),
                         new DialogInterface.OnClickListener() {
@@ -183,7 +176,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
         setTitle(R.string.monitor_detail_activity_title);
 
         // Get the ID of the Monitor.
-        final long monitorId = mStartIntent.getLongExtra(MonitorEntry._ID, -1);
+        final long monitorId = startIntent.getLongExtra(MonitorEntry._ID, -1);
         if (monitorId == -1) {
             Log.e(LOG_TAG, "Intent does not contain a Monitor ID.");
             onBackPressed(); // Close the activity.
@@ -206,53 +199,52 @@ public class MonitorDetailActivity extends AppCompatActivity {
 
         // Store all the initial values.
         cursor.moveToFirst();
-        mValues = new ContentValues();
-        mValues.put(MonitorEntry._ID, cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)));
-        mValues.put(MonitorEntry.TITLE, cursor.getString(cursor.getColumnIndex(MonitorEntry.TITLE)));
-        mValues.put(MonitorEntry.URL, cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)));
-        mValues.put(MonitorEntry.PING_FREQUENCY, cursor.getInt(cursor.getColumnIndex(MonitorEntry.PING_FREQUENCY)));
-        mValues.put(MonitorEntry.END_TIME, cursor.getLong(cursor.getColumnIndex(MonitorEntry.END_TIME)));
-        mValues.put(MonitorEntry.TIME_LAST_CHECKED, cursor.getLong(cursor.getColumnIndex(MonitorEntry.TIME_LAST_CHECKED)));
-        mValues.put(MonitorEntry.STATUS, cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS)));
+        values = new ContentValues();
+        values.put(MonitorEntry._ID, cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)));
+        values.put(MonitorEntry.TITLE, cursor.getString(cursor.getColumnIndex(MonitorEntry.TITLE)));
+        values.put(MonitorEntry.URL, cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)));
+        values.put(MonitorEntry.PING_FREQUENCY, cursor.getInt(cursor.getColumnIndex(MonitorEntry.PING_FREQUENCY)));
+        values.put(MonitorEntry.END_TIME, cursor.getLong(cursor.getColumnIndex(MonitorEntry.END_TIME)));
+        values.put(MonitorEntry.TIME_LAST_CHECKED, cursor.getLong(cursor.getColumnIndex(MonitorEntry.TIME_LAST_CHECKED)));
+        values.put(MonitorEntry.STATUS, cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS)));
         cursor.close();
 
         // Populate all the user-accessible fields.
-        final String title = (String) mValues.get(MonitorEntry.TITLE);
-        mTitleField.setText(title);
-        final String url = (String) mValues.get(MonitorEntry.URL);
-        mUrlField.setText(url);
-        final int pingFrequency = (int) mValues.get(MonitorEntry.PING_FREQUENCY);
-        mPingFrequency.setProgress(pingFrequency);
-        setPingFrequencyExplanation(pingFrequency);
+        final String title = (String) values.get(MonitorEntry.TITLE);
+        titleField.setText(title);
+        final String url = (String) values.get(MonitorEntry.URL);
+        urlField.setText(url);
+        final int progress = (int) values.get(MonitorEntry.PING_FREQUENCY);
+        pingFrequency.setProgress(progress);
+        setPingFrequencyExplanation(progress);
 
         // Populate the endDate, only if one already exists.
-        long endDateInMillis = (long) mValues.get(MonitorEntry.END_TIME);
+        long endDateInMillis = (long) values.get(MonitorEntry.END_TIME);
         if (endDateInMillis != MonitorEntry.END_TIME_NONE) {
-            mSelectedDateTime.setTimeInMillis(endDateInMillis);
-            mDatePickerOutput.setText(mDateFormat.format(mSelectedDateTime.getTime()));
-            mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()) +
-                    getString(R.string.approximately_tag));
-            mIsDatePickerSet = true;
-            mIsTimePickerSet = true;
+            selectedDateTime.setTimeInMillis(endDateInMillis);
+            datePickerOutput.setText(dateFormat.format(selectedDateTime.getTime()));
+            timePickerOutput.setText(timeFormat.format(selectedDateTime.getTime()) + getString(R.string.approximately_tag));
+            isDatePickerSet = true;
+            isTimePickerSet = true;
         }
 
         // Initiate the confirmation dialog for when the delete button is pressed.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final Context context = this;
-        mConfirmDeleteDialog = builder.setMessage(R.string.dialog_confirm_delete)
+        confirmDeleteDialog = builder.setMessage(R.string.dialog_confirm_delete)
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Delete the Monitor's database entry and its sync account then close the activity.
-                        int monitorId = (int) mValues.get(MonitorEntry._ID);
+                        int monitorId = (int) values.get(MonitorEntry._ID);
                         final String selection = MonitorEntry._ID + " = ?";
                         final String[] selectionArgs = {String.valueOf(monitorId)};
                         getContentResolver().delete(MonitorEntry.CONTENT_URI, selection, selectionArgs);
                         PingSyncAdapter.removePeriodicSync(
                                 context,
-                                mStartIntent.getStringExtra(MonitorEntry.URL),
+                                startIntent.getStringExtra(MonitorEntry.URL),
                                 monitorId);
                         // If the Monitor had a removal alarm set, delete it.
-                        long endDate = (long) mValues.get(MonitorEntry.END_TIME);
+                        long endDate = (long) values.get(MonitorEntry.END_TIME);
                         if (endDate != MonitorEntry.END_TIME_NONE) {
                             Utility.deleteRemovalAlarm(context, monitorId);
                         }
@@ -266,22 +258,22 @@ public class MonitorDetailActivity extends AppCompatActivity {
                 }).create();
 
         // Set the status icon.
-        mStatusIcon.setImageDrawable(ContextCompat.getDrawable(context,
-                Utility.getStatusIcon((int) mValues.get(MonitorEntry.STATUS))));
-        // NOTE: mLastCheckedField and mStatusIcon do not update if the database changes.
+        statusIcon.setImageDrawable(ContextCompat.getDrawable(context,
+                Utility.getStatusIcon((int) values.get(MonitorEntry.STATUS))));
+        // NOTE: lastCheckedField and statusIcon do not update if the database changes.
         // Format the time last checked and place it in the resource string.
-        long timeLastChecked = (long) mValues.get(MonitorEntry.TIME_LAST_CHECKED);
-        mLastCheckedField.setVisibility(View.VISIBLE);
+        long timeLastChecked = (long) values.get(MonitorEntry.TIME_LAST_CHECKED);
+        lastCheckedField.setVisibility(View.VISIBLE);
         if (timeLastChecked != MonitorEntry.TIME_LAST_CHECKED_NONE) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             String formattedTime = Utility.formatDate(timeLastChecked,
                     sharedPref.getBoolean(getString(R.string.pref_key_24_hour_clock), false));
-            mLastCheckedField.setText(String.format(
+            lastCheckedField.setText(String.format(
                     getString(R.string.last_checked_text),
                     formattedTime));
         } else {
             // If timeLastChecked is 0, it hasn't been checked yet.
-            mLastCheckedField.setText(getString(R.string.last_checked_text_no_info));
+            lastCheckedField.setText(getString(R.string.last_checked_text_no_info));
         }
     }
 
@@ -290,12 +282,12 @@ public class MonitorDetailActivity extends AppCompatActivity {
      */
     private void buildCreatePageElements() {
         // Set the URL EditText to the value passed in the Intent, if it exists.
-        if (mStartIntent.hasExtra(MonitorEntry.URL)) {
-            mUrlField.setText(mStartIntent.getStringExtra(MonitorEntry.URL));
+        if (startIntent.hasExtra(MonitorEntry.URL)) {
+            urlField.setText(startIntent.getStringExtra(MonitorEntry.URL));
         }
 
         // Set the initial ping frequency values.
-        mPingFrequency.setProgress(PING_FREQUENCY_ON_CREATE);
+        pingFrequency.setProgress(PING_FREQUENCY_ON_CREATE);
         setPingFrequencyExplanation(PING_FREQUENCY_ON_CREATE);
     }
 
@@ -304,20 +296,20 @@ public class MonitorDetailActivity extends AppCompatActivity {
      */
     private void setExpirationDateElements() {
         // Set the Switch to change the visibility of the pickers and explanation.
-        mDatePickerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        datePickerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 int visibility = (isChecked) ? View.VISIBLE : View.GONE;
-                mDatePickerOutput.setVisibility(visibility);
-                mTimePickerOutput.setVisibility(visibility);
-                mExpirationDateExplanation.setVisibility(visibility);
-                mHasEndDate = isChecked;
+                datePickerOutput.setVisibility(visibility);
+                timePickerOutput.setVisibility(visibility);
+                expirationDateExplanation.setVisibility(visibility);
+                hasEndDate = isChecked;
             }
         });
 
         // Set the Monitor's preference if this is a DETAIL page.
-        if (mStartIntent.getStringExtra(PAGE_TYPE_ID).equals(PAGE_DETAIL)) {
-            mDatePickerSwitch.setChecked(((long)mValues.get(MonitorEntry.END_TIME))
+        if (startIntent.getStringExtra(PAGE_TYPE_ID).equals(PAGE_DETAIL)) {
+            datePickerSwitch.setChecked(((long) values.get(MonitorEntry.END_TIME))
                     != MonitorEntry.END_TIME_NONE);
         }
 
@@ -326,27 +318,27 @@ public class MonitorDetailActivity extends AppCompatActivity {
         final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                mSelectedDateTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                mSelectedDateTime.set(Calendar.MINUTE, minute);
+                selectedDateTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                selectedDateTime.set(Calendar.MINUTE, minute);
 
                 // Set the output TextView's text.
-                mTimePickerOutput.setText(mTimeFormat.format(mSelectedDateTime.getTime()) +
+                timePickerOutput.setText(timeFormat.format(selectedDateTime.getTime()) +
                         getString(R.string.approximately_tag));
-                mIsTimePickerSet = true;
+                isTimePickerSet = true;
             }
         };
 
         // Set the TimePicker to popup when the TextField is clicked.
-        mTimePickerDialog = new TimePickerDialog(
+        timePickerDialog = new TimePickerDialog(
                 this,
                 time,
-                mSelectedDateTime.get(Calendar.HOUR_OF_DAY),
-                mSelectedDateTime.get(Calendar.MINUTE),
+                selectedDateTime.get(Calendar.HOUR_OF_DAY),
+                selectedDateTime.get(Calendar.MINUTE),
                 false);
-        mTimePickerOutput.setOnClickListener(new View.OnClickListener() {
+        timePickerOutput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTimePickerDialog.show();
+                timePickerDialog.show();
             }
         });
 
@@ -355,27 +347,27 @@ public class MonitorDetailActivity extends AppCompatActivity {
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                mSelectedDateTime.set(Calendar.YEAR, year);
-                mSelectedDateTime.set(Calendar.MONTH, month);
-                mSelectedDateTime.set(Calendar.DAY_OF_MONTH, day);
+                selectedDateTime.set(Calendar.YEAR, year);
+                selectedDateTime.set(Calendar.MONTH, month);
+                selectedDateTime.set(Calendar.DAY_OF_MONTH, day);
 
                 // Set the output TextView's text.
-                mDatePickerOutput.setText(mDateFormat.format(mSelectedDateTime.getTime()));
-                mIsDatePickerSet = true;
+                datePickerOutput.setText(dateFormat.format(selectedDateTime.getTime()));
+                isDatePickerSet = true;
             }
         };
 
         // Set the DatePicker to popup when the TextField is clicked.
-        mDatePickerDialog = new DatePickerDialog(
+        datePickerDialog = new DatePickerDialog(
                 this,
                 date,
-                mSelectedDateTime.get(Calendar.YEAR),
-                mSelectedDateTime.get(Calendar.MONTH),
-                mSelectedDateTime.get(Calendar.DAY_OF_MONTH));
-        mDatePickerOutput.setOnClickListener(new View.OnClickListener() {
+                selectedDateTime.get(Calendar.YEAR),
+                selectedDateTime.get(Calendar.MONTH),
+                selectedDateTime.get(Calendar.DAY_OF_MONTH));
+        datePickerOutput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatePickerDialog.show();
+                datePickerDialog.show();
             }
         });
     }
@@ -388,15 +380,15 @@ public class MonitorDetailActivity extends AppCompatActivity {
      */
     private void saveAllFields(String pageType, int monitorId) {
         ContentValues values = new ContentValues();
-        values.put(MonitorEntry.TITLE, mTitleField.getText().toString());
-        String url = mUrlField.getText().toString();
+        values.put(MonitorEntry.TITLE, titleField.getText().toString());
+        String url = urlField.getText().toString();
         values.put(MonitorEntry.URL, url);
-        values.put(MonitorEntry.PING_FREQUENCY, mPingFrequency.getProgress());
-        long endDate = (mHasEndDate) ? mSelectedDateTime.getTimeInMillis() : MonitorEntry.END_TIME_NONE;
+        values.put(MonitorEntry.PING_FREQUENCY, pingFrequency.getProgress());
+        long endDate = (hasEndDate) ? selectedDateTime.getTimeInMillis() : MonitorEntry.END_TIME_NONE;
         values.put(MonitorEntry.END_TIME, endDate);
         // If this is a detail page and the URL has changed, invalidate the last checked time and status.
-        if (PAGE_DETAIL.equals(mStartIntent.getStringExtra(PAGE_TYPE_ID)) &&
-                !mValues.get(MonitorEntry.URL).equals(url)) {
+        if (PAGE_DETAIL.equals(startIntent.getStringExtra(PAGE_TYPE_ID)) &&
+                !this.values.get(MonitorEntry.URL).equals(url)) {
             values.put(MonitorEntry.TIME_LAST_CHECKED, MonitorEntry.TIME_LAST_CHECKED_NONE);
             values.put(MonitorEntry.STATUS, MonitorEntry.STATUS_NO_INFO);
         }
@@ -410,10 +402,10 @@ public class MonitorDetailActivity extends AppCompatActivity {
             // Remove the current periodic sync timer for this Monitor, later we create a new one.
             PingSyncAdapter.removePeriodicSync(
                     this,
-                    mStartIntent.getStringExtra(MonitorEntry.URL),
+                    startIntent.getStringExtra(MonitorEntry.URL),
                     monitorId);
             // If the Monitor previously had a removal alarm set, delete it.
-            if (((long)mValues.get(MonitorEntry.END_TIME)) != MonitorEntry.END_TIME_NONE) {
+            if (((long) this.values.get(MonitorEntry.END_TIME)) != MonitorEntry.END_TIME_NONE) {
                 Utility.deleteRemovalAlarm(this, monitorId);
             }
         } else {
@@ -426,13 +418,13 @@ public class MonitorDetailActivity extends AppCompatActivity {
         }
 
         // Don't create a sync timer for the last ping frequency option.
-        if (mPingFrequency.getProgress() != mPingFrequency.getMax()) {
+        if (pingFrequency.getProgress() != pingFrequency.getMax()) {
             // Create the new sync timer for the Monitor.
             PingSyncAdapter.createPeriodicSync(
                     this,
-                    mUrlField.getText().toString(),
+                    urlField.getText().toString(),
                     monitorId,
-                    (int) TimeUnit.MINUTES.toSeconds(PING_FREQUENCY_MINUTES[mPingFrequency.getProgress()]));
+                    (int) TimeUnit.MINUTES.toSeconds(PING_FREQUENCY_MINUTES[pingFrequency.getProgress()]));
             // If the Monitor has been set to never ping automatically, don't add a removal alarm.
             if (endDate != MonitorEntry.END_TIME_NONE) {
                 Utility.addRemovalAlarm(this, monitorId, endDate);
@@ -442,7 +434,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
             PingSyncAdapter.syncImmediately(
                     this,
                     PingSyncAdapter.getSyncAccount(this),
-                    mUrlField.getText().toString(),
+                    urlField.getText().toString(),
                     monitorId);
         }
 
@@ -451,12 +443,12 @@ public class MonitorDetailActivity extends AppCompatActivity {
 
     /**
      * Given the current progress of the ping frequency SeekBar, set the text of
-     * mPingFrequencyExplanation to match.
-     * @param progress A valid progress value from mPingFrequencyExplanation.
+     * pingFrequencyExplanation to match.
+     * @param progress A valid progress value from pingFrequencyExplanation.
      */
     private void setPingFrequencyExplanation(int progress) {
-        if (progress == mPingFrequency.getMax()) {
-            mPingFrequencyExplanation.setText(R.string.ping_explanation_never);
+        if (progress == pingFrequency.getMax()) {
+            pingFrequencyExplanation.setText(R.string.ping_explanation_never);
             return;
         }
         long duration = TimeUnit.MINUTES.toMillis(PING_FREQUENCY_MINUTES[progress]);
@@ -469,12 +461,12 @@ public class MonitorDetailActivity extends AppCompatActivity {
         // Set the result as the explanation TextField for the frequency SeekBar.
         if (progress == 0) {
             formattedStr += getString(R.string.ping_frequency_warning);
-            mPingFrequencyExplanation.setText(Html.fromHtml(formattedStr));
+            pingFrequencyExplanation.setText(Html.fromHtml(formattedStr));
         } else {
-            mPingFrequencyExplanation.setText(formattedStr);
+            pingFrequencyExplanation.setText(formattedStr);
         }
 
-        mPingFrequencyExplanation.setText(Html.fromHtml(formattedStr));
+        pingFrequencyExplanation.setText(Html.fromHtml(formattedStr));
     }
 
     @Override
@@ -483,12 +475,12 @@ public class MonitorDetailActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_detail_monitor, menu);
 
         // Get the Toolbar button references.
-        Menu toolbarMenu = mToolbar.getMenu();
+        Menu toolbarMenu = toolbar.getMenu();
         MenuItem saveButton = toolbarMenu.findItem(R.id.action_content_save);
         MenuItem deleteButton = toolbarMenu.findItem(R.id.action_delete);
 
         // Set the visibility and titles of the Toolbar buttons depending on the page type.
-        if (PAGE_DETAIL.equals(mStartIntent.getStringExtra(PAGE_TYPE_ID))) {
+        if (PAGE_DETAIL.equals(startIntent.getStringExtra(PAGE_TYPE_ID))) {
             saveButton.setTitle(R.string.save_button_title);
             deleteButton.setVisible(true);
         } else {
@@ -506,13 +498,13 @@ public class MonitorDetailActivity extends AppCompatActivity {
         switch (id) {
             case R.id.action_content_save:
                 // Pulse haptic feedback.
-                mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+                vibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
 
                 if (isValidInput()) {
-                    if (PAGE_DETAIL.equals(mStartIntent.getStringExtra(PAGE_TYPE_ID))) {
+                    if (PAGE_DETAIL.equals(startIntent.getStringExtra(PAGE_TYPE_ID))) {
                         // Update all fields. Don't bother to check, as it takes more time than to
                         // just update all the possible columns.
-                        saveAllFields(PAGE_DETAIL, (int) mValues.get(MonitorEntry._ID));
+                        saveAllFields(PAGE_DETAIL, (int) values.get(MonitorEntry._ID));
                     } else {
                         // Create a new entry in the database and close the activity.
                         saveAllFields(PAGE_CREATE, -1);
@@ -521,13 +513,13 @@ public class MonitorDetailActivity extends AppCompatActivity {
                 return true;
             case R.id.action_delete:
                 // Pulse haptic feedback.
-                mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+                vibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
 
                 // Show confirmation dialog.
-                mConfirmDeleteDialog.show();
+                confirmDeleteDialog.show();
                 return true;
             case R.id.action_explain_approximate:
-                mWhyApproximateDialog.show();
+                whyApproximateDialog.show();
                 return true;
             case android.R.id.home:
                 onBackPressed();
@@ -542,29 +534,29 @@ public class MonitorDetailActivity extends AppCompatActivity {
      * @return Whether all input on the page is valid.
      */
     private boolean isValidInput() {
-        String url = mUrlField.getText().toString();
+        String url = urlField.getText().toString();
 
-        if ("".equals(mTitleField.getText().toString())) {
+        if ("".equals(titleField.getText().toString())) {
             Toast.makeText(this, getString(R.string.invalid_input_title), Toast.LENGTH_LONG).show();
             return false;
         } else if ("".equals(url)) {
             Toast.makeText(this, getString(R.string.invalid_input_url_empty), Toast.LENGTH_LONG).show();
             return false;
-        } else if (!Patterns.WEB_URL.matcher(mUrlField.getText().toString()).matches()) {
+        } else if (!Patterns.WEB_URL.matcher(urlField.getText().toString()).matches()) {
             Toast.makeText(this, getString(R.string.invalid_input_url), Toast.LENGTH_LONG).show();
             return false;
-        } else if (mDatePickerSwitch.isChecked()) {
+        } else if (datePickerSwitch.isChecked()) {
             // Check both the time field and the date field.
-            if (mPingFrequency.getProgress() == mPingFrequency.getMax()) {
+            if (pingFrequency.getProgress() == pingFrequency.getMax()) {
                 Toast.makeText(this, getString(R.string.invalid_input_ping_frequency), Toast.LENGTH_LONG).show();
                 return false;
-            } else if (!mIsTimePickerSet) {
+            } else if (!isTimePickerSet) {
                 Toast.makeText(this, getString(R.string.invalid_input_time), Toast.LENGTH_LONG).show();
                 return false;
-            } else if (!mIsDatePickerSet) {
+            } else if (!isDatePickerSet) {
                 Toast.makeText(this, getString(R.string.invalid_input_date), Toast.LENGTH_LONG).show();
                 return false;
-            } else if (Calendar.getInstance().after(mSelectedDateTime)) {
+            } else if (Calendar.getInstance().after(selectedDateTime)) {
                 Toast.makeText(this, getString(R.string.invalid_input_date_before_now), Toast.LENGTH_LONG).show();
                 return false;
             }
@@ -581,7 +573,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
                 // a different ID from the current one (i.e. they are not the same Monitor).
                 if (url.equals(cursor.getString(cursor.getColumnIndex(MonitorEntry.URL))) &&
                         cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)) !=
-                                (int)mStartIntent.getLongExtra(MonitorEntry._ID, -1)) {
+                                (int) startIntent.getLongExtra(MonitorEntry._ID, -1)) {
                     Toast.makeText(this, getString(R.string.invalid_input_url_uniqueness), Toast.LENGTH_LONG).show();
                     return false;
                 }

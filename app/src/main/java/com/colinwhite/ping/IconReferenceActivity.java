@@ -19,10 +19,9 @@ public class IconReferenceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_icon_reference);
 
-        // Set up the Toolbar.
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         try {
-            setSupportActionBar(toolbar);
+            // Set up the Toolbar.
+            setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (NullPointerException e) {
             Toast.makeText(this, getString(R.string.error), Toast.LENGTH_LONG).show();

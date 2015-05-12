@@ -18,8 +18,7 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
  * manual refresh.
  */
 public class SyncRemovalService extends IntentService {
-    private final String[] mProjection = {PingContract.MonitorEntry.URL};
-    private final String mSelection = PingContract.MonitorEntry._ID + " = ?";
+    private final String[] projection = {PingContract.MonitorEntry.URL};
 
     public SyncRemovalService() { super(SyncRemovalService.class.getName()); }
     public SyncRemovalService(String name) { super(name); }
@@ -35,10 +34,11 @@ public class SyncRemovalService extends IntentService {
         // Get the specific Monitor's data.
         final String[] selectionArgs = {String.valueOf(monitorId)};
         ContentResolver contentResolver = getContentResolver();
+        String selection = MonitorEntry._ID + " = ?";
         Cursor cursor = contentResolver.query(
                 MonitorEntry.buildUri(monitorId),
-                mProjection,
-                mSelection,
+                projection,
+                selection,
                 selectionArgs,
                 null);
         cursor.moveToFirst();
@@ -59,6 +59,6 @@ public class SyncRemovalService extends IntentService {
                 monitorId);
         cursor.close();
 
-        contentResolver.update(MonitorEntry.CONTENT_URI, values, mSelection, selectionArgs);
+        contentResolver.update(MonitorEntry.CONTENT_URI, values, selection, selectionArgs);
     }
 }

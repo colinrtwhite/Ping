@@ -25,10 +25,13 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
  * of the MainActivity.
  */
 class MonitorAdapter extends CursorAdapter {
-    private static Vibrator mVibratorService;
+    private static Vibrator vibratorService;
 
     public MonitorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
+
+        // Get the service for haptic feedback.
+        vibratorService = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     @Override
@@ -36,9 +39,6 @@ class MonitorAdapter extends CursorAdapter {
         View view = LayoutInflater.from(context).inflate(R.layout.monitor_list_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
-
-        // Get the service for haptic feedback.
-        mVibratorService = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
         return view;
     }
@@ -67,7 +67,7 @@ class MonitorAdapter extends CursorAdapter {
                 @Override
                 public void onClick(View v) {
                     // Pulse haptic feedback.
-                    mVibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+                    vibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
 
                     if (Utility.hasNetworkConnection(context)) {
                         // Refresh the Monitor right now.

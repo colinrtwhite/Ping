@@ -19,6 +19,7 @@ public class PingCheckBoxPreference extends CheckBoxPreference {
     public PingCheckBoxPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
+
     public PingCheckBoxPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
