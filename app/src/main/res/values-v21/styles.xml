@@ -6,9 +6,6 @@
         <item name="android:colorAccent">@color/accent</item>
         <item name="android:dialogTheme">@style/AppTheme.DialogTheme</item>
         <item name="android:alertDialogTheme">@style/AppTheme.DialogTheme</item>
-        <item name="android:colorControlNormal">@color/accent</item>
-        <item name="android:colorControlActivated">@color/accent</item>
-        <item name="android:colorControlHighlight">@color/accent</item>
     </style>
 
     <style name="AppTheme.DialogTheme" parent="Theme.AppCompat.Light.Dialog">
