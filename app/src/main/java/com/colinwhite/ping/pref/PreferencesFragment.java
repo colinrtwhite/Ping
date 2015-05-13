@@ -14,7 +14,7 @@ import com.colinwhite.ping.R;
  * SettingsFragment loads the preferences from preferences.xml and reduces the in-built padding
  * on the preferences ListView.
  */
-public class SettingsFragment extends PreferenceFragment {
+public class PreferencesFragment extends PreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +30,8 @@ public class SettingsFragment extends PreferenceFragment {
         if (view != null) {
             ListView preferences = (ListView) view.findViewById(android.R.id.list);
             preferences.setPadding(0, 0, 0, 0);
+            preferences.setDividerHeight(0);
+            preferences.setDivider(null);
         }
         return view;
     }

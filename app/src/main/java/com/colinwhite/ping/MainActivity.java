@@ -29,7 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
-import com.colinwhite.ping.pref.SettingsActivity;
+import com.colinwhite.ping.pref.PreferencesActivity;
 import com.colinwhite.ping.widget.ClearableEditText;
 import com.melnykov.fab.FloatingActionButton;
 
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 startActivity(new Intent(this, IconReferenceActivity.class));
                 return true;
             case R.id.action_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
+                startActivity(new Intent(this, PreferencesActivity.class));
                 return true;
         }
 

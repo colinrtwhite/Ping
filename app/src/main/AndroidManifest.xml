@@ -45,7 +45,7 @@
         </activity>
 
         <activity
-            android:name=".pref.SettingsActivity"
+            android:name=".pref.PreferencesActivity"
             android:label="@string/settings_activity_label"/>
 
         <activity

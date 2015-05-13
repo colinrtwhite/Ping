@@ -4,7 +4,7 @@
         android:key="@string/pref_key_24_hour_clock"
         android:title="@string/pref_24_hour_clock_title"
         android:summary="@string/pref_24_hour_clock"
-        android:defaultValue="false" />
+        android:defaultValue="false"/>
 
     <CheckBoxPreference
         android:key="@string/pref_key_disable_notifications"

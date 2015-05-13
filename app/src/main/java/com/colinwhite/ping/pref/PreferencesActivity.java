@@ -11,7 +11,7 @@ import com.colinwhite.ping.R;
 /**
  * Loads the SettingsFragment and manages the back button.
  */
-public class SettingsActivity extends AppCompatActivity {
+public class PreferencesActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +28,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Display the fragment as the main content.
         getFragmentManager().beginTransaction()
-                .replace(R.id.pref_frame, new SettingsFragment())
+                .replace(R.id.pref_frame, new PreferencesFragment())
                 .commit();
     }
 
