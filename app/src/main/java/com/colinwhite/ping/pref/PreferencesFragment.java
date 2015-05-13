@@ -30,8 +30,6 @@ public class PreferencesFragment extends PreferenceFragment {
         if (view != null) {
             ListView preferences = (ListView) view.findViewById(android.R.id.list);
             preferences.setPadding(0, 0, 0, 0);
-            preferences.setDividerHeight(0);
-            preferences.setDivider(null);
         }
         return view;
     }
