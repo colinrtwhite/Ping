@@ -282,9 +282,8 @@ public class MonitorDetailActivity extends AppCompatActivity {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             String formattedTime = Utility.formatDate(timeLastChecked,
                     sharedPref.getBoolean(getString(R.string.pref_key_24_hour_clock), false));
-            lastCheckedField.setText(String.format(
-                    getString(R.string.last_checked_text),
-                    formattedTime));
+            lastCheckedField.setText(Html.fromHtml(String.format(getString(R.string.last_checked_text),
+                    formattedTime)));
         } else {
             // If timeLastChecked is 0, it hasn't been checked yet.
             lastCheckedField.setText(getString(R.string.last_checked_text_no_info));

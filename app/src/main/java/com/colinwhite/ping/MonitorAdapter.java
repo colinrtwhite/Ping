@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,8 +103,8 @@ class MonitorAdapter extends CursorAdapter {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
             String formattedTime = Utility.formatDate(timeLastCheckedMillis,
                     sharedPref.getBoolean(context.getString(R.string.pref_key_24_hour_clock), false));
-            viewHolder.lastCheckedView.setText(String.format(
-                    context.getString(R.string.last_checked_text), formattedTime));
+            viewHolder.lastCheckedView.setText(Html.fromHtml(
+                    String.format(context.getString(R.string.last_checked_text), formattedTime)));
         } else {
             // If timeLastCheckedMillis is 0, it hasn't been checked yet.
             viewHolder.lastCheckedView.setText(context.getResources().getString(R.string.last_checked_text_no_info));

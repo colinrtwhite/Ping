@@ -23,7 +23,7 @@
     <string name="content_authority" translatable="false">com.colinwhite.ping</string>
     <string name="monitor_detail_activity_title">Edit Monitor</string>
     <string name="save_button_title">Update</string>
-    <string name="last_checked_text">Last checked at %s.</string>
+    <string name="last_checked_text"><![CDATA[Last checked at <i>%s</i>.]]></string>
     <string name="last_checked_text_no_info">This will be checked soon.</string>
     <string name="notification_text" formatted="false">%s is %s as of %s.</string>
     <string name="expiration_date_explanation">Set the date and time you would like the Monitor to stop pinging automatically.</string>
