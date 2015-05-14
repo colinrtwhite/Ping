@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @InjectView(R.id.toolbar) Toolbar toolbar;
     @InjectView(R.id.url_text_field_quick) ClearableEditText clearableEditText;
     @InjectView(R.id.activity_container) LinearLayout activityContainer;
+    @InjectView(R.id.swiper_container) SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,17 +123,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        // Initialise the Loader for the ListView.
-        monitorAdapter = new MonitorAdapter(this, null, 0);
-        monitorList.setAdapter(monitorAdapter);
-        getLoaderManager().initLoader(0, null, this);
-
-        // Attach the FAB to the ListView.
-        FloatingActionButton addButton = (FloatingActionButton) findViewById(R.id.add_button);
-        addButton.attachToListView(monitorList);
-
         // Setup refresh listener, which refreshes all Monitors.
-        final SwipeRefreshLayout swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swiper_container);
+        swipeContainer.setEnabled(false);
         swipeContainer.setColorSchemeResources(
                 R.color.accent,
                 R.color.primary,
@@ -163,6 +155,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 swipeContainer.setRefreshing(false);
             }
         });
+
+        // Initialise the Loader for the ListView.
+        monitorAdapter = new MonitorAdapter(this, null, 0);
+        monitorList.setAdapter(monitorAdapter);
+        getLoaderManager().initLoader(0, null, this);
+
+        // Attach the FAB to the ListView.
+        FloatingActionButton addButton = (FloatingActionButton) findViewById(R.id.add_button);
+        addButton.attachToListView(monitorList);
     }
 
     @Override
@@ -277,6 +278,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Try and show the data.
         if (monitorAdapter != null && data != null) {
+            // Enable the SwipeRefreshLayout if there is at least one Monitor.
+            swipeContainer.setEnabled(data.getCount() > 0);
+
             monitorAdapter.swapCursor(data);
         } else {
             Log.v(LOG_TAG, "OnLoadFinished: monitorAdapter is null.");
@@ -287,6 +291,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<Cursor> loader) {
         // Try and show the data.
         if (monitorAdapter != null) {
+            swipeContainer.setEnabled(false);
+
             monitorAdapter.swapCursor(null);
         } else {
             Log.v(LOG_TAG, "OnLoadFinished: monitorAdapter is null.");
