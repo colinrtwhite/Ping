@@ -67,5 +67,6 @@
     <string name="sort_by_last_checked">Sort by last checked</string>
     <string name="sort_by_name">Sort by name</string>
     <string name="sort_by_current_state">Sort by current state</string>
+    <string name="rate_app">Rate app</string>
 
 </resources>
