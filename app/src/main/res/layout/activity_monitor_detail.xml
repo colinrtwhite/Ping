@@ -133,11 +133,12 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1">
 
-                    <Switch
+                    <android.support.v7.widget.SwitchCompat
                         android:id="@+id/date_picker_switch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"/>
+                        android:layout_gravity="center_vertical"
+                        app:showText="false" />
                 </FrameLayout>
 
             </LinearLayout>

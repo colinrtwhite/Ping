@@ -7,6 +7,7 @@
         <item name="colorAccent">@color/accent</item>
         <item name="android:scrollViewStyle">@style/ScrollViewStyle</item>
         <item name="android:listViewStyle">@style/ListViewStyle</item>
+        <item name="android:seekBarStyle">@style/SeekBarAppTheme</item>
     </style>
 
     <!-- Common elements between base and v21 AppTheme. -->
@@ -27,6 +28,13 @@
     <!-- Set the CardView selector appropriately for the OS version. -->
     <style name="CardViewStyle" parent="android:Widget.TextView">
         <item name="android:foreground">@drawable/ripple_accent</item>
+    </style>
+
+    <!-- Used to colour the seekbarbar in pre-Lollipop devices. -->
+    <style name="SeekBarAppTheme" parent="android:Widget.Holo.Light.SeekBar">
+        <item name="android:progressDrawable">@drawable/apptheme_scrubber_progress_horizontal_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/apptheme_scrubber_progress_horizontal_holo_light</item>
+        <item name="android:thumb">@drawable/apptheme_scrubber_control_selector_holo_light</item>
     </style>
 
 </resources>
