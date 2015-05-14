@@ -10,4 +10,4 @@
     android:layout_marginRight="@dimen/add_button_margin"
     android:src="@drawable/ic_content_add"
     fab:fab_colorNormal="@color/accent"
-    fab:fab_colorPressed="@color/accent_transparent"/>
+    fab:fab_colorPressed="@color/accent_lightened"/>

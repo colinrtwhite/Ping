@@ -4,4 +4,6 @@
     <color name="primary_dark">#455ede</color>
     <color name="accent">#ff6e40</color>
     <color name="accent_transparent">#88ff6e40</color>
+    <color name="accent_lightened">#ffb7a0</color>
+    <color name="white_transparent">#11ffffff</color>
 </resources>

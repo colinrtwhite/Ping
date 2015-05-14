@@ -30,7 +30,7 @@
             android:layout_height="32dp"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="3dp"
-            android:background="@drawable/ripple_accent"
+            android:background="@drawable/ripple_white"
             android:hapticFeedbackEnabled="true"
             android:src="@drawable/ic_navigation_refresh_white"
             android:scaleType="centerCrop"
