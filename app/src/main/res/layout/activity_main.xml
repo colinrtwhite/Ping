@@ -43,20 +43,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:foreground="?android:windowContentOverlay">
-        <ListView
-            android:id="@+id/monitor_list"
+        <android.support.v4.widget.SwipeRefreshLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/swiper_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp"
-            android:divider="@null"
-            android:dividerHeight="0dp"
-            android:visibility="gone"
-            android:clipToPadding="false"
-            android:listSelector="@android:color/transparent"
-            android:cacheColorHint="@android:color/transparent"
-            android:focusable="true"
-            android:focusableInTouchMode="true"/>
+            android:layout_height="match_parent">
+            <ListView
+                android:id="@+id/monitor_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:divider="@null"
+                android:dividerHeight="0dp"
+                android:visibility="gone"
+                android:clipToPadding="false"
+                android:listSelector="@android:color/transparent"
+                android:cacheColorHint="@android:color/transparent"
+                android:focusable="true"
+                android:focusableInTouchMode="true"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <include layout="@layout/floating_action_button"/>
 

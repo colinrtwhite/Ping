@@ -72,11 +72,6 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                               ContentProviderClient provider,
                               SyncResult syncResult) {
         try {
-            // Simply return if we're not given an ID nor URL.
-            if (extras.isEmpty()) {
-                return;
-            }
-
             // Tell the database that we are now loading.
             int monitorId = extras.getInt(MonitorEntry._ID);
             ContentValues isNowLoadingValue = new ContentValues();
@@ -177,13 +172,8 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
      * @param timeLastChecked The time the status was checked at in milliseconds.
      */
     private void triggerNotification(int monitorId, String title, String url, int status, long timeLastChecked) {
-        String statusStr;
-        if (status == MonitorEntry.STATUS_IS_UP) {
-            statusStr = "up";
-        } else {
-            // If it's not up then it's down.
-            statusStr = "down";
-        }
+        // If it's not up then it's down.
+        String statusStr = (status == MonitorEntry.STATUS_IS_UP) ? "up" : "down";
 
         String notificationText = String.format(
                 context.getString(R.string.notification_text),

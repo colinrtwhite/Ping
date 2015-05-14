@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.pref.PreferencesActivity;
+import com.colinwhite.ping.sync.PingSyncAdapter;
 import com.colinwhite.ping.widget.ClearableEditText;
 import com.melnykov.fab.FloatingActionButton;
 
@@ -100,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         // Set the text that is shown when the list of monitors is empty.
-        ListView monitorList = (ListView) findViewById(R.id.monitor_list);
+        final ListView monitorList = (ListView) findViewById(R.id.monitor_list);
         monitorList.setEmptyView(findViewById(R.id.empty_monitor_list));
 
         // Set the any items in the Monitor ListView to open up their detail activity.
@@ -126,6 +128,39 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Attach the FAB to the ListView.
         FloatingActionButton addButton = (FloatingActionButton) findViewById(R.id.add_button);
         addButton.attachToListView(monitorList);
+
+        // Setup refresh listener, which refreshes all Monitors.
+        final SwipeRefreshLayout swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swiper_container);
+        swipeContainer.setColorSchemeResources(
+                R.color.accent,
+                R.color.primary,
+                R.color.primary_dark);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Pulse haptic feedback.
+                vibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+
+                // Using the Cursor from the list adapter, get and sync all the Monitors.
+                if (Utility.hasNetworkConnection(MainActivity.this)) {
+                    Cursor cursor = monitorAdapter.getCursor();
+                    cursor.moveToFirst();
+                    do {
+                        // Refresh the Monitor right now.
+                        PingSyncAdapter.syncImmediately(
+                                MainActivity.this,
+                                PingSyncAdapter.getSyncAccount(MainActivity.this),
+                                cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)),
+                                cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)));
+                    } while (cursor.moveToNext());
+                } else {
+                    Toast.makeText(MainActivity.this,
+                            getString(R.string.error_poor_connection),
+                            Toast.LENGTH_LONG).show();
+                }
+                swipeContainer.setRefreshing(false);
+            }
+        });
     }
 
     @Override
