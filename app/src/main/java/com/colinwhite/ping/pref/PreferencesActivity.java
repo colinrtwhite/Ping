@@ -25,11 +25,6 @@ public class PreferencesActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.error), Toast.LENGTH_LONG).show();
             finish();
         }
-
-        // Display the fragment as the main content.
-        getFragmentManager().beginTransaction()
-                .replace(R.id.pref_frame, new PreferencesFragment())
-                .commit();
     }
 
     @Override
