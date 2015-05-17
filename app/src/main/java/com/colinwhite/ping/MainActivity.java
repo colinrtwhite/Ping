@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private SharedPreferences sharedPref;
     private Vibrator vibratorService;
     private MonitorAdapter monitorAdapter;
+    private InputMethodManager inputMethodManager;
 
     // UI elements
     @InjectView(R.id.toolbar) Toolbar toolbar;
@@ -73,11 +74,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         ButterKnife.inject(this);
         setSupportActionBar(toolbar);
 
-        // Get classes for vibration and preferences.
+        // Get classes for vibration, preferences, and the keyboard.
         vibratorService = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
         sharedPref.registerOnSharedPreferenceChangeListener(this);
+        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         // Give the same logic to the "enter" key on the soft keyboard while in the EditText.
         clearableEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -291,12 +292,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         pingServiceIntent.putExtra(MonitorEntry.URL, inputText);
         pingServiceIntent.putExtra(PingService.RESULT_RECEIVER_KEY, resultReceiver);
 
-        // Close the virtual keyboard.
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(
-                Context.INPUT_METHOD_SERVICE);
+        // Close the virtual keyboard and remove focus from clearableEditText.
         inputMethodManager.hideSoftInputFromWindow(clearableEditText.getWindowToken(), 0);
-
-        // Remove focus from clearableEditText once URL has been entered.
         activityContainer.requestFocus();
 
         startService(pingServiceIntent);
@@ -401,10 +398,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             monitorDetailActivityIntent.putExtra(MonitorEntry.URL, text);
         }
 
-        // Show that we are creating a new Monitor.
+        // Add that we are creating a new Monitor.
         monitorDetailActivityIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
                 MonitorDetailActivity.PAGE_CREATE);
 
         startActivity(monitorDetailActivityIntent);
+    }
+
+    @Override
+    public void startActivity(Intent intent) {
+        super.startActivity(intent, null);
+
+        // Remove focus from the quick check URL EditText, if it is focused.
+        if (inputMethodManager.isAcceptingText()) {
+            activityContainer.requestFocus();
+        }
     }
 }
