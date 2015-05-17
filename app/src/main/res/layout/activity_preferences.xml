@@ -7,11 +7,15 @@
 
     <include layout="@layout/toolbar"/>
 
-    <fragment
-        android:id="@+id/pref_frame"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="com.colinwhite.ping.pref.PreferencesFragment"
-        android:foreground="?android:windowContentOverlay" />
+        android:foreground="?android:windowContentOverlay">
+        <fragment
+            android:id="@+id/preferences"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.colinwhite.ping.pref.PreferencesFragment" />
+    </FrameLayout>
 
 </LinearLayout>
