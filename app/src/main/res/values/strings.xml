@@ -13,7 +13,7 @@
     <string name="url_hint">URL (e.g. "google.com")</string>
     <string name="create_button_title">Create</string>
     <string name="delete_button_title">Delete</string>
-    <string name="ping_frequency_explanation">Ping every %s, approximately.</string>
+    <string name="ping_frequency_explanation" formatted="false">Ping every %s%s.</string>
     <string name="date_picker_header">Expiration Date</string>
     <string name="date_picker_label">Tap to set date.</string>
     <string name="time_picker_label">Tap to set time.</string>
@@ -28,7 +28,7 @@
     <string name="notification_text" formatted="false">%s is %s as of %s.</string>
     <string name="expiration_date_explanation">Set the date and time you would like the Monitor to stop pinging automatically.</string>
     <string name="ping_explanation_never">Never ping the website automatically.</string>
-    <string name="approximately_tag">, approximately</string>
+    <string name="approximately_tag"></string>
     <string name="invalid_input_title">Please enter a title.</string>
     <string name="invalid_input_url_empty">Please enter a URL.</string>
     <string name="invalid_input_time">Please set an expiration time.</string>
@@ -49,7 +49,7 @@
     <string name="cancel">Cancel</string>
     <string name="dialog_explain_approximate_okay">Okay</string>
     <string name="dialog_explain_approximate_message">Ping! uses inexact timers to schedule network processes together. This saves you heaps of battery life!\n\nAndroid Jelly Bean only supports exact timers so Monitors run on a fixed schedule.</string>
-    <string name="action_explain_approximate_title">Why Approximate?</string>
+    <string name="action_explain_approximate_title">Approximate timers</string>
     <string name="icon_reference_activity_label">Icon Reference</string>
     <string name="action_icon_reference">Icon Reference</string>
     <string name="icon_explanation_is_up">The website is up and responding to network requests.</string>

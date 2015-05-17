@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -40,7 +39,6 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
@@ -171,18 +169,6 @@ public class MonitorDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * Simple helper method that sets the output of time picker with respect to the user's Android
-     * version.
-     */
-    private void setTimePickerOutput(Date time) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            timePickerOutput.setText(timeFormat.format(time) + getString(R.string.approximately_tag));
-        } else {
-            timePickerOutput.setText(timeFormat.format(time));
-        }
-    }
-
-    /**
      * Build the elements necessary to update a Monitor's details/delete it.
      */
     private void buildDetailPageElements() {
@@ -237,7 +223,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
         if (endDateInMillis != MonitorEntry.END_TIME_NONE) {
             selectedDateTime.setTimeInMillis(endDateInMillis);
             datePickerOutput.setText(dateFormat.format(selectedDateTime.getTime()));
-            setTimePickerOutput(selectedDateTime.getTime());
+            timePickerOutput.setText(timeFormat.format(selectedDateTime.getTime()) + getString(R.string.approximately_tag));
             isDatePickerSet = true;
             isTimePickerSet = true;
         }
@@ -335,7 +321,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
                 selectedDateTime.set(Calendar.MINUTE, minute);
 
                 // Set the output TextView's text.
-                setTimePickerOutput(selectedDateTime.getTime());
+                timePickerOutput.setText(timeFormat.format(selectedDateTime.getTime()) + getString(R.string.approximately_tag));
                 isTimePickerSet = true;
             }
         };
@@ -468,7 +454,8 @@ public class MonitorDetailActivity extends AppCompatActivity {
         // Place the formatted duration in the resource string.
         String formattedStr = String.format(
                 getString(R.string.ping_frequency_explanation),
-                Utility.formatTimeDuration(duration));
+                Utility.formatTimeDuration(duration),
+                getString(R.string.approximately_tag));
 
         // Set the result as the explanation TextField for the frequency SeekBar.
         if (progress == 0) {
