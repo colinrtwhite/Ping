@@ -8,6 +8,7 @@
     android:layout_gravity="end|bottom"
     android:layout_marginBottom="@dimen/add_button_margin"
     android:layout_marginRight="@dimen/add_button_margin"
+    android:visibility="invisible"
     android:src="@drawable/ic_content_add"
     fab:fab_colorNormal="@color/accent"
     fab:fab_colorRipple="@android:color/white"/>

@@ -1,5 +1,7 @@
 package com.colinwhite.ping;
 
+import android.animation.Animator;
+import android.annotation.TargetApi;
 import android.app.LoaderManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -9,6 +11,7 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -23,6 +26,8 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -162,8 +167,48 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         getLoaderManager().initLoader(0, null, this);
 
         // Attach the FAB to the ListView.
-        FloatingActionButton addButton = (FloatingActionButton) findViewById(R.id.add_button);
+        final FloatingActionButton addButton = (FloatingActionButton) findViewById(R.id.add_button);
         addButton.attachToListView(monitorList);
+
+        // If we are running Lollipop or higher reveal the FAB with an animation.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            addButton.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public void onGlobalLayout() {
+                    addButton.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                    // Get the centre and final radius for the clipping circle. Set up the animation.
+                    int cx = addButton.getWidth() / 2;
+                    int cy = addButton.getHeight() / 2;
+                    int finalRadius = Math.max(addButton.getWidth(), addButton.getHeight());
+                    Animator animation = ViewAnimationUtils.createCircularReveal(addButton, cx, cy, 0, finalRadius);
+
+                    // Make the view visible and start the animation.
+                    animation.setStartDelay(1); // Start delay 0 causes the animation to start before the activity is open.
+                    animation.setDuration(150);
+                    animation.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            addButton.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+                        }
+                    });
+                    animation.start();
+                }
+            });
+        }
     }
 
     @Override

@@ -132,7 +132,7 @@ public class Utility {
      * @return A long string of HTML all on one line. On error, returns an empty string.
      */
     public static String getHtml(String url) throws IOException {
-        // Bulid and set timeout values for the request.
+        // Build and set timeout values for the request.
         URLConnection connection = (new URL(HOST + url)).openConnection();
         connection.setConnectTimeout(HTTP_REQUEST_CONNECTION_TIMEOUT);
         connection.setReadTimeout(HTTP_REQUEST_SOCKET_TIMEOUT);
