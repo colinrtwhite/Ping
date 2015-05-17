@@ -48,7 +48,7 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="dialog_explain_approximate_okay">Okay</string>
-    <string name="dialog_explain_approximate_message">Ping! uses inexact timers to schedule network processes together. This saves you heaps of battery life!\n\nAndroid Jelly Bean only supports exact timers so Monitors run on a fixed schedule.</string>
+    <string name="dialog_explain_approximate_message">Ping! uses inexact timers to schedule network processes together. This saves you heaps of battery life!\n\nUnfortunately, Android Jelly Bean only supports exact timers so Monitors run on a fixed schedule.</string>
     <string name="action_explain_approximate_title">Approximate timers</string>
     <string name="icon_reference_activity_label">Icon Reference</string>
     <string name="action_icon_reference">Icon Reference</string>
