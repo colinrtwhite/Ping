@@ -186,7 +186,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         // Refresh the Monitor right now.
                         PingSyncAdapter.recreateRefreshPeriodicSync(
                                 MainActivity.this,
-                                PingSyncAdapter.getSyncAccount(MainActivity.this),
                                 cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)),
                                 cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)),
                                 cursor.getInt(cursor.getColumnIndex(MonitorEntry.PING_FREQUENCY)));

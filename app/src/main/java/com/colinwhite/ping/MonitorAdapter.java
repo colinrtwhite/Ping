@@ -77,7 +77,6 @@ class MonitorAdapter extends CursorAdapter {
                         // Refresh the Monitor right now.
                         PingSyncAdapter.recreateRefreshPeriodicSync(
                                 context,
-                                PingSyncAdapter.getSyncAccount(context),
                                 (String) values.get(MonitorEntry.URL),
                                 (int) values.get(MonitorEntry._ID),
                                 (int) values.get(MonitorEntry.PING_FREQUENCY));

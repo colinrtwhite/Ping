@@ -338,13 +338,12 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
      * NOTE: This is used for when the user manually refreshes. We recreate the Monitor's periodic
      * sync to reset the timer on the automatic refresh.
      * @param context The Context used to access the account service.
-     * @param account Ping's sync account.
      * @param url The URL that the periodic sync is tied to.
      * @param monitorId The ID of the relevant Monitor in the database.
      * @param interval The duration between syncs in seconds.
      */
-    public static void recreateRefreshPeriodicSync(Context context, Account account, String url,
-                                            int monitorId, int interval) {
+    public static void recreateRefreshPeriodicSync(Context context, String url,
+                                                   int monitorId, int interval) {
         // Only remove and create a new periodic sync if the Monitor is set to automatically sync.
         if (interval < MonitorEntry.PING_FREQUENCY_MAX) {
             removePeriodicSync(context, url, monitorId);

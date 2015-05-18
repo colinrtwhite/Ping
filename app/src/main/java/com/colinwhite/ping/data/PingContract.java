@@ -12,8 +12,7 @@ public final class PingContract {
     public static final String PATH_MONITOR = "monitor";
     public static final String CONTENT_AUTHORITY = "com.colinwhite.ping";
 
-    // To prevent accidental instantiation
-    public PingContract() { }
+    public PingContract() { /* To prevent accidental instantiation */ }
 
     public static abstract class MonitorEntry implements BaseColumns {
         public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
