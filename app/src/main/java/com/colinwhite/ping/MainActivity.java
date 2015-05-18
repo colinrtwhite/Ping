@@ -319,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void startPingService(String inputText) {
         Intent pingServiceIntent = new Intent(getApplicationContext(), PingService.class);
 
-        // Add the URL from the text field and the ResultReciever to the Intent.
+        // Add the URL from the text field and the ResultReceiver to the Intent.
         pingServiceIntent.putExtra(MonitorEntry.URL, inputText);
         pingServiceIntent.putExtra(PingService.RESULT_RECEIVER_KEY, resultReceiver);
 
