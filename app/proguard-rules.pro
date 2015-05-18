@@ -18,6 +18,17 @@
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
 -keepattributes *Annotation*
 
+# Used for Butterknife:
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewInjector { *; }
+-keepclasseswithmembernames class * {
+    @butterknife.* <fields>;
+}
+-keepclasseswithmembernames class * {
+    @butterknife.* <methods>;
+}
+
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:
