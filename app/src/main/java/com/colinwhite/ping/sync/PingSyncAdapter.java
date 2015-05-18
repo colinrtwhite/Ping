@@ -30,6 +30,7 @@ import com.colinwhite.ping.Utility;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
@@ -302,7 +303,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
 
     /**
      * Helper method to have the SyncAdapter sync immediately.
-     * @param context The context used to access the account service
+     * @param context The Context used to access the account service.
      * @param account Ping's sync account.
      * @param url The URL that the periodic sync is tied to.
      * @param monitorId The ID of the relevant Monitor in the database.
@@ -319,7 +320,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
 
     /**
      * Attempt to delete the selected periodic sync timer.
-     * @param context The context used to access the account service
+     * @param context The Context used to access the account service.
      * @param url The URL that the periodic sync is tied to.
      * @param monitorId The ID of the relevant Monitor in the database.
      */
@@ -329,5 +330,28 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
         bundle.putInt(MonitorEntry._ID, monitorId);
         bundle.putString(MonitorEntry.URL, url);
         ContentResolver.removePeriodicSync(account, context.getString(R.string.content_authority), bundle);
+    }
+
+    /**
+     * Given the information of a current Monitor, remove then recreate its periodic sync and finally
+     * trigger an immediate sync.
+     * NOTE: This is used for when the user manually refreshes. We recreate the Monitor's periodic
+     * sync to reset the timer on the automatic refresh.
+     * @param context The Context used to access the account service.
+     * @param account Ping's sync account.
+     * @param url The URL that the periodic sync is tied to.
+     * @param monitorId The ID of the relevant Monitor in the database.
+     * @param interval The duration between syncs in seconds.
+     */
+    public static void recreateRefreshPeriodicSync(Context context, Account account, String url,
+                                            int monitorId, int interval) {
+        // Only remove and create a new periodic sync if the Monitor is set to automatically sync.
+        if (interval < MonitorEntry.PING_FREQUENCY_MAX) {
+            removePeriodicSync(context, url, monitorId);
+            createPeriodicSync(context, url, monitorId,
+                    (int) TimeUnit.MINUTES.toSeconds(Utility.PING_FREQUENCY_MINUTES[interval]));
+        }
+
+        syncImmediately(context, account, url, monitorId);
     }
 }

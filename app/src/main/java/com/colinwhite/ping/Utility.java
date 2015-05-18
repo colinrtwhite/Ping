@@ -34,6 +34,7 @@ public class Utility {
             "hour", " hours",
             "minute", "minutes",
             "second", "seconds"};
+    public static final int[] PING_FREQUENCY_MINUTES = {1, 5, 15, 30, 60, 120, 240, 720, 1440};
     public static final String HOST = "http://www.downforeveryoneorjustme.com/";
     public static final String TIME_FORMAT_12_HOURS = "h:mm a";
     public static final String TIME_FORMAT_24_HOURS = "H:mm";

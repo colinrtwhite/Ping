@@ -61,7 +61,6 @@ public class MonitorDetailActivity extends AppCompatActivity {
     public static final String PAGE_TYPE_ID = "PAGE_TYPE_ID";
     private static final int PING_FREQUENCY_ON_CREATE = 4;
     private static final String DATE_FORMAT = "EEEE, d MMMM, y";
-    private static final int[] PING_FREQUENCY_MINUTES = {1, 5, 15, 30, 60, 120, 240, 720, 1440};
 
     // Valid values for PAGE_TYPE_ID.
     public static final String PAGE_CREATE = "PAGE_CREATE";
@@ -441,7 +440,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
             final String[] selectionArgs = {String.valueOf(monitorId)};
             getContentResolver().update(MonitorEntry.CONTENT_URI, values, selection, selectionArgs);
 
-            // Remove the current periodic sync timer for this Monitor, later we create a new one.
+            // Remove the current periodic sync timer for this Monitor. Later we create a new one.
             PingSyncAdapter.removePeriodicSync(
                     this,
                     startIntent.getStringExtra(MonitorEntry.URL),
@@ -466,7 +465,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
                     this,
                     urlField.getText().toString(),
                     monitorId,
-                    (int) TimeUnit.MINUTES.toSeconds(PING_FREQUENCY_MINUTES[pingFrequency.getProgress()]));
+                    (int) TimeUnit.MINUTES.toSeconds(Utility.PING_FREQUENCY_MINUTES[pingFrequency.getProgress()]));
             // If the Monitor has been set to never ping automatically, don't add a removal alarm.
             if (endDate != MonitorEntry.END_TIME_NONE) {
                 Utility.addRemovalAlarm(this, monitorId, endDate);
@@ -493,7 +492,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
             pingFrequencyExplanation.setText(R.string.ping_explanation_never);
             return;
         }
-        long duration = TimeUnit.MINUTES.toMillis(PING_FREQUENCY_MINUTES[progress]);
+        long duration = TimeUnit.MINUTES.toMillis(Utility.PING_FREQUENCY_MINUTES[progress]);
 
         // Place the formatted duration in the resource string.
         String formattedStr = String.format(

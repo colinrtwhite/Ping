@@ -147,11 +147,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     cursor.moveToFirst();
                     do {
                         // Refresh the Monitor right now.
-                        PingSyncAdapter.syncImmediately(
+                        PingSyncAdapter.recreateRefreshPeriodicSync(
                                 MainActivity.this,
                                 PingSyncAdapter.getSyncAccount(MainActivity.this),
                                 cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)),
-                                cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)));
+                                cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)),
+                                cursor.getInt(cursor.getColumnIndex(MonitorEntry.PING_FREQUENCY)));
                     } while (cursor.moveToNext());
                 } else {
                     Toast.makeText(MainActivity.this,
@@ -193,18 +194,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         public void onAnimationStart(Animator animation) {
                             addButton.setVisibility(View.VISIBLE);
                         }
-
                         @Override
-                        public void onAnimationEnd(Animator animation) {
-                        }
-
+                        public void onAnimationEnd(Animator animation) { /* Do nothing. */ }
                         @Override
-                        public void onAnimationCancel(Animator animation) {
-                        }
-
+                        public void onAnimationCancel(Animator animation) { /* Do nothing. */ }
                         @Override
-                        public void onAnimationRepeat(Animator animation) {
-                        }
+                        public void onAnimationRepeat(Animator animation) { /* Do nothing. */ }
                     });
                     animation.start();
                 }

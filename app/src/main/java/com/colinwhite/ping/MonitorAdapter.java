@@ -56,6 +56,7 @@ class MonitorAdapter extends CursorAdapter {
         final ContentValues values = new ContentValues();
         values.put(MonitorEntry.URL, cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)));
         values.put(MonitorEntry._ID, cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)));
+        values.put(MonitorEntry.PING_FREQUENCY, cursor.getInt(cursor.getColumnIndex(MonitorEntry.PING_FREQUENCY)));
         values.put(MonitorEntry.TITLE, cursor.getString(cursor.getColumnIndex(MonitorEntry.TITLE)));
         values.put(MonitorEntry.TIME_LAST_CHECKED, cursor.getLong(cursor.getColumnIndex(MonitorEntry.TIME_LAST_CHECKED)));
         values.put(MonitorEntry.STATUS, cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS)));
@@ -74,11 +75,12 @@ class MonitorAdapter extends CursorAdapter {
 
                     if (Utility.hasNetworkConnection(context)) {
                         // Refresh the Monitor right now.
-                        PingSyncAdapter.syncImmediately(
+                        PingSyncAdapter.recreateRefreshPeriodicSync(
                                 context,
                                 PingSyncAdapter.getSyncAccount(context),
                                 (String) values.get(MonitorEntry.URL),
-                                (int) values.get(MonitorEntry._ID));
+                                (int) values.get(MonitorEntry._ID),
+                                (int) values.get(MonitorEntry.PING_FREQUENCY));
                     } else {
                         Toast.makeText(context,
                                 context.getResources().getString(R.string.error_poor_connection),
