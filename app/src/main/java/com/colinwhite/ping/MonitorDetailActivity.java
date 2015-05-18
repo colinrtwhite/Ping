@@ -1,6 +1,7 @@
 package com.colinwhite.ping;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.content.ContentValues;
@@ -33,6 +34,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.colinwhite.ping.data.PingContract;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.sync.PingSyncAdapter;
@@ -80,10 +82,10 @@ public class MonitorDetailActivity extends AppCompatActivity {
     @InjectView(R.id.date_picker_switch) SwitchCompat datePickerSwitch;
     @InjectView(R.id.expiration_date_explanation) TextView expirationDateExplanation;
     @InjectView(R.id.detail_last_checked_text) TextView lastCheckedField;
-    private AlertDialog whyApproximateDialog;
+    private Dialog whyApproximateDialog = null;
 
     // Only used on DETAIL pages
-    private AlertDialog confirmDeleteDialog;
+    private Dialog confirmDeleteDialog = null;
     private ContentValues values;
     private boolean hasEndDate = false;
     private boolean isTimePickerSet = false;
@@ -130,10 +132,8 @@ public class MonitorDetailActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 setPingFrequencyExplanation(progress);
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) { /* Do nothing. */ }
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) { /* Do nothing. */ }
         });
@@ -146,18 +146,6 @@ public class MonitorDetailActivity extends AppCompatActivity {
         } else {
             buildCreatePageElements();
         }
-
-        // Build the dialog, which explains why ping frequencies and expiration dates can't be exact.
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        whyApproximateDialog = builder.setMessage(getString(R.string.dialog_explain_approximate_message))
-                .setCancelable(false)
-                .setPositiveButton(getString(R.string.dialog_explain_approximate_okay),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        }).create();
 
         // Hide any notifications for this Monitor.
         NotificationManager notificationManager = ((NotificationManager)
@@ -228,37 +216,8 @@ public class MonitorDetailActivity extends AppCompatActivity {
             isTimePickerSet = true;
         }
 
-        // Initiate the confirmation dialog for when the delete button is pressed.
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final Context context = this;
-        confirmDeleteDialog = builder.setMessage(R.string.dialog_confirm_delete)
-                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Delete the Monitor's database entry and its sync account then close the activity.
-                        int monitorId = (int) values.get(MonitorEntry._ID);
-                        final String selection = MonitorEntry._ID + " = ?";
-                        final String[] selectionArgs = {String.valueOf(monitorId)};
-                        getContentResolver().delete(MonitorEntry.CONTENT_URI, selection, selectionArgs);
-                        PingSyncAdapter.removePeriodicSync(
-                                context,
-                                startIntent.getStringExtra(MonitorEntry.URL),
-                                monitorId);
-                        // If the Monitor had a removal alarm set, delete it.
-                        long endDate = (long) values.get(MonitorEntry.END_TIME);
-                        if (endDate != MonitorEntry.END_TIME_NONE) {
-                            Utility.deleteRemovalAlarm(context, monitorId);
-                        }
-                        onBackPressed();
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                }).create();
-
         // Set the status icon.
-        statusIcon.setImageDrawable(ContextCompat.getDrawable(context,
+        statusIcon.setImageDrawable(ContextCompat.getDrawable(this,
                 Utility.getStatusIcon((int) values.get(MonitorEntry.STATUS))));
         // NOTE: lastCheckedField and statusIcon do not update if the database changes.
         // Format the time last checked and place it in the resource string.
@@ -599,11 +558,10 @@ public class MonitorDetailActivity extends AppCompatActivity {
                 // Pulse haptic feedback.
                 vibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
 
-                // Show confirmation dialog.
-                confirmDeleteDialog.show();
+                showConfirmDeleteDialog();
                 return true;
             case R.id.action_explain_approximate:
-                whyApproximateDialog.show();
+                showApproximateDialog();
                 return true;
             case android.R.id.home:
                 onBackPressed();
@@ -611,6 +569,96 @@ public class MonitorDetailActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showConfirmDeleteDialog() {
+        if (confirmDeleteDialog == null) {
+            // Initiate the confirmation dialog for when the delete button is pressed.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                confirmDeleteDialog = builder.setTitle(getString(R.string.dialog_confirm_delete_title))
+                        .setMessage(R.string.dialog_confirm_delete)
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                deleteDialogOnPositiveClick();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+            } else {
+                confirmDeleteDialog = new MaterialDialog.Builder(this)
+                        .title(R.string.dialog_confirm_delete_title)
+                        .content(R.string.dialog_confirm_delete)
+                        .positiveText(R.string.confirm)
+                        .negativeText(R.string.cancel)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                deleteDialogOnPositiveClick();
+                            }
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+            }
+        } else {
+            confirmDeleteDialog.show();
+        }
+    }
+
+    private void deleteDialogOnPositiveClick() {
+        // Delete the Monitor's database entry and its sync account then close the activity.
+        int monitorId = (int) values.get(MonitorEntry._ID);
+        final String selection = MonitorEntry._ID + " = ?";
+        final String[] selectionArgs = {String.valueOf(monitorId)};
+        getContentResolver().delete(MonitorEntry.CONTENT_URI, selection, selectionArgs);
+        PingSyncAdapter.removePeriodicSync(
+                MonitorDetailActivity.this,
+                startIntent.getStringExtra(MonitorEntry.URL),
+                monitorId);
+        // If the Monitor had a removal alarm set, delete it.
+        long endDate = (long) values.get(MonitorEntry.END_TIME);
+        if (endDate != MonitorEntry.END_TIME_NONE) {
+            Utility.deleteRemovalAlarm(MonitorDetailActivity.this, monitorId);
+        }
+        onBackPressed();
+    }
+
+    private void showApproximateDialog() {
+        if (whyApproximateDialog == null) {
+            // Build and show the dialog, which explains why ping frequencies and expiration dates
+            // can't be exact.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                whyApproximateDialog = builder.setTitle(getString(R.string.action_explain_approximate_dialog_title))
+                        .setMessage(getString(R.string.dialog_explain_approximate_message))
+                        .setCancelable(false)
+                        .setPositiveButton(getString(R.string.okay),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }).show();
+            } else {
+                whyApproximateDialog = new MaterialDialog.Builder(this)
+                        .title(R.string.action_explain_approximate_dialog_title)
+                        .content(R.string.dialog_explain_approximate_message)
+                        .positiveText(R.string.okay)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+            }
+        } else {
+            whyApproximateDialog.show();
+        }
     }
 
     /**

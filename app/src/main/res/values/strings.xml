@@ -47,7 +47,7 @@
     <string name="dialog_confirm_delete">Are you sure you want to delete this Monitor?</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
-    <string name="dialog_explain_approximate_okay">Okay</string>
+    <string name="okay">Okay</string>
     <string name="dialog_explain_approximate_message">Ping! uses inexact timers to schedule network processes together. This saves you heaps of battery life!\n\nUnfortunately, Android Jelly Bean only supports exact timers so Monitors run on a fixed schedule.</string>
     <string name="action_explain_approximate_title">Approximate timers</string>
     <string name="icon_reference_activity_label">Icon Reference</string>
@@ -68,5 +68,7 @@
     <string name="sort_by_name">Sort by name</string>
     <string name="sort_by_current_state">Sort by current state</string>
     <string name="rate_app">Rate app</string>
+    <string name="action_explain_approximate_dialog_title">Approximate Timers</string>
+    <string name="dialog_confirm_delete_title">Delete Monitor?</string>
 
 </resources>
