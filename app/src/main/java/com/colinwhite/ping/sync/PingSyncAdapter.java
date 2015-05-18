@@ -333,8 +333,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     /**
-     * Given the information of a current Monitor, remove then recreate its periodic sync and finally
-     * trigger an immediate sync.
+     * Given the information of a current Monitor, remove then recreate its periodic sync.
      * NOTE: This is used for when the user manually refreshes. We recreate the Monitor's periodic
      * sync to reset the timer on the automatic refresh.
      * @param context The Context used to access the account service.
