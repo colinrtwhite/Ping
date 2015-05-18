@@ -1,5 +1,6 @@
 package com.colinwhite.ping;
 
+import android.accounts.Account;
 import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.app.LoaderManager;
@@ -57,7 +58,7 @@ import butterknife.OnClick;
  * landing page for the app.
  */
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        SharedPreferences.OnSharedPreferenceChangeListener, SwipeRefreshLayout.OnRefreshListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final String PREF_SORT_ORDER_ID = "sort_order_pref";
     private static final String PREF_SORT_ORDER_DEFAULT_VALUE = MonitorEntry._ID + " DESC";
@@ -142,72 +143,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         swipeContainer.setColorSchemeResources(
                 R.color.accent,
                 R.color.primary);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // Pulse haptic feedback.
-                vibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
-
-                // Using the Cursor from the list adapter, get and sync all the Monitors.
-                if (Utility.hasNetworkConnection(MainActivity.this)) {
-                    final Cursor cursor = monitorAdapter.getCursor();
-                    cursor.moveToFirst();
-
-                    SyncStatusObserver observer = new SyncStatusObserver() {
-                        int numMonitors = cursor.getCount();
-
-                        @Override
-                        public void onStatusChanged(int which) {
-                            // Once all Monitors have finished syncing, remove the listener and stop
-                            // the refreshing animation.
-                            if (numMonitors <= 0) {
-                                ContentResolver.removeStatusChangeListener(syncHandle);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        swipeContainer.setRefreshing(false);
-                                    }
-                                });
-                            }
-
-                            // Check if any of the Monitors became active.
-                            List<SyncInfo> test = ContentResolver.getCurrentSyncs();
-                            for (SyncInfo syncInfo : test) {
-                                if (syncInfo.authority.equals(getString(R.string.content_authority))) {
-                                    // Decrement the number of expected syncing Monitors.
-                                    numMonitors--;
-                                }
-                            }
-                        }
-                    };
-                    syncHandle = ContentResolver.addStatusChangeListener(
-                            ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE,
-                            observer);
-
-                    // Remove all the periodic syncs.
-                    List<String> urls = new ArrayList<>();
-                    List<Integer> ids = new ArrayList<>();
-                    List<Integer> frequencies = new ArrayList<>();
-                    do {
-                        String url = cursor.getString(cursor.getColumnIndex(MonitorEntry.URL));
-                        urls.add(url);
-                        Integer id = cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID));
-                        ids.add(id);
-                        frequencies.add(cursor.getInt(cursor.getColumnIndex(MonitorEntry.PING_FREQUENCY)));
-                        PingSyncAdapter.removePeriodicSync(MainActivity.this, url, id);
-                    } while (cursor.moveToNext());
-
-                    // Recreate the periodic syncs. The Monitors will also be synced during this process.
-                    for (int i = 0; i < ids.size(); i++) {
-                        PingSyncAdapter.createPeriodicSync(MainActivity.this, urls.get(i), ids.get(i), frequencies.get(i));
-                    }
-                } else {
-                    Toast.makeText(MainActivity.this,
-                            getString(R.string.error_poor_connection),
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+        swipeContainer.setOnRefreshListener(this);
 
         // Initialise the Loader for the ListView.
         monitorAdapter = new MonitorAdapter(this, null, 0);
@@ -379,6 +315,86 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             monitorAdapter.swapCursor(null);
         } else {
             Log.v(LOG_TAG, "OnLoadFinished: monitorAdapter is null.");
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        // Pulse haptic feedback.
+        vibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
+
+        // Using the Cursor from the list adapter, get and sync all the Monitors.
+        if (Utility.hasNetworkConnection(MainActivity.this)) {
+            final Cursor cursor = monitorAdapter.getCursor();
+            cursor.moveToFirst();
+
+            SyncStatusObserver observer = new SyncStatusObserver() {
+                int numMonitors = cursor.getCount();
+
+                @Override
+                public void onStatusChanged(int which) {
+                    // Once all Monitors have finished syncing, remove the listener and stop
+                    // the refreshing animation.
+                    if (numMonitors <= 0) {
+                        ContentResolver.removeStatusChangeListener(syncHandle);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeContainer.setRefreshing(false);
+                            }
+                        });
+                    }
+
+                    // Check if any of the Monitors became active.
+                    List<SyncInfo> test = ContentResolver.getCurrentSyncs();
+                    for (SyncInfo syncInfo : test) {
+                        if (syncInfo.authority.equals(getString(R.string.content_authority))) {
+                            // Decrement the number of expected syncing Monitors.
+                            numMonitors--;
+                        }
+                    }
+                }
+            };
+            syncHandle = ContentResolver.addStatusChangeListener(
+                    ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE,
+                    observer);
+
+            // Remove all the periodic syncs.
+            List<String> urls = new ArrayList<>();
+            List<Integer> ids = new ArrayList<>();
+            List<Integer> frequencies = new ArrayList<>();
+            do {
+                String url = cursor.getString(cursor.getColumnIndex(MonitorEntry.URL));
+                urls.add(url);
+                Integer id = cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID));
+                ids.add(id);
+                int frequency = cursor.getInt(cursor.getColumnIndex(MonitorEntry.PING_FREQUENCY));
+                frequencies.add(frequency);
+                // Only remove and create a new periodic sync if the Monitor is set to automatically sync.
+                if (frequency < MonitorEntry.PING_FREQUENCY_MAX) {
+                    PingSyncAdapter.removePeriodicSync(MainActivity.this, url, id);
+                }
+            } while (cursor.moveToNext());
+
+            // Recreate the periodic syncs. The Monitors will also be synced during this process.
+            Account syncAccount = PingSyncAdapter.getSyncAccount(MainActivity.this);
+            for (int i = 0; i < ids.size(); i++) {
+                if (frequencies.get(i) < MonitorEntry.PING_FREQUENCY_MAX) {
+                    PingSyncAdapter.createPeriodicSync(MainActivity.this,
+                            urls.get(i),
+                            ids.get(i),
+                            frequencies.get(i));
+                } else {
+                    PingSyncAdapter.syncImmediately(MainActivity.this,
+                            syncAccount,
+                            urls.get(i),
+                            ids.get(i));
+                }
+            }
+        } else {
+            Toast.makeText(MainActivity.this,
+                    getString(R.string.error_poor_connection),
+                    Toast.LENGTH_LONG).show();
         }
     }
 
