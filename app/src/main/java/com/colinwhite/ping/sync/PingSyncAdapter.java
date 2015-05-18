@@ -351,7 +351,5 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             createPeriodicSync(context, url, monitorId,
                     (int) TimeUnit.MINUTES.toSeconds(Utility.PING_FREQUENCY_MINUTES[interval]));
         }
-
-        syncImmediately(context, account, url, monitorId);
     }
 }

@@ -4,11 +4,14 @@ import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.app.LoaderManager;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
+import android.content.SyncInfo;
+import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -42,6 +45,8 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
 import com.colinwhite.ping.widget.ClearableEditText;
 import com.melnykov.fab.FloatingActionButton;
 
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -50,7 +55,8 @@ import butterknife.OnClick;
  * The MainActivity handles the logic for all the UI elements in activity_mail.xml and is the main
  * landing page for the app.
  */
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
+        SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final String PREF_SORT_ORDER_ID = "sort_order_pref";
     private static final String PREF_SORT_ORDER_DEFAULT_VALUE = MonitorEntry._ID + " DESC";
@@ -60,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private Vibrator vibratorService;
     private MonitorAdapter monitorAdapter;
     private InputMethodManager inputMethodManager;
+    private Object syncHandle;
 
     // UI elements
     @InjectView(R.id.toolbar) Toolbar toolbar;
@@ -133,8 +140,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         swipeContainer.setEnabled(false);
         swipeContainer.setColorSchemeResources(
                 R.color.accent,
-                R.color.primary,
-                R.color.primary_dark);
+                R.color.primary);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -143,8 +149,39 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 // Using the Cursor from the list adapter, get and sync all the Monitors.
                 if (Utility.hasNetworkConnection(MainActivity.this)) {
-                    Cursor cursor = monitorAdapter.getCursor();
+                    final Cursor cursor = monitorAdapter.getCursor();
                     cursor.moveToFirst();
+
+                    SyncStatusObserver observer = new SyncStatusObserver() {
+                        int numMonitors = cursor.getCount();
+
+                        @Override
+                        public void onStatusChanged(int which) {
+                            // Once all Monitors have finished syncing, remove the listener and stop
+                            // the refreshing animation.
+                            if (numMonitors <= 0) {
+                                ContentResolver.removeStatusChangeListener(syncHandle);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        swipeContainer.setRefreshing(false);
+                                    }
+                                });
+                            }
+
+                            // Check if any of the Monitors became active.
+                            List<SyncInfo> test = ContentResolver.getCurrentSyncs();
+                            for (SyncInfo syncInfo : test) {
+                                if (syncInfo.authority.equals(getString(R.string.content_authority))) {
+                                    // Decrement the number of expected syncing Monitors.
+                                    numMonitors--;
+                                }
+                            }
+                        }
+                    };
+                    syncHandle = ContentResolver.addStatusChangeListener(
+                            ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE,
+                            observer);
                     do {
                         // Refresh the Monitor right now.
                         PingSyncAdapter.recreateRefreshPeriodicSync(
@@ -159,7 +196,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             getString(R.string.error_poor_connection),
                             Toast.LENGTH_LONG).show();
                 }
-                swipeContainer.setRefreshing(false);
             }
         });
 
