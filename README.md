@@ -1,4 +1,4 @@
-Ping!
+﻿Ping!
 =====
 
 Unsure why you can't access a website? Ping! is a sleek, lightweight app that checks if a website is actually down or if your connection is the problem.
@@ -27,9 +27,12 @@ Screenshots
 <img src="/google_play_store_assets/screenshot_3.png" alt="Screenshot 3" width="270" height="480">
 <img src="/google_play_store_assets/screenshot_4.png" alt="Screenshot 4" width="270" height="480">
 <img src="/google_play_store_assets/screenshot_5.png" alt="Screenshot 5" width="270" height="480">
+<img src="/google_play_store_assets/screenshot_6.png" alt="Screenshot 5" width="270" height="480">
 
 Version History
 ---------------
+1.2 - 18 May, 2015
+
 1.1 - 27 February, 2015
 
 1.0 - 9 February, 2015
