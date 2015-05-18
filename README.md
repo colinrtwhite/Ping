@@ -32,6 +32,8 @@ Screenshots
 
 Version History
 ---------------
+1.2.2 - 19 May, 2015
+
 1.2.1 - 18 May, 2015
 
 1.2 - 18 May, 2015

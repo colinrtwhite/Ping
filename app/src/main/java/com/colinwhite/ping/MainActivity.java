@@ -48,6 +48,7 @@ import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -383,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     PingSyncAdapter.createPeriodicSync(MainActivity.this,
                             urls.get(i),
                             ids.get(i),
-                            frequencies.get(i));
+                            (int) TimeUnit.MINUTES.toSeconds(Utility.PING_FREQUENCY_MINUTES[frequencies.get(i)]));
                 } else {
                     PingSyncAdapter.syncImmediately(MainActivity.this,
                             syncAccount,
