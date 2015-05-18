@@ -45,6 +45,7 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
 import com.colinwhite.ping.widget.ClearableEditText;
 import com.melnykov.fab.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -182,14 +183,24 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     syncHandle = ContentResolver.addStatusChangeListener(
                             ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE,
                             observer);
+
+                    // Remove all the periodic syncs.
+                    List<String> urls = new ArrayList<>();
+                    List<Integer> ids = new ArrayList<>();
+                    List<Integer> frequencies = new ArrayList<>();
                     do {
-                        // Refresh the Monitor right now.
-                        PingSyncAdapter.recreateRefreshPeriodicSync(
-                                MainActivity.this,
-                                cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)),
-                                cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)),
-                                cursor.getInt(cursor.getColumnIndex(MonitorEntry.PING_FREQUENCY)));
+                        String url = cursor.getString(cursor.getColumnIndex(MonitorEntry.URL));
+                        urls.add(url);
+                        Integer id = cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID));
+                        ids.add(id);
+                        frequencies.add(cursor.getInt(cursor.getColumnIndex(MonitorEntry.PING_FREQUENCY)));
+                        PingSyncAdapter.removePeriodicSync(MainActivity.this, url, id);
                     } while (cursor.moveToNext());
+
+                    // Recreate the periodic syncs. The Monitors will also be synced during this process.
+                    for (int i = 0; i < ids.size(); i++) {
+                        PingSyncAdapter.createPeriodicSync(MainActivity.this, urls.get(i), ids.get(i), frequencies.get(i));
+                    }
                 } else {
                     Toast.makeText(MainActivity.this,
                             getString(R.string.error_poor_connection),
