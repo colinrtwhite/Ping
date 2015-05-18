@@ -3,7 +3,8 @@
 
 Unsure why you can't access a website? Ping! is a sleek, lightweight app that checks if a website is actually down or if your connection is the problem.
 
-[Download on the Google Play Store.](https://play.google.com/store/apps/details?id=com.colinwhite.ping)
+
+[<img src="/google_play_store_assets/google_play_badge.png" alt="Download on the Google Play Store." width="200" height="69">](https://play.google.com/store/apps/details?id=com.colinwhite.ping)
 
 Monitors
 --------
