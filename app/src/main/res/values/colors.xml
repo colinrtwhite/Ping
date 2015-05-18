@@ -3,7 +3,12 @@
     <color name="primary">#5677fc</color>
     <color name="primary_dark">#455ede</color>
     <color name="accent">#ff6e40</color>
+    <color name="accent_dark">#EF673C</color>
     <color name="accent_transparent">#88ff6e40</color>
     <color name="accent_lightened">#ffb7a0</color>
     <color name="white_transparent">#11ffffff</color>
+
+    <!-- Required for the open source Date and TimePickerDialogs. -->
+    <color name="mdtp_accent_color">@color/accent</color>
+    <color name="mdtp_accent_color_dark">@color/accent_dark</color>
 </resources>

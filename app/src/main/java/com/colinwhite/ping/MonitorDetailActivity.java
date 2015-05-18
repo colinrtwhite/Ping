@@ -1,9 +1,8 @@
 package com.colinwhite.ping;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
+import android.app.FragmentManager;
 import android.app.NotificationManager;
-import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -36,6 +36,8 @@ import android.widget.Toast;
 import com.colinwhite.ping.data.PingContract;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.sync.PingSyncAdapter;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -78,8 +80,6 @@ public class MonitorDetailActivity extends AppCompatActivity {
     @InjectView(R.id.date_picker_switch) SwitchCompat datePickerSwitch;
     @InjectView(R.id.expiration_date_explanation) TextView expirationDateExplanation;
     @InjectView(R.id.detail_last_checked_text) TextView lastCheckedField;
-    private DatePickerDialog datePickerDialog;
-    private TimePickerDialog timePickerDialog;
     private AlertDialog whyApproximateDialog;
 
     // Only used on DETAIL pages
@@ -312,22 +312,29 @@ public class MonitorDetailActivity extends AppCompatActivity {
                     != MonitorEntry.END_TIME_NONE);
         }
 
+        // Build the correct Time and DateDialogPickers depending on the user's version of Android.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            BuildLollipopPickers();
+        } else {
+            BuildAppCompatPickers();
+        }
+    }
+
+    /**
+     * Build and set up a TimePickerDialog and a DatePickerDialog using the Lollipop API.
+     */
+    private void BuildLollipopPickers() {
         // -- TIME PICKER --
         // Make the TimePicker set the output TextField's time when it is changed.
-        final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
+        final android.app.TimePickerDialog.OnTimeSetListener time = new android.app.TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                selectedDateTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                selectedDateTime.set(Calendar.MINUTE, minute);
-
-                // Set the output TextView's text.
-                timePickerOutput.setText(timeFormat.format(selectedDateTime.getTime()) + getString(R.string.approximately_tag));
-                isTimePickerSet = true;
+                setSelectedTime(hourOfDay, minute);
             }
         };
 
         // Set the TimePicker to popup when the TextField is clicked.
-        timePickerDialog = new TimePickerDialog(
+        final android.app.TimePickerDialog timePickerDialog = new android.app.TimePickerDialog(
                 this,
                 time,
                 selectedDateTime.get(Calendar.HOUR_OF_DAY),
@@ -342,21 +349,15 @@ public class MonitorDetailActivity extends AppCompatActivity {
 
         // -- DATE PICKER --
         // Make the DatePicker set the output TextField's date when it is changed.
-        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+        final android.app.DatePickerDialog.OnDateSetListener date = new android.app.DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                selectedDateTime.set(Calendar.YEAR, year);
-                selectedDateTime.set(Calendar.MONTH, month);
-                selectedDateTime.set(Calendar.DAY_OF_MONTH, day);
-
-                // Set the output TextView's text.
-                datePickerOutput.setText(dateFormat.format(selectedDateTime.getTime()));
-                isDatePickerSet = true;
+                setSelectedDate(year, month, day);
             }
         };
 
         // Set the DatePicker to popup when the TextField is clicked.
-        datePickerDialog = new DatePickerDialog(
+        final android.app.DatePickerDialog datePickerDialog = new android.app.DatePickerDialog(
                 this,
                 date,
                 selectedDateTime.get(Calendar.YEAR),
@@ -368,6 +369,90 @@ public class MonitorDetailActivity extends AppCompatActivity {
                 datePickerDialog.show();
             }
         });
+    }
+
+    /**
+     * Build and set up a TimePickerDialog and a DatePickerDialog using an open source API.
+     */
+    private void BuildAppCompatPickers() {
+        final FragmentManager fragmentManager = getFragmentManager();
+
+        // -- TIME PICKER --
+        // Make the TimePicker set the output TextField's time when it is changed.
+        final com.wdullaer.materialdatetimepicker.time.TimePickerDialog.OnTimeSetListener time = new com.wdullaer.materialdatetimepicker.time.TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(RadialPickerLayout radialPickerLayout, int hourOfDay, int minute) {
+                setSelectedTime(hourOfDay, minute);
+            }
+        };
+
+        // Set the TimePicker to popup when the TextField is clicked.
+        final com.wdullaer.materialdatetimepicker.time.TimePickerDialog timePickerDialog =
+                com.wdullaer.materialdatetimepicker.time.TimePickerDialog.newInstance(
+                        time,
+                        selectedDateTime.get(Calendar.HOUR_OF_DAY),
+                        selectedDateTime.get(Calendar.MINUTE),
+                        false);
+        timePickerOutput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timePickerDialog.show(fragmentManager, "");
+            }
+        });
+
+        // -- DATE PICKER --
+        // Make the DatePicker set the output TextField's date when it is changed.
+        com.wdullaer.materialdatetimepicker.date.DatePickerDialog.OnDateSetListener date =
+                new com.wdullaer.materialdatetimepicker.date.DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
+                        setSelectedDate(year, month, day);
+                    }
+                };
+
+        // Set the DatePicker to popup when the TextField is clicked.
+        final com.wdullaer.materialdatetimepicker.date.DatePickerDialog datePickerDialog =
+                com.wdullaer.materialdatetimepicker.date.DatePickerDialog.newInstance(
+                        date,
+                        selectedDateTime.get(Calendar.YEAR),
+                        selectedDateTime.get(Calendar.MONTH),
+                        selectedDateTime.get(Calendar.DAY_OF_MONTH));
+        datePickerOutput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                datePickerDialog.show(fragmentManager, "");
+            }
+        });
+    }
+
+    /**
+     * Set the time TextField.
+     * @param hourOfDay Hour of day (0 - 23)
+     * @param minute Minute in hour
+     */
+    private void setSelectedTime(int hourOfDay, int minute) {
+        selectedDateTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        selectedDateTime.set(Calendar.MINUTE, minute);
+
+        // Set the output TextView's text.
+        timePickerOutput.setText(timeFormat.format(selectedDateTime.getTime()) + getString(R.string.approximately_tag));
+        isTimePickerSet = true;
+    }
+
+    /**
+     * Set the date TextField.
+     * @param year Year
+     * @param month Month in year
+     * @param day Day in month
+     */
+    private void setSelectedDate(int year, int month, int day) {
+        selectedDateTime.set(Calendar.YEAR, year);
+        selectedDateTime.set(Calendar.MONTH, month);
+        selectedDateTime.set(Calendar.DAY_OF_MONTH, day);
+
+        // Set the output TextView's text.
+        datePickerOutput.setText(dateFormat.format(selectedDateTime.getTime()));
+        isDatePickerSet = true;
     }
 
     /**

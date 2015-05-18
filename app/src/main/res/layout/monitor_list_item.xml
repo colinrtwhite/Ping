@@ -75,7 +75,7 @@
                 android:layout_height="48dp"
                 android:layout_gravity="center"
                 android:layout_weight="0"
-                android:layout_margin="16dp"/>
+                android:layout_margin="18dp"/>
 
         </LinearLayout>
     </android.support.v7.widget.CardView>
