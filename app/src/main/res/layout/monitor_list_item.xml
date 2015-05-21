@@ -50,7 +50,8 @@
                     android:textSize="@dimen/text_size_large"
                     android:padding="4dp"
                     android:maxLines="1"
-                    android:textColor="@color/accent"/>
+                    android:textColor="@color/accent"
+                    android:ellipsize="end"/>
 
                 <TextView
                     android:id="@+id/list_item_url"
@@ -58,7 +59,8 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_small"
                     android:padding="4dp"
-                    android:maxLines="1"/>
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
 
                 <TextView
                     android:id="@+id/list_item_time_last_checked"
@@ -66,7 +68,8 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_small"
                     android:padding="4dp"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:ellipsize="start"/>
             </LinearLayout>
 
             <ImageView
