@@ -1,6 +1,5 @@
 package com.colinwhite.ping;
 
-import android.accounts.Account;
 import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.app.LoaderManager;
@@ -46,9 +45,7 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
 import com.colinwhite.ping.widget.ClearableEditText;
 import com.melnykov.fab.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -360,38 +357,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE,
                     observer);
 
-            // Remove all the periodic syncs.
-            List<String> urls = new ArrayList<>();
-            List<Integer> ids = new ArrayList<>();
-            List<Integer> frequencies = new ArrayList<>();
             do {
-                String url = cursor.getString(cursor.getColumnIndex(MonitorEntry.URL));
-                urls.add(url);
-                Integer id = cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID));
-                ids.add(id);
-                int frequency = cursor.getInt(cursor.getColumnIndex(MonitorEntry.PING_FREQUENCY));
-                frequencies.add(frequency);
-                // Only remove and create a new periodic sync if the Monitor is set to automatically sync.
-                if (frequency < MonitorEntry.PING_FREQUENCY_MAX) {
-                    PingSyncAdapter.removePeriodicSync(MainActivity.this, url, id);
-                }
+                // Refresh the Monitor right now.
+                PingSyncAdapter.recreateRefreshPeriodicSync(
+                        MainActivity.this,
+                        cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)),
+                        cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)),
+                        cursor.getInt(cursor.getColumnIndex(MonitorEntry.PING_FREQUENCY)));
             } while (cursor.moveToNext());
-
-            // Recreate the periodic syncs. The Monitors will also be synced during this process.
-            Account syncAccount = PingSyncAdapter.getSyncAccount(MainActivity.this);
-            for (int i = 0; i < ids.size(); i++) {
-                if (frequencies.get(i) < MonitorEntry.PING_FREQUENCY_MAX) {
-                    PingSyncAdapter.createPeriodicSync(MainActivity.this,
-                            urls.get(i),
-                            ids.get(i),
-                            (int) TimeUnit.MINUTES.toSeconds(Utility.PING_FREQUENCY_MINUTES[frequencies.get(i)]));
-                } else {
-                    PingSyncAdapter.syncImmediately(MainActivity.this,
-                            syncAccount,
-                            urls.get(i),
-                            ids.get(i));
-                }
-            }
         } else {
             Toast.makeText(MainActivity.this,
                     getString(R.string.error_poor_connection),

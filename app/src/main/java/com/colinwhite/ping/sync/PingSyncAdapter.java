@@ -314,8 +314,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         bundle.putInt(MonitorEntry._ID, monitorId);
         bundle.putString(MonitorEntry.URL, url);
-        ContentResolver.requestSync(account,
-                context.getString(R.string.content_authority), bundle);
+        ContentResolver.requestSync(account, context.getString(R.string.content_authority), bundle);
     }
 
     /**
@@ -348,6 +347,8 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             removePeriodicSync(context, url, monitorId);
             createPeriodicSync(context, url, monitorId,
                     (int) TimeUnit.MINUTES.toSeconds(Utility.PING_FREQUENCY_MINUTES[interval]));
+        } else {
+            syncImmediately(context, getSyncAccount(context), url, monitorId);
         }
     }
 }
