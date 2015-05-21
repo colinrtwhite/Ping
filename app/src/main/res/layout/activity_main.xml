@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingTop="3dp"
-                android:paddingBottom="3dp"
+                android:paddingBottom="72dp"
                 android:divider="@null"
                 android:dividerHeight="0dp"
                 android:visibility="gone"
@@ -61,7 +61,8 @@
                 android:listSelector="@android:color/transparent"
                 android:cacheColorHint="@android:color/transparent"
                 android:focusable="true"
-                android:focusableInTouchMode="true"/>
+                android:focusableInTouchMode="true"
+                android:scrollbarStyle="outsideOverlay"/>
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <include layout="@layout/floating_action_button"/>

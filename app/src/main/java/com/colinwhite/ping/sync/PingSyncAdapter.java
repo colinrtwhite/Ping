@@ -111,6 +111,12 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                     PingSyncAdapter.selection,
                     selectionArgs,
                     null);
+
+            if (cursor.getCount() == 0) {
+                Log.e(LOG_TAG, "No Monitors found in cursor.");
+                return;
+            }
+
             cursor.moveToFirst();
             int previousStatus = cursor.getInt(cursor.getColumnIndex(MonitorEntry.STATUS));
             int lastNonErrorStatus = cursor.getInt(cursor.getColumnIndex(MonitorEntry.LAST_NON_ERROR_STATUS));
