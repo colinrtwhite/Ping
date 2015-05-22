@@ -369,6 +369,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             Toast.makeText(MainActivity.this,
                     getString(R.string.error_poor_connection),
                     Toast.LENGTH_LONG).show();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    swipeContainer.setRefreshing(false);
+                }
+            });
         }
     }
 
