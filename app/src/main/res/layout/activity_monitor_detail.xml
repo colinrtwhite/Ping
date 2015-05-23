@@ -40,7 +40,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/monitor_title_hint"
                         android:inputType="textCapSentences"
-                        android:maxLines="1"
+                        android:singleLine="true"
                         android:padding="12dp"
                         android:textSize="@dimen/abc_text_size_large_material"
                         android:maxLength="30"/>
@@ -51,7 +51,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/url_hint"
                         android:inputType="textUri"
-                        android:maxLines="1"
+                        android:singleLine="true"
                         android:padding="12dp"
                         android:textSize="@dimen/abc_text_size_small_material" />
                 </LinearLayout>

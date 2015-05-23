@@ -39,9 +39,9 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:orientation="vertical"
-                android:gravity="center"
-                android:layout_weight="1">
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/list_item_title"
@@ -49,8 +49,8 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_large"
                     android:padding="4dp"
-                    android:maxLines="1"
                     android:textColor="@color/accent"
+                    android:singleLine="true"
                     android:ellipsize="end"/>
 
                 <TextView
@@ -59,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_small"
                     android:padding="4dp"
-                    android:maxLines="1"
+                    android:singleLine="true"
                     android:ellipsize="end"/>
 
                 <TextView
@@ -68,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_small"
                     android:padding="4dp"
-                    android:maxLines="1"
+                    android:singleLine="true"
                     android:ellipsize="start"/>
             </LinearLayout>
 
