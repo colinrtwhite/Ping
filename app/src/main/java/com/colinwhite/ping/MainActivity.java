@@ -190,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(PREF_SORT_ORDER_ID)) {
+            monitorAdapter.getCursor().close();
             getLoaderManager().restartLoader(0, null, MainActivity.this);
         } else if (key.equals(getString(R.string.pref_key_24_hour_clock))) {
             monitorAdapter.notifyDataSetChanged();
