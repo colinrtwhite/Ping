@@ -16,8 +16,10 @@
         style="@style/CardViewStyle">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="105dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:descendantFocusability="blocksDescendants">
 
             <ImageButton
@@ -40,6 +42,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center">
 
@@ -48,28 +51,31 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_large"
-                    android:padding="4dp"
                     android:textColor="@color/accent"
                     android:singleLine="true"
                     android:ellipsize="end"/>
+
+                <Space
+                    android:layout_width="fill_parent"
+                    android:layout_height="8dp" />
 
                 <TextView
                     android:id="@+id/list_item_url"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_small"
-                    android:padding="4dp"
                     android:singleLine="true"
                     android:ellipsize="end"/>
+
+                <Space
+                    android:layout_width="fill_parent"
+                    android:layout_height="8dp" />
 
                 <TextView
                     android:id="@+id/list_item_time_last_checked"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_size_small"
-                    android:padding="4dp"
-                    android:singleLine="true"
-                    android:ellipsize="start"/>
+                    android:textSize="@dimen/text_size_small"/>
             </LinearLayout>
 
             <ImageView
