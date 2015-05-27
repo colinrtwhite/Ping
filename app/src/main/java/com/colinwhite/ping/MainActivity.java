@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void showSortByDialog() {
-        // Display the "sort by" Dialog. Initialise it if it hasn't been already.
+        // Display the "sort by" Dialog. Use lazy loading (i.e. don't load it unless we need it).
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (sortByDialog == null) {
                 sortByDialog = (new AlertDialog.Builder(this).setTitle(R.string.sort_by_title)
