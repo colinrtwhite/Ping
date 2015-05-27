@@ -49,7 +49,9 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
 import com.colinwhite.ping.widget.ClearableEditText;
 import com.melnykov.fab.FloatingActionButton;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -65,16 +67,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String PREF_SORT_BY_ID = "sort_by_pref";
     private static final String PREF_SORT_DIRECTION_ID = "sort_direction_pref";
     private static final int SORT_DESCENDING = 0, SORT_ASCENDING = 1;
-    private static final String[] PROJECTION = { // We need these columns from the database to run the CursorAdapter.
-            MonitorEntry._ID,
+    private static final String[] PROJECTION = { // We need these columns from the database to run
+            MonitorEntry._ID,                    // the CursorAdapter.
             MonitorEntry.TITLE,
             MonitorEntry.URL,
             MonitorEntry.PING_FREQUENCY,
             MonitorEntry.END_TIME,
             MonitorEntry.TIME_LAST_CHECKED,
             MonitorEntry.STATUS};
-    private static final String[] SORT_BY_OPTIONS = { // Should match the options in R.array.sort_options
-            MonitorEntry._ID,
+    private static final String[] SORT_BY_OPTIONS = { // Should match the options in
+            MonitorEntry._ID,                         // R.array.sort_options
             MonitorEntry.TIME_LAST_CHECKED,
             MonitorEntry.TITLE,
             MonitorEntry.STATUS };
@@ -144,12 +146,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         monitorList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent monitorDetailIntent = new Intent(getApplicationContext(), MonitorDetailActivity.class);
+                Intent monitorDetailIntent = new Intent(getApplicationContext(),
+                        MonitorDetailActivity.class);
                 // Show that we are looking at an existing Monitor.
                 monitorDetailIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
                         MonitorDetailActivity.PAGE_DETAIL);
                 monitorDetailIntent.putExtra(MonitorEntry._ID, id);
-                monitorDetailIntent.putExtra(MonitorEntry.URL, ((TextView) view.findViewById(R.id.list_item_url)).getText());
+                monitorDetailIntent.putExtra(MonitorEntry.URL, ((TextView)
+                        view.findViewById(R.id.list_item_url)).getText());
 
                 startActivity(monitorDetailIntent);
             }
@@ -183,10 +187,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     int cx = addButton.getWidth() / 2;
                     int cy = addButton.getHeight() / 2;
                     int finalRadius = Math.max(addButton.getWidth(), addButton.getHeight());
-                    Animator animation = ViewAnimationUtils.createCircularReveal(addButton, cx, cy, 0, finalRadius);
+                    Animator animation = ViewAnimationUtils.createCircularReveal(addButton, cx, cy,
+                            0, finalRadius);
 
-                    // Make the view visible and start the animation.
-                    animation.setStartDelay(1); // Start delay 0 causes the animation to start before the activity is open.
+                    // Make the view visible and start the animation. Start delay 0 causes the
+                    // animation to start before the activity is open.
+                    animation.setStartDelay(1);
                     animation.setDuration(150);
                     animation.addListener(new Animator.AnimatorListener() {
                         @Override
@@ -238,9 +244,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 return true;
             case R.id.rate_app:
                 try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("market://details?id=" + getPackageName())));
                 } catch (ActivityNotFoundException e) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + getPackageName())));
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://play.google.com/store/apps/details?id=" + getPackageName())));
                 }
                 return true;
         }
@@ -255,12 +263,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 sortByDialog = (new AlertDialog.Builder(this).setTitle(R.string.sort_by_title)
                         .setPositiveButton(R.string.ascending, new SortByOnClickListener(SORT_ASCENDING))
                         .setNegativeButton(R.string.descending, new SortByOnClickListener(SORT_DESCENDING)))
-                        .setSingleChoiceItems(R.array.sort_options, sharedPref.getInt(PREF_SORT_BY_ID, 0), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                temporarySortOrder = which;
-                            }
-                        }).show();
+                        .setSingleChoiceItems(R.array.sort_options, sharedPref.getInt(PREF_SORT_BY_ID, 0),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        temporarySortOrder = which;
+                                    }
+                                }).show();
             } else {
                 sortByDialog.show();
             }
@@ -431,7 +440,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      * the main TextView with the returned information.
      */
     public class PingServiceReceiver extends ResultReceiver {
-        public PingServiceReceiver(Handler handler) { super(handler); }
+        private final Map<Integer, Integer> statusToString = new HashMap<>();
+
+        public PingServiceReceiver(Handler handler) {
+            super(handler);
+            statusToString.put(MonitorEntry.STATUS_IS_UP, R.string.is_up);
+            statusToString.put(MonitorEntry.STATUS_IS_DOWN, R.string.is_down);
+            statusToString.put(MonitorEntry.STATUS_IS_NOT_WEBSITE, R.string.does_not_exist);
+            statusToString.put(MonitorEntry.STATUS_NO_INTERNET, R.string.no_internet_connection);
+        }
 
         /**
          * Handle the status information the PingService broadcasts and display the relevant Toast
@@ -439,23 +456,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
          */
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
-            switch (resultCode) {
-                case MonitorEntry.STATUS_IS_UP:
-                    Toast.makeText(MainActivity.this, R.string.is_up, Toast.LENGTH_LONG).show();
-                    break;
-                case MonitorEntry.STATUS_IS_DOWN:
-                    Toast.makeText(MainActivity.this, R.string.is_down, Toast.LENGTH_LONG).show();
-                    break;
-                case MonitorEntry.STATUS_IS_NOT_WEBSITE:
-                    Toast.makeText(MainActivity.this, R.string.does_not_exist, Toast.LENGTH_LONG).show();
-                    break;
-                case MonitorEntry.STATUS_NO_INTERNET:
-                    Toast.makeText(MainActivity.this, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
-                    break;
-                default:
-                    Toast.makeText(MainActivity.this, R.string.other, Toast.LENGTH_LONG).show();
-                    break;
-            }
+            Toast.makeText(MainActivity.this,
+                    statusToString.containsKey(resultCode) ? statusToString.get(resultCode) : R.string.other,
+                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -464,7 +467,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      * Dialog.
      */
     public class SortByOnClickListener implements DialogInterface.OnClickListener {
-        private int sortDirection;
+        private final int sortDirection;
 
         public SortByOnClickListener(int sortDirection) {
             this.sortDirection = sortDirection;

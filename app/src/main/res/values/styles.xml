@@ -30,7 +30,7 @@
         <item name="android:foreground">@drawable/ripple_accent</item>
     </style>
 
-    <!-- Used to colour the seekbarbar in pre-Lollipop devices. -->
+    <!-- Used to colour the SeekBar in pre-Lollipop devices. -->
     <style name="SeekBarAppTheme" parent="android:Widget.Holo.Light.SeekBar">
         <item name="android:progressDrawable">@drawable/apptheme_scrubber_progress_horizontal_holo_light</item>
         <item name="android:indeterminateDrawable">@drawable/apptheme_scrubber_progress_horizontal_holo_light</item>

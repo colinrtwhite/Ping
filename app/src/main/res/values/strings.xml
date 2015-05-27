@@ -28,7 +28,7 @@
     <string name="notification_text" formatted="false">%s is %s as of %s.</string>
     <string name="expiration_date_explanation">Set the date and time you would like the Monitor to stop pinging automatically.</string>
     <string name="ping_explanation_never">Never ping the website automatically.</string>
-    <string name="approximately_tag"></string>
+    <string name="approximately_tag"/>
     <string name="invalid_input_title">Please enter a title.</string>
     <string name="invalid_input_url_empty">Please enter a URL.</string>
     <string name="invalid_input_time">Please set an expiration time.</string>
@@ -63,15 +63,16 @@
     <string name="empty_list_view_header">What\'s a Monitor?</string>
     <string name="error">An internal error occurred.</string>
     <string name="sort_by">Sort by</string>
-    <string name="sort_by_date_created">Sort by date created</string>
-    <string name="sort_by_last_checked">Sort by last checked</string>
-    <string name="sort_by_name">Sort by name</string>
-    <string name="sort_by_current_state">Sort by current state</string>
     <string name="rate_app">Rate app</string>
     <string name="action_explain_approximate_dialog_title">Approximate Timers</string>
     <string name="dialog_confirm_delete_title">Delete Monitor?</string>
     <string name="sort_by_title">Sort by:</string>
     <string name="ascending">Ascending</string>
     <string name="descending">Descending</string>
+    <string name="content_description_is_up">Is up status</string>
+    <string name="content_description_is_down">Is down status</string>
+    <string name="content_description_no_info">No info status</string>
+    <string name="content_description_is_not_website">Is not a website status</string>
+    <string name="content_description_no_internet">No internet status</string>
 
 </resources>

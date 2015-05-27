@@ -74,10 +74,7 @@ public class ClearableEditText extends EditText implements OnTouchListener,
                 return true;
             }
         }
-        if (l != null) {
-            return l.onTouch(v, event);
-        }
-        return false;
+        return l != null && l.onTouch(v, event);
     }
 
     @Override
@@ -99,7 +96,7 @@ public class ClearableEditText extends EditText implements OnTouchListener,
         }
     }
 
-    public static boolean isNotEmpty(CharSequence str) {
+    private static boolean isNotEmpty(CharSequence str) {
         return str != null && str.length() > 0;
     }
 
@@ -115,7 +112,7 @@ public class ClearableEditText extends EditText implements OnTouchListener,
         addTextChangedListener(new TextWatcherAdapter(this, this));
     }
 
-    protected void setClearIconVisible(boolean visible) {
+    private void setClearIconVisible(boolean visible) {
         boolean wasVisible = (getCompoundDrawables()[2] != null);
         if (visible != wasVisible) {
             Drawable x = visible ? clearIcon : null;
