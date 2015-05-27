@@ -63,7 +63,8 @@
                     android:layout_marginLeft="12dp"
                     android:src="@drawable/ic_monitor"
                     android:layout_gravity="center"
-                    android:layout_weight="0"/>
+                    android:layout_weight="0"
+                    android:contentDescription="@string/content_description_status"/>
             </LinearLayout>
 
             <LinearLayout

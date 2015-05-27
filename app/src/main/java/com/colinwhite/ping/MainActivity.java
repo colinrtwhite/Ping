@@ -236,8 +236,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             animation.setDuration(300);
             set.addAnimation(animation);
 
-            LayoutAnimationController controller = new LayoutAnimationController(set, 0.25f);
-            monitorList.setLayoutAnimation(controller);
+            monitorList.setLayoutAnimation(new LayoutAnimationController(set, 0.25f));
         } else if (key.equals(getString(R.string.pref_key_24_hour_clock))) {
             monitorAdapter.notifyDataSetChanged();
         }

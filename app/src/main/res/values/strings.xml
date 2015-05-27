@@ -74,5 +74,8 @@
     <string name="content_description_no_info">No info status</string>
     <string name="content_description_is_not_website">Is not a website status</string>
     <string name="content_description_no_internet">No internet status</string>
+    <string name="content_description_ping_button">Check URL button</string>
+    <string name="content_description_status">Monitor\'s status</string>
+    <string name="content_description_refresh_button">Refresh button</string>
 
 </resources>

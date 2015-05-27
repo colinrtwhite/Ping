@@ -34,7 +34,8 @@
                 android:hapticFeedbackEnabled="true"
                 android:scaleType="centerCrop"
                 android:focusable="false"
-                android:focusableInTouchMode="false"/>
+                android:focusableInTouchMode="false"
+                android:contentDescription="@string/content_description_refresh_button"/>
 
             <include layout="@layout/progress_bar"/>
 
@@ -84,7 +85,8 @@
                 android:layout_height="48dp"
                 android:layout_gravity="center"
                 android:layout_weight="0"
-                android:layout_margin="18dp"/>
+                android:layout_margin="18dp"
+                android:contentDescription="@string/content_description_status"/>
 
         </LinearLayout>
     </android.support.v7.widget.CardView>

@@ -34,7 +34,8 @@
             android:hapticFeedbackEnabled="true"
             android:src="@drawable/ic_navigation_refresh_white"
             android:scaleType="centerCrop"
-            android:layout_weight="0"/>
+            android:layout_weight="0"
+            android:contentDescription="@string/content_description_ping_button"/>
 
         <include layout="@layout/url_quick_check_field"/>
     </LinearLayout>
