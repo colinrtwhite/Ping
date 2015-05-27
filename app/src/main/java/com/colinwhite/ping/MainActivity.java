@@ -34,6 +34,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -64,7 +69,7 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         SharedPreferences.OnSharedPreferenceChangeListener, SwipeRefreshLayout.OnRefreshListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    private static final String PREF_SORT_BY_ID = "sort_by_pref";
+    private static final String PREF_SORT_ATTRIBUTE_ID = "sort_attribute_pref";
     private static final String PREF_SORT_DIRECTION_ID = "sort_direction_pref";
     private static final int SORT_DESCENDING = 0, SORT_ASCENDING = 1;
     private static final String[] PROJECTION = { // We need these columns from the database to run
@@ -95,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @InjectView(R.id.url_text_field_quick) ClearableEditText clearableEditText;
     @InjectView(R.id.activity_container) LinearLayout activityContainer;
     @InjectView(R.id.swiper_container) SwipeRefreshLayout swipeContainer;
+    @InjectView(R.id.monitor_list) ListView monitorList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +145,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         // Set the text that is shown when the list of monitors is empty.
-        final ListView monitorList = (ListView) findViewById(R.id.monitor_list);
         monitorList.setEmptyView(findViewById(R.id.empty_monitor_list));
 
         // Set the any items in the Monitor ListView to open up their detail activity.
@@ -214,9 +219,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(PREF_SORT_BY_ID) || key.equals(PREF_SORT_DIRECTION_ID)) {
+        if (key.equals(PREF_SORT_ATTRIBUTE_ID) || key.equals(PREF_SORT_DIRECTION_ID)) {
             monitorAdapter.getCursor().close();
             getLoaderManager().restartLoader(0, null, MainActivity.this);
+
+            // Animate the change to the data set.
+            AnimationSet set = new AnimationSet(true);
+
+            Animation animation = new AlphaAnimation(0.0f, 1.0f);
+            animation.setDuration(300);
+            set.addAnimation(animation);
+
+            animation = new TranslateAnimation(
+                    Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                    Animation.RELATIVE_TO_SELF, -1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
+            animation.setDuration(300);
+            set.addAnimation(animation);
+
+            LayoutAnimationController controller = new LayoutAnimationController(set, 0.25f);
+            monitorList.setLayoutAnimation(controller);
         } else if (key.equals(getString(R.string.pref_key_24_hour_clock))) {
             monitorAdapter.notifyDataSetChanged();
         }
@@ -263,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 sortByDialog = (new AlertDialog.Builder(this).setTitle(R.string.sort_by_title)
                         .setPositiveButton(R.string.ascending, new SortByOnClickListener(SORT_ASCENDING))
                         .setNegativeButton(R.string.descending, new SortByOnClickListener(SORT_DESCENDING)))
-                        .setSingleChoiceItems(R.array.sort_options, sharedPref.getInt(PREF_SORT_BY_ID, 0),
+                        .setSingleChoiceItems(R.array.sort_options, sharedPref.getInt(PREF_SORT_ATTRIBUTE_ID, 0),
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -284,18 +305,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             sharedPref.edit().putInt(PREF_SORT_DIRECTION_ID, SORT_ASCENDING)
-                                    .putInt(PREF_SORT_BY_ID, temporarySortOrder).apply();
+                                    .putInt(PREF_SORT_ATTRIBUTE_ID, temporarySortOrder).apply();
                         }
 
                         @Override
                         public void onNegative(MaterialDialog dialog) {
                             sharedPref.edit().putInt(PREF_SORT_DIRECTION_ID, SORT_DESCENDING)
-                                    .putInt(PREF_SORT_BY_ID, temporarySortOrder).apply();
+                                    .putInt(PREF_SORT_ATTRIBUTE_ID, temporarySortOrder).apply();
                         }
                     })
                     .alwaysCallSingleChoiceCallback()
                     .items(R.array.sort_options)
-                    .itemsCallbackSingleChoice(sharedPref.getInt(PREF_SORT_BY_ID, 0), new MaterialDialog.ListCallbackSingleChoice() {
+                    .itemsCallbackSingleChoice(sharedPref.getInt(PREF_SORT_ATTRIBUTE_ID, 0), new MaterialDialog.ListCallbackSingleChoice() {
                         @Override
                         public boolean onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
                             temporarySortOrder = i;
@@ -345,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     // Required to implement a CursorAdapter on the main ListView.
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String sortBy = SORT_BY_OPTIONS[sharedPref.getInt(PREF_SORT_BY_ID, 0)] +
+        String sortBy = SORT_BY_OPTIONS[sharedPref.getInt(PREF_SORT_ATTRIBUTE_ID, 0)] +
                 ((sharedPref.getInt(PREF_SORT_DIRECTION_ID, 0) == SORT_DESCENDING) ? " DESC" : " ASC");
         return new CursorLoader(this, MonitorEntry.CONTENT_URI, PROJECTION, null, null, sortBy);
     }
@@ -476,7 +497,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         @Override
         public void onClick(DialogInterface dialog, int which) {
             sharedPref.edit().putInt(PREF_SORT_DIRECTION_ID, sortDirection)
-                    .putInt(PREF_SORT_BY_ID, temporarySortOrder).apply();
+                    .putInt(PREF_SORT_ATTRIBUTE_ID, temporarySortOrder).apply();
         }
     }
 
