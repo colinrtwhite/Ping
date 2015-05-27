@@ -250,8 +250,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void showSortByDialog() {
         // Display the "sort by" Dialog. Initialise it if it hasn't been already.
-        if (sortByDialog == null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (sortByDialog == null) {
                 sortByDialog = (new AlertDialog.Builder(this).setTitle(R.string.sort_by_title)
                         .setPositiveButton(R.string.ascending, new SortByOnClickListener(SORT_ASCENDING))
                         .setNegativeButton(R.string.descending, new SortByOnClickListener(SORT_DESCENDING)))
@@ -262,37 +262,37 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             }
                         }).show();
             } else {
-                // Can't cache compat dialog because of item selection bug when the dialog is
-                // re-shown.
-                new MaterialDialog.Builder(this)
-                        .title(R.string.sort_by_title)
-                        .positiveText(R.string.ascending)
-                        .negativeText(R.string.descending)
-                        .callback(new MaterialDialog.ButtonCallback() {
-                            @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                sharedPref.edit().putInt(PREF_SORT_DIRECTION_ID, SORT_ASCENDING)
-                                        .putInt(PREF_SORT_BY_ID, temporarySortOrder).apply();
-                            }
-
-                            @Override
-                            public void onNegative(MaterialDialog dialog) {
-                                sharedPref.edit().putInt(PREF_SORT_DIRECTION_ID, SORT_DESCENDING)
-                                        .putInt(PREF_SORT_BY_ID, temporarySortOrder).apply();
-                            }
-                        })
-                        .alwaysCallSingleChoiceCallback()
-                        .items(R.array.sort_options)
-                        .itemsCallbackSingleChoice(sharedPref.getInt(PREF_SORT_BY_ID, 0), new MaterialDialog.ListCallbackSingleChoice() {
-                            @Override
-                            public boolean onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                                temporarySortOrder = i;
-                                return true;
-                            }
-                        }).show();
+                sortByDialog.show();
             }
         } else {
-            sortByDialog.show();
+            // Can't cache compat dialog because of a library bug involving item selection when the
+            // same dialog is re-shown.
+            new MaterialDialog.Builder(this)
+                    .title(R.string.sort_by_title)
+                    .positiveText(R.string.ascending)
+                    .negativeText(R.string.descending)
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            sharedPref.edit().putInt(PREF_SORT_DIRECTION_ID, SORT_ASCENDING)
+                                    .putInt(PREF_SORT_BY_ID, temporarySortOrder).apply();
+                        }
+
+                        @Override
+                        public void onNegative(MaterialDialog dialog) {
+                            sharedPref.edit().putInt(PREF_SORT_DIRECTION_ID, SORT_DESCENDING)
+                                    .putInt(PREF_SORT_BY_ID, temporarySortOrder).apply();
+                        }
+                    })
+                    .alwaysCallSingleChoiceCallback()
+                    .items(R.array.sort_options)
+                    .itemsCallbackSingleChoice(sharedPref.getInt(PREF_SORT_BY_ID, 0), new MaterialDialog.ListCallbackSingleChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                            temporarySortOrder = i;
+                            return true;
+                        }
+                    }).show();
         }
     }
 

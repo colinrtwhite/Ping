@@ -3,7 +3,7 @@
     <string-array name="sort_options">
         <item>Order created</item>
         <item>Time checked</item>
-        <item>Name</item>
+        <item>Title</item>
         <item>Current state</item>
     </string-array>
 </resources>
