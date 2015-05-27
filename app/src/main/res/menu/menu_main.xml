@@ -4,24 +4,10 @@
     tools:context=".MainActivity">
 
     <item
+        android:id="@+id/action_sort"
         android:icon="@drawable/ic_action_content_sort"
         android:title="@string/sort_by"
-        app:showAsAction="ifRoom">
-        <menu>
-            <item
-                android:id="@+id/sort_by_date_created"
-                android:title="@string/sort_by_date_created" />
-            <item
-                android:id="@+id/sort_by_last_checked"
-                android:title="@string/sort_by_last_checked" />
-            <item
-                android:id="@+id/sort_by_name"
-                android:title="@string/sort_by_name" />
-            <item
-                android:id="@+id/sort_by_state"
-                android:title="@string/sort_by_current_state" />
-        </menu>
-    </item>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_icon_reference"

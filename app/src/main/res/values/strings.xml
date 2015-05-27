@@ -70,5 +70,8 @@
     <string name="rate_app">Rate app</string>
     <string name="action_explain_approximate_dialog_title">Approximate Timers</string>
     <string name="dialog_confirm_delete_title">Delete Monitor?</string>
+    <string name="sort_by_title">Sort by:</string>
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
 
 </resources>

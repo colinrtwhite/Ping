@@ -2,11 +2,14 @@ package com.colinwhite.ping;
 
 import android.animation.Animator;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.LoaderManager;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -39,6 +42,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.pref.PreferencesActivity;
 import com.colinwhite.ping.sync.PingSyncAdapter;
@@ -58,8 +62,22 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         SharedPreferences.OnSharedPreferenceChangeListener, SwipeRefreshLayout.OnRefreshListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    private static final String PREF_SORT_ORDER_ID = "sort_order_pref";
-    private static final String PREF_SORT_ORDER_DEFAULT_VALUE = MonitorEntry._ID + " DESC";
+    private static final String PREF_SORT_BY_ID = "sort_by_pref";
+    private static final String PREF_SORT_DIRECTION_ID = "sort_direction_pref";
+    private static final int SORT_DESCENDING = 0, SORT_ASCENDING = 1;
+    private static final String[] PROJECTION = { // We need these columns from the database to run the CursorAdapter.
+            MonitorEntry._ID,
+            MonitorEntry.TITLE,
+            MonitorEntry.URL,
+            MonitorEntry.PING_FREQUENCY,
+            MonitorEntry.END_TIME,
+            MonitorEntry.TIME_LAST_CHECKED,
+            MonitorEntry.STATUS};
+    private static final String[] SORT_BY_OPTIONS = { // Should match the options in R.array.sort_options
+            MonitorEntry._ID,
+            MonitorEntry.TIME_LAST_CHECKED,
+            MonitorEntry.TITLE,
+            MonitorEntry.STATUS };
 
     private final PingServiceReceiver resultReceiver = new PingServiceReceiver(new Handler());
     private SharedPreferences sharedPref;
@@ -67,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private MonitorAdapter monitorAdapter;
     private InputMethodManager inputMethodManager;
     private Object syncHandle;
+    private int temporarySortOrder = 0;
+    private Dialog sortByDialog = null;
 
     // UI elements
     @InjectView(R.id.toolbar) Toolbar toolbar;
@@ -90,8 +110,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Give the same logic to the "enter" key on the soft keyboard while in the EditText.
         clearableEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean isConfirm =
-                        (actionId == EditorInfo.IME_ACTION_DONE) ||
+                boolean isConfirm = (actionId == EditorInfo.IME_ACTION_DONE) ||
                                 (actionId == EditorInfo.IME_ACTION_NEXT);
                 String inputText = clearableEditText.getText().toString();
                 if (isConfirm && isValidInput(inputText)) {
@@ -189,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(PREF_SORT_ORDER_ID)) {
+        if (key.equals(PREF_SORT_BY_ID) || key.equals(PREF_SORT_DIRECTION_ID)) {
             monitorAdapter.getCursor().close();
             getLoaderManager().restartLoader(0, null, MainActivity.this);
         } else if (key.equals(getString(R.string.pref_key_24_hour_clock))) {
@@ -208,17 +227,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.sort_by_date_created:
-                sharedPref.edit().putString(PREF_SORT_ORDER_ID, MonitorEntry._ID + " DESC").apply();
-                return true;
-            case R.id.sort_by_name:
-                sharedPref.edit().putString(PREF_SORT_ORDER_ID, MonitorEntry.TITLE + " ASC").apply();
-                return true;
-            case R.id.sort_by_last_checked:
-                sharedPref.edit().putString(PREF_SORT_ORDER_ID, MonitorEntry.TIME_LAST_CHECKED + " DESC").apply();
-                return true;
-            case R.id.sort_by_state:
-                sharedPref.edit().putString(PREF_SORT_ORDER_ID, MonitorEntry.STATUS + " DESC").apply();
+            case R.id.action_sort:
+                showSortByDialog();
                 return true;
             case R.id.action_icon_reference:
                 startActivity(new Intent(this, IconReferenceActivity.class));
@@ -236,6 +246,54 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSortByDialog() {
+        // Display the "sort by" Dialog. Initialise it if it hasn't been already.
+        if (sortByDialog == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                sortByDialog = (new AlertDialog.Builder(this).setTitle(R.string.sort_by_title)
+                        .setPositiveButton(R.string.ascending, new SortByOnClickListener(SORT_ASCENDING))
+                        .setNegativeButton(R.string.descending, new SortByOnClickListener(SORT_DESCENDING)))
+                        .setSingleChoiceItems(R.array.sort_options, sharedPref.getInt(PREF_SORT_BY_ID, 0), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                temporarySortOrder = which;
+                            }
+                        }).show();
+            } else {
+                // Can't cache compat dialog because of item selection bug when the dialog is
+                // re-shown.
+                new MaterialDialog.Builder(this)
+                        .title(R.string.sort_by_title)
+                        .positiveText(R.string.ascending)
+                        .negativeText(R.string.descending)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                sharedPref.edit().putInt(PREF_SORT_DIRECTION_ID, SORT_ASCENDING)
+                                        .putInt(PREF_SORT_BY_ID, temporarySortOrder).apply();
+                            }
+
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                sharedPref.edit().putInt(PREF_SORT_DIRECTION_ID, SORT_DESCENDING)
+                                        .putInt(PREF_SORT_BY_ID, temporarySortOrder).apply();
+                            }
+                        })
+                        .alwaysCallSingleChoiceCallback()
+                        .items(R.array.sort_options)
+                        .itemsCallbackSingleChoice(sharedPref.getInt(PREF_SORT_BY_ID, 0), new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                                temporarySortOrder = i;
+                                return true;
+                            }
+                        }).show();
+            }
+        } else {
+            sortByDialog.show();
+        }
     }
 
     /**
@@ -278,18 +336,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     // Required to implement a CursorAdapter on the main ListView.
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // We need these columns from the database to run the CursorAdapter.
-        String[] projection = {
-                MonitorEntry._ID,
-                MonitorEntry.TITLE,
-                MonitorEntry.URL,
-                MonitorEntry.PING_FREQUENCY,
-                MonitorEntry.END_TIME,
-                MonitorEntry.TIME_LAST_CHECKED,
-                MonitorEntry.STATUS};
-
-        return new CursorLoader(this, MonitorEntry.CONTENT_URI, projection, null, null,
-                sharedPref.getString(PREF_SORT_ORDER_ID, PREF_SORT_ORDER_DEFAULT_VALUE));
+        String sortBy = SORT_BY_OPTIONS[sharedPref.getInt(PREF_SORT_BY_ID, 0)] +
+                ((sharedPref.getInt(PREF_SORT_DIRECTION_ID, 0) == SORT_DESCENDING) ? " DESC" : " ASC");
+        return new CursorLoader(this, MonitorEntry.CONTENT_URI, PROJECTION, null, null, sortBy);
     }
 
     @Override
@@ -298,7 +347,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (monitorAdapter != null && data != null) {
             // Enable the SwipeRefreshLayout if there is at least one Monitor.
             swipeContainer.setEnabled(data.getCount() > 0);
-
             monitorAdapter.swapCursor(data);
         } else {
             Log.v(LOG_TAG, "OnLoadFinished: monitorAdapter is null.");
@@ -310,7 +358,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Try and show the data.
         if (monitorAdapter != null) {
             swipeContainer.setEnabled(false);
-
             monitorAdapter.swapCursor(null);
         } else {
             Log.v(LOG_TAG, "OnLoadFinished: monitorAdapter is null.");
@@ -409,6 +456,24 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     Toast.makeText(MainActivity.this, R.string.other, Toast.LENGTH_LONG).show();
                     break;
             }
+        }
+    }
+
+    /**
+     * Used as the OnClickListener for the "Ascending" and "Descending" buttons in the sort by
+     * Dialog.
+     */
+    public class SortByOnClickListener implements DialogInterface.OnClickListener {
+        private int sortDirection;
+
+        public SortByOnClickListener(int sortDirection) {
+            this.sortDirection = sortDirection;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            sharedPref.edit().putInt(PREF_SORT_DIRECTION_ID, sortDirection)
+                    .putInt(PREF_SORT_BY_ID, temporarySortOrder).apply();
         }
     }
 
