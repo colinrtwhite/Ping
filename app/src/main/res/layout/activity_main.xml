@@ -18,7 +18,7 @@
         android:background="@color/primary"
         android:orientation="horizontal"
         android:paddingTop="2dp"
-        android:paddingBottom="10dp"
+        android:paddingBottom="8dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:gravity="center"
