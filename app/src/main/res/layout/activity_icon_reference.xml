@@ -42,8 +42,8 @@
                     android:contentDescription="@null"/>
 
                 <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_margin="@dimen/icon_explanation_margin"
                     android:layout_weight="0"
                     android:paddingLeft="4dp"
@@ -76,8 +76,8 @@
                     android:contentDescription="@null"/>
 
                 <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_margin="@dimen/icon_explanation_margin"
                     android:layout_weight="0"
                     android:paddingLeft="4dp"
@@ -110,8 +110,8 @@
                     android:contentDescription="@null"/>
 
                 <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_margin="@dimen/icon_explanation_margin"
                     android:layout_weight="0"
                     android:paddingLeft="4dp"
@@ -144,8 +144,8 @@
                     android:contentDescription="@null"/>
 
                 <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_margin="@dimen/icon_explanation_margin"
                     android:layout_weight="0"
                     android:paddingLeft="4dp"
@@ -178,8 +178,8 @@
                     android:contentDescription="@null"/>
 
                 <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_margin="@dimen/icon_explanation_margin"
                     android:layout_weight="0"
                     android:paddingLeft="4dp"

@@ -18,8 +18,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
             android:descendantFocusability="blocksDescendants">
 
             <ImageButton
@@ -39,45 +37,60 @@
 
             <include layout="@layout/progress_bar"/>
 
+            <Space
+                android:layout_width="4dp"
+                android:layout_height="match_parent" />
+
             <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center">
 
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp" />
+
                 <TextView
                     android:id="@+id/list_item_title"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/accent"
                     android:singleLine="true"
-                    android:ellipsize="end"/>
+                    android:ellipsize="end" />
 
                 <Space
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="8dp" />
 
                 <TextView
                     android:id="@+id/list_item_url"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_small"
                     android:singleLine="true"
-                    android:ellipsize="end"/>
+                    android:ellipsize="end" />
 
                 <Space
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="8dp" />
 
                 <TextView
                     android:id="@+id/list_item_time_last_checked"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_size_small"/>
+                    android:textSize="@dimen/text_size_small" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp" />
             </LinearLayout>
+
+            <Space
+                android:layout_width="4dp"
+                android:layout_height="match_parent" />
 
             <ImageView
                 android:id="@+id/list_item_status"
