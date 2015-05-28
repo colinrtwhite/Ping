@@ -114,6 +114,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
 
             if (cursor.getCount() == 0) {
                 Log.e(LOG_TAG, "No Monitors found in cursor.");
+                cursor.close();
                 return;
             }
 
@@ -267,8 +268,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
         configurePeriodicSync(context, account, url, monitorId, interval);
 
         // Without calling setSyncAutomatically, our periodic sync will not be enabled.
-        ContentResolver.setSyncAutomatically(account, context.getString(R.string.content_authority),
-                true);
+        ContentResolver.setSyncAutomatically(account, context.getString(R.string.content_authority), true);
 
         // Run an immediate sync if we are on Lollipop.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
