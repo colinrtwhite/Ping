@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         monitorList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent monitorDetailIntent = new Intent(getApplicationContext(),
+                Intent monitorDetailIntent = new Intent(MainActivity.this,
                         MonitorDetailActivity.class);
                 // Show that we are looking at an existing Monitor.
                 monitorDetailIntent.putExtra(MonitorDetailActivity.PAGE_TYPE_ID,
@@ -349,7 +349,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      * @param inputText A valid URL that we can ping.
      */
     private void startPingService(String inputText) {
-        Intent pingServiceIntent = new Intent(getApplicationContext(), PingService.class);
+        Intent pingServiceIntent = new Intent(this, PingService.class);
 
         // Add the URL from the text field and the ResultReceiver to the Intent.
         pingServiceIntent.putExtra(MonitorEntry.URL, inputText);
@@ -517,7 +517,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         vibratorService.vibrate(Utility.HAPTIC_FEEDBACK_DURATION);
 
         // Pass the value of the EditText to MonitorDetailActivity.
-        Intent monitorDetailActivityIntent = new Intent(getApplicationContext(),
+        Intent monitorDetailActivityIntent = new Intent(MainActivity.this,
                 MonitorDetailActivity.class);
         String text = clearableEditText.getText().toString();
         if (!text.isEmpty()) {
