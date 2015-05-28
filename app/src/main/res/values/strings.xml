@@ -51,7 +51,7 @@
     <string name="dialog_explain_approximate_message">Ping! uses inexact timers to schedule network processes together. This saves you heaps of battery life!\n\nUnfortunately, Android Jelly Bean only supports exact timers so Monitors run on a fixed schedule.</string>
     <string name="action_explain_approximate_title">Approximate timers</string>
     <string name="icon_reference_activity_label">Icon Reference</string>
-    <string name="action_icon_reference">Icon Reference</string>
+    <string name="action_icon_reference">Icon reference</string>
     <string name="icon_explanation_is_up">The website is up and responding to network requests.</string>
     <string name="icon_explanation_no_internet">Ping! couldn\'t complete its last network request to the website. Your internet connection might not be working or you might not be able to access the host.</string>
     <string name="icon_explanation_is_not_website">According to the host, it didn\'t receive a valid URL.</string>
