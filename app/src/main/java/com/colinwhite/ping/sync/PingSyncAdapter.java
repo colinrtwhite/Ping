@@ -30,7 +30,6 @@ import com.colinwhite.ping.Utility;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 
 import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
@@ -40,10 +39,11 @@ import java.util.regex.Pattern;
 public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String LOG_TAG = PingSyncAdapter.class.getSimpleName();
 
-    // The SQL selection string is always the same.
+    // The SQL selection and projection strings are always the same.
     private static final String selection = MonitorEntry._ID + " = ?";
+    private static final String[] projection = { MonitorEntry.TITLE, MonitorEntry.STATUS,
+            MonitorEntry.LAST_NON_ERROR_STATUS};
 
-    // UI elements
     private static Context context;
     private static Pattern upPattern, downPattern, doesNotExistPattern;
     private static ContentResolver contentResolver;
@@ -101,10 +101,6 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
             long timeLastChecked = Calendar.getInstance().getTimeInMillis();
 
             // Get the Monitor's previous status to compare.
-            String[] projection = {
-                    MonitorEntry.TITLE,
-                    MonitorEntry.STATUS,
-                    MonitorEntry.LAST_NON_ERROR_STATUS};
             Cursor cursor = contentResolver.query(
                     MonitorEntry.buildUri(monitorId),
                     projection,
@@ -113,9 +109,8 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                     null);
 
             if (cursor.getCount() == 0) {
-                Log.e(LOG_TAG, "No Monitors found in cursor.");
                 cursor.close();
-                return;
+                throw new IllegalStateException("No Monitors found in cursor.");
             }
 
             cursor.moveToFirst();
@@ -335,26 +330,5 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
         bundle.putInt(MonitorEntry._ID, monitorId);
         bundle.putString(MonitorEntry.URL, url);
         ContentResolver.removePeriodicSync(account, context.getString(R.string.content_authority), bundle);
-    }
-
-    /**
-     * Given the information of a current Monitor, remove then recreate its periodic sync.
-     * NOTE: This is used for when the user manually refreshes. We recreate the Monitor's periodic
-     * sync to reset the timer on the automatic refresh.
-     * @param context The Context used to access the account service.
-     * @param url The URL that the periodic sync is tied to.
-     * @param monitorId The ID of the relevant Monitor in the database.
-     * @param interval The duration between syncs in seconds.
-     */
-    public static void recreateRefreshPeriodicSync(Context context, String url,
-                                                   int monitorId, int interval) {
-        // Only remove and create a new periodic sync if the Monitor is set to automatically sync.
-        if (interval < MonitorEntry.PING_FREQUENCY_MAX) {
-            removePeriodicSync(context, url, monitorId);
-            createPeriodicSync(context, url, monitorId,
-                    (int) TimeUnit.MINUTES.toSeconds(Utility.PING_FREQUENCY_MINUTES[interval]));
-        } else {
-            syncImmediately(context, getSyncAccount(context), url, monitorId);
-        }
     }
 }

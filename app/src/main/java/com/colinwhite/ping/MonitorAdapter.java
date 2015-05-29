@@ -1,5 +1,6 @@
 package com.colinwhite.ping;
 
+import android.accounts.Account;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,12 +30,13 @@ import butterknife.InjectView;
  */
 class MonitorAdapter extends CursorAdapter {
     private static Vibrator vibratorService;
+    private Account account;
 
     public MonitorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
 
-        // Get the service for haptic feedback.
         vibratorService = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        account = PingSyncAdapter.getSyncAccount(context);
     }
 
     @Override
@@ -75,11 +77,9 @@ class MonitorAdapter extends CursorAdapter {
 
                     if (Utility.hasNetworkConnection(context)) {
                         // Refresh the Monitor right now.
-                        PingSyncAdapter.recreateRefreshPeriodicSync(
-                                context,
+                        PingSyncAdapter.syncImmediately(context, account,
                                 (String) values.get(MonitorEntry.URL),
-                                (int) values.get(MonitorEntry._ID),
-                                (int) values.get(MonitorEntry.PING_FREQUENCY));
+                                (int) values.get(MonitorEntry._ID));
                     } else {
                         Toast.makeText(context,
                                 context.getResources().getString(R.string.error_poor_connection),

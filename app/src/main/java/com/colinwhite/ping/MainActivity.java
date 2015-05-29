@@ -1,5 +1,6 @@
 package com.colinwhite.ping;
 
+import android.accounts.Account;
 import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -434,13 +435,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE,
                     observer);
 
+            Account account = PingSyncAdapter.getSyncAccount(MainActivity.this);
+
             do {
                 // Refresh the Monitor right now.
-                PingSyncAdapter.recreateRefreshPeriodicSync(
-                        MainActivity.this,
+                PingSyncAdapter.syncImmediately(MainActivity.this, account,
                         cursor.getString(cursor.getColumnIndex(MonitorEntry.URL)),
-                        cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)),
-                        cursor.getInt(cursor.getColumnIndex(MonitorEntry.PING_FREQUENCY)));
+                        cursor.getInt(cursor.getColumnIndex(MonitorEntry._ID)));
             } while (cursor.moveToNext());
         } else {
             Toast.makeText(MainActivity.this,
