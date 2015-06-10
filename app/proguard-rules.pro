@@ -8,15 +8,12 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
--optimizationpasses 5
--dontusemixedcaseclassnames
--dontskipnonpubliclibraryclasses
--dontpreverify
--repackageclasses ''
--allowaccessmodification
--verbose
+-optimizationpasses 10
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
--keepattributes *Annotation*
+-allowaccessmodification
+-mergeinterfacesaggressively
+-flattenpackagehierarchy ''
+-overloadaggressively
 
 # Used for Butterknife:
 -keep class butterknife.** { *; }
