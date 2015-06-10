@@ -77,5 +77,8 @@
     <string name="content_description_ping_button">Check URL button</string>
     <string name="content_description_status">Monitor\'s status</string>
     <string name="content_description_refresh_button">Refresh button</string>
+    <string name="pref_avoid_metered_connections_title">Avoid Metered Connections</string>
+    <string name="pref_key_avoid_metered_connection" translatable="false">pref_key_avoid_metered_connection</string>
+    <string name="pref_avoid_metered_connections">Don\'t ping on metered connections (e.g. mobile data). NOTE: This can result in delayed pings.</string>
 
 </resources>

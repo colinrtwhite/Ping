@@ -7,6 +7,12 @@
         android:defaultValue="false"/>
 
     <CheckBoxPreference
+        android:key="@string/pref_key_avoid_metered_connection"
+        android:title="@string/pref_avoid_metered_connections_title"
+        android:summary="@string/pref_avoid_metered_connections"
+        android:defaultValue="false"/>
+
+    <CheckBoxPreference
         android:key="@string/pref_key_disable_notifications"
         android:title="@string/pref_disable_notifications_title"
         android:summary="@string/pref_disable_notifications"

@@ -18,6 +18,7 @@ import android.content.SyncResult;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -72,6 +73,13 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
                               String authority,
                               ContentProviderClient provider,
                               SyncResult syncResult) {
+        // Cancel the sync if the user has set the preference to avoid metered connections.
+        if (sharedPref.getBoolean(context.getString(R.string.pref_key_avoid_metered_connection), false) &&
+                ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE)).isActiveNetworkMetered()) {
+            Log.v(LOG_TAG, "Cancelled sync because of user preference to avoid metered connections.");
+            return;
+        }
+
         try {
             // Tell the database that we are now loading.
             int monitorId = extras.getInt(MonitorEntry._ID);
