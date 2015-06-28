@@ -45,8 +45,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 /**
  * The MonitorDetailActivity handles the layouts and logic for both when the user wants to
@@ -67,20 +67,20 @@ public class MonitorDetailActivity extends AppCompatActivity {
     public static final String PAGE_DETAIL = "PAGE_DETAIL";
 
     // Fields that are used in the database.
-    @InjectView(R.id.create_monitor_title) EditText titleField;
-    @InjectView(R.id.url_text_field_create) EditText urlField;
-    @InjectView(R.id.ping_frequency_seek_bar) SeekBar pingFrequency;
+    @Bind(R.id.create_monitor_title) EditText titleField;
+    @Bind(R.id.url_text_field_create) EditText urlField;
+    @Bind(R.id.ping_frequency_seek_bar) SeekBar pingFrequency;
     private Calendar selectedDateTime;
 
     // Other UI elements
-    @InjectView(R.id.toolbar) Toolbar toolbar;
-    @InjectView(R.id.status_icon) ImageView statusIcon;
-    @InjectView(R.id.date_picker_output) TextView datePickerOutput;
-    @InjectView(R.id.time_picker_output) TextView timePickerOutput;
-    @InjectView(R.id.ping_frequency_explanation) TextView pingFrequencyExplanation;
-    @InjectView(R.id.date_picker_switch) SwitchCompat datePickerSwitch;
-    @InjectView(R.id.expiration_date_explanation) TextView expirationDateExplanation;
-    @InjectView(R.id.detail_last_checked_text) TextView lastCheckedField;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.status_icon) ImageView statusIcon;
+    @Bind(R.id.date_picker_output) TextView datePickerOutput;
+    @Bind(R.id.time_picker_output) TextView timePickerOutput;
+    @Bind(R.id.ping_frequency_explanation) TextView pingFrequencyExplanation;
+    @Bind(R.id.date_picker_switch) SwitchCompat datePickerSwitch;
+    @Bind(R.id.expiration_date_explanation) TextView expirationDateExplanation;
+    @Bind(R.id.detail_last_checked_text) TextView lastCheckedField;
     private Dialog whyApproximateDialog = null;
 
     // Only used on DETAIL pages
@@ -99,7 +99,7 @@ public class MonitorDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor_detail);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         try {
             // Set up the Toolbar.

@@ -59,8 +59,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 
 /**
@@ -97,17 +97,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private Dialog sortByDialog = null;
 
     // UI elements
-    @InjectView(R.id.toolbar) Toolbar toolbar;
-    @InjectView(R.id.url_text_field_quick) ClearableEditText clearableEditText;
-    @InjectView(R.id.activity_container) LinearLayout activityContainer;
-    @InjectView(R.id.swiper_container) SwipeRefreshLayout swipeContainer;
-    @InjectView(R.id.monitor_list) ListView monitorList;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.url_text_field_quick) ClearableEditText clearableEditText;
+    @Bind(R.id.activity_container) LinearLayout activityContainer;
+    @Bind(R.id.swiper_container) SwipeRefreshLayout swipeContainer;
+    @Bind(R.id.monitor_list) ListView monitorList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
         // Get classes for vibration, preferences, and the keyboard.

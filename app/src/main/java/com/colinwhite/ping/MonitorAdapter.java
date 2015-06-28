@@ -21,8 +21,8 @@ import android.widget.Toast;
 import com.colinwhite.ping.data.PingContract.MonitorEntry;
 import com.colinwhite.ping.sync.PingSyncAdapter;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 /**
  * The MonitorAdapter class is a slightly modified CursorAdapter, which is used in the main ListView
@@ -120,15 +120,15 @@ class MonitorAdapter extends CursorAdapter {
      * Cache of the children views for a Monitor list item.
      */
     public static class ViewHolder {
-        @InjectView(R.id.list_item_refresh_button) ImageButton refreshButtonView;
-        @InjectView(R.id.progress_bar) View progressSpinner;
-        @InjectView(R.id.list_item_title) TextView titleView;
-        @InjectView(R.id.list_item_url) TextView urlView;
-        @InjectView(R.id.list_item_time_last_checked) TextView lastCheckedView;
-        @InjectView(R.id.list_item_status) ImageView statusView;
+        @Bind(R.id.list_item_refresh_button) ImageButton refreshButtonView;
+        @Bind(R.id.progress_bar) View progressSpinner;
+        @Bind(R.id.list_item_title) TextView titleView;
+        @Bind(R.id.list_item_url) TextView urlView;
+        @Bind(R.id.list_item_time_last_checked) TextView lastCheckedView;
+        @Bind(R.id.list_item_status) ImageView statusView;
 
         public ViewHolder(View view) {
-            ButterKnife.inject(this, view);
+            ButterKnife.bind(this, view);
         }
     }
 }
