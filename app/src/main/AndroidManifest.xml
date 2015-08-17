@@ -45,9 +45,7 @@
 
         <activity
             android:name=".MonitorDetailActivity"
-            android:label="@string/create_monitor_activity_title"
-            android:parentActivityName=".MainActivity">
-        </activity>
+            android:label="@string/create_monitor_activity_title" />
 
         <activity
             android:name=".pref.PreferencesActivity"
