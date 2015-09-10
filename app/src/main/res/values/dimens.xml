@@ -1,15 +1,9 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="elevation_low">3dp</dimen>
-    <dimen name="elevation_medium">6dp</dimen>
-    <dimen name="elevation_high">10dp</dimen>
-    <dimen name="round_button_diameter">56dp</dimen>
+    <dimen name="elevation_low">2dp</dimen>
     <dimen name="add_button_margin">16dp</dimen>
     <dimen name="status_icon_size">48dp</dimen>
     <dimen name="status_icon_reference_margin">16dp</dimen>
     <dimen name="icon_explanation_margin">6dp</dimen>
     <dimen name="text_size_small">12sp</dimen>
-    <dimen name="text_size_medium">14sp</dimen>
     <dimen name="text_size_large">16sp</dimen>
-
 </resources>

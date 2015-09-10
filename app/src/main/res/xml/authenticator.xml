@@ -4,5 +4,4 @@
     android:accountType="@string/sync_account_type"
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
-    android:smallIcon="@mipmap/ic_launcher">
-</account-authenticator>
+    android:smallIcon="@mipmap/ic_launcher"/>

@@ -80,5 +80,4 @@
     <string name="pref_avoid_metered_connections_title">Avoid Metered Connections</string>
     <string name="pref_key_avoid_metered_connection" translatable="false">pref_key_avoid_metered_connection</string>
     <string name="pref_avoid_metered_connections">Don\'t ping on metered connections (e.g. mobile data). NOTE: This can delay pings.</string>
-
 </resources>

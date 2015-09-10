@@ -30,10 +30,10 @@ import butterknife.ButterKnife;
  */
 class MonitorAdapter extends CursorAdapter {
     private static Vibrator vibratorService;
-    private Account account;
+    private final Account account;
 
-    public MonitorAdapter(Context context, Cursor c, int flags) {
-        super(context, c, flags);
+    public MonitorAdapter(Context context) {
+        super(context, null, 0);
 
         vibratorService = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         account = PingSyncAdapter.getSyncAccount(context);

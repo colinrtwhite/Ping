@@ -8,7 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 /**
- * Manages "Authentication" to Ping's backend service.  The SyncAdapter framework
+ * Manages "Authentication" to Ping!'s backend service.  The SyncAdapter framework
  * requires an authenticator object, so syncing to a service that doesn't need authentication
  * typically means creating a stub Authenticator like this one. This code is copied directly, in its
  * entirety, from http://developer.android.com/training/sync-adapters/creating-authenticator.html.
@@ -20,38 +20,28 @@ class PingAuthenticator extends AbstractAccountAuthenticator {
 
     // No properties to edit.
     @Override
-    public Bundle editProperties(
-            AccountAuthenticatorResponse r, String s) {
+    public Bundle editProperties(AccountAuthenticatorResponse r, String s) {
         throw new UnsupportedOperationException();
     }
 
     // Because we're not actually adding an account to the device, just return null.
     @Override
-    public Bundle addAccount(
-            AccountAuthenticatorResponse r,
-            String s,
-            String s2,
-            String[] strings,
-            Bundle bundle) throws NetworkErrorException {
+    public Bundle addAccount(AccountAuthenticatorResponse r, String s, String s2, String[] strings,
+                             Bundle bundle) throws NetworkErrorException {
         return null;
     }
 
     // Ignore attempts to confirm credentials.
     @Override
-    public Bundle confirmCredentials(
-            AccountAuthenticatorResponse r,
-            Account account,
-            Bundle bundle) throws NetworkErrorException {
+    public Bundle confirmCredentials(AccountAuthenticatorResponse r, Account account, Bundle bundle)
+            throws NetworkErrorException {
         return null;
     }
 
     // Getting an authentication token is not supported.
     @Override
-    public Bundle getAuthToken(
-            AccountAuthenticatorResponse r,
-            Account account,
-            String s,
-            Bundle bundle) throws NetworkErrorException {
+    public Bundle getAuthToken(AccountAuthenticatorResponse r, Account account, String s, Bundle bundle)
+            throws NetworkErrorException {
         throw new UnsupportedOperationException();
     }
 
@@ -63,18 +53,15 @@ class PingAuthenticator extends AbstractAccountAuthenticator {
 
     // Updating user credentials is not supported.
     @Override
-    public Bundle updateCredentials(
-            AccountAuthenticatorResponse r,
-            Account account,
-            String s, Bundle bundle) throws NetworkErrorException {
+    public Bundle updateCredentials(AccountAuthenticatorResponse r, Account account, String s,
+                                    Bundle bundle) throws NetworkErrorException {
         throw new UnsupportedOperationException();
     }
 
     // Checking features for the account is not supported.
     @Override
-    public Bundle hasFeatures(
-            AccountAuthenticatorResponse r,
-            Account account, String[] strings) throws NetworkErrorException {
+    public Bundle hasFeatures(AccountAuthenticatorResponse r, Account account, String[] strings)
+            throws NetworkErrorException {
         throw new UnsupportedOperationException();
     }
 }

@@ -15,7 +15,7 @@ public class PingSyncService extends Service {
     public void onCreate() {
         super.onCreate();
         if (pingSyncAdapter == null) {
-            pingSyncAdapter = new PingSyncAdapter(getApplicationContext(), true);
+            pingSyncAdapter = new PingSyncAdapter(getApplicationContext());
         }
     }
 

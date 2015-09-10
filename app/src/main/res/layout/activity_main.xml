@@ -22,7 +22,7 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:gravity="center"
-        android:elevation="@dimen/elevation_medium">
+        android:elevation="@dimen/elevation_low">
 
         <ImageButton
             android:id="@+id/ping_button"

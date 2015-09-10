@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <CheckBoxPreference
+    <com.colinwhite.ping.pref.SwitchPreferenceCompat
         android:key="@string/pref_key_24_hour_clock"
         android:title="@string/pref_24_hour_clock_title"
         android:summary="@string/pref_24_hour_clock"
         android:defaultValue="false"/>
 
-    <CheckBoxPreference
+    <com.colinwhite.ping.pref.SwitchPreferenceCompat
         android:key="@string/pref_key_avoid_metered_connection"
         android:title="@string/pref_avoid_metered_connections_title"
         android:summary="@string/pref_avoid_metered_connections"
         android:defaultValue="false"/>
 
-    <CheckBoxPreference
+    <com.colinwhite.ping.pref.SwitchPreferenceCompat
         android:key="@string/pref_key_disable_notifications"
         android:title="@string/pref_disable_notifications_title"
         android:summary="@string/pref_disable_notifications"

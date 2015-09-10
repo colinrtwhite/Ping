@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         swipeContainer.setOnRefreshListener(this);
 
         // Initialise the Loader for the ListView.
-        monitorAdapter = new MonitorAdapter(this, null, 0);
+        monitorAdapter = new MonitorAdapter(this);
         monitorList.setAdapter(monitorAdapter);
         getLoaderManager().initLoader(0, null, this);
 

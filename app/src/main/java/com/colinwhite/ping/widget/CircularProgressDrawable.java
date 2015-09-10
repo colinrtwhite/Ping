@@ -26,6 +26,7 @@ class CircularProgressDrawable extends Drawable implements Animatable {
     private static final int          ANGLE_ANIMATOR_DURATION = 2000;
     private static final int          SWEEP_ANIMATOR_DURATION = 600;
     private static final int          MIN_SWEEP_ANGLE         = 30;
+    private static final float        BORDER_WIDTH            = 7;
     private final RectF fBounds                 = new RectF();
 
     private ObjectAnimator mObjectAnimatorSweep;
@@ -35,16 +36,13 @@ class CircularProgressDrawable extends Drawable implements Animatable {
     private float          mCurrentGlobalAngleOffset;
     private float          mCurrentGlobalAngle;
     private float          mCurrentSweepAngle;
-    private final float          mBorderWidth;
     private boolean        mRunning;
 
-    public CircularProgressDrawable(int color, float borderWidth) {
-        mBorderWidth = borderWidth;
-
+    public CircularProgressDrawable(int color) {
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(borderWidth);
+        mPaint.setStrokeWidth(BORDER_WIDTH);
         mPaint.setColor(color);
 
         setupAnimations();
@@ -108,10 +106,10 @@ class CircularProgressDrawable extends Drawable implements Animatable {
     @Override
     protected void onBoundsChange(Rect bounds) {
         super.onBoundsChange(bounds);
-        fBounds.left = bounds.left + mBorderWidth / 2f + .5f;
-        fBounds.right = bounds.right - mBorderWidth / 2f - .5f;
-        fBounds.top = bounds.top + mBorderWidth / 2f + .5f;
-        fBounds.bottom = bounds.bottom - mBorderWidth / 2f - .5f;
+        fBounds.left = bounds.left + BORDER_WIDTH / 2f + .5f;
+        fBounds.right = bounds.right - BORDER_WIDTH / 2f - .5f;
+        fBounds.top = bounds.top + BORDER_WIDTH / 2f + .5f;
+        fBounds.bottom = bounds.bottom - BORDER_WIDTH / 2f - .5f;
     }
 
     private void setCurrentGlobalAngle(float currentGlobalAngle) {

@@ -22,6 +22,7 @@ import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
@@ -52,8 +53,8 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
     private static String clockTypeKey;
     private static String disableNotificationsKey;
 
-    public PingSyncAdapter(Context context, boolean autoInitialize) {
-        super(context, autoInitialize);
+    public PingSyncAdapter(Context context) {
+        super(context, true);
         PingSyncAdapter.context = context;
         contentResolver = context.getContentResolver();
 
@@ -216,7 +217,7 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
 
         // Set the small icon colour if we are running Lollipop.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            notificationBuilder.setColor(context.getResources().getColor(R.color.primary));
+            notificationBuilder.setColor(ContextCompat.getColor(context, R.color.primary));
         }
 
         // Construct artificial back stack.
@@ -302,9 +303,9 @@ public class PingSyncAdapter extends AbstractThreadedSyncAdapter {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             // We can enable inexact timers in our periodic sync.
-            SyncRequest request = new SyncRequest.Builder().
-                    syncPeriodic(interval, interval / 2).
-                    setSyncAdapter(account, authority)
+            SyncRequest request = new SyncRequest.Builder()
+                    .syncPeriodic(interval, interval / 2)
+                    .setSyncAdapter(account, authority)
                     .setExtras(bundle).build();
 
             ContentResolver.requestSync(request);

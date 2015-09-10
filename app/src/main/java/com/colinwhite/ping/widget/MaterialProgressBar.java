@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -28,7 +29,7 @@ public class MaterialProgressBar extends View {
     public MaterialProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        mDrawable = new CircularProgressDrawable(getResources().getColor(R.color.primary), 7);
+        mDrawable = new CircularProgressDrawable(ContextCompat.getColor(context, R.color.primary));
         mDrawable.setCallback(this);
         if (getVisibility() == VISIBLE) {
             mDrawable.start();
