@@ -29,19 +29,3 @@ Screenshots
 <img src="/google_play_store_assets/screenshot_4.png" alt="Screenshot 4" width="270" height="480">
 <img src="/google_play_store_assets/screenshot_5.png" alt="Screenshot 5" width="270" height="480">
 <img src="/google_play_store_assets/screenshot_6.png" alt="Screenshot 5" width="270" height="480">
-
-Version History
----------------
-1.2.4 - 16 June, 2015
-
-1.2.3 - 21 May, 2015
-
-1.2.2 - 19 May, 2015
-
-1.2.1 - 18 May, 2015
-
-1.2 - 18 May, 2015
-
-1.1 - 27 February, 2015
-
-1.0 - 9 February, 2015
