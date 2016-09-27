@@ -1,73 +1,72 @@
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:orientation="vertical"
-    tools:context=".MainActivity"
-    tools:ignore="MergeRootFrame">
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/activity_container"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:focusable="true"
+	android:focusableInTouchMode="true"
+	android:orientation="vertical">
 
-    <include layout="@layout/toolbar"/>
+	<include layout="@layout/toolbar"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:orientation="horizontal"
-        android:paddingTop="2dp"
-        android:paddingBottom="8dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:gravity="center"
-        android:elevation="@dimen/elevation_low">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/primary"
+		android:elevation="@dimen/elevation_medium"
+		android:gravity="center"
+		android:orientation="horizontal"
+		android:paddingBottom="8dp"
+		android:paddingStart="10dp"
+		android:paddingEnd="10dp"
+		android:paddingTop="2dp">
 
-        <ImageButton
-            android:id="@+id/ping_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="3dp"
-            android:background="@drawable/ripple_white"
-            android:hapticFeedbackEnabled="true"
-            android:src="@drawable/ic_navigation_refresh_white"
-            android:scaleType="centerCrop"
-            android:layout_weight="0"
-            android:contentDescription="@string/content_description_ping_button"/>
+		<ImageButton
+			android:id="@+id/ping_button"
+			android:layout_width="0dp"
+			android:layout_height="32dp"
+			android:layout_marginStart="2dp"
+			android:layout_marginEnd="3dp"
+			android:layout_weight="0"
+			android:background="@drawable/ripple_white"
+			android:contentDescription="@string/content_description_ping_button"
+			android:hapticFeedbackEnabled="true"
+			android:scaleType="centerCrop"
+			android:src="@drawable/ic_refresh"/>
 
-        <include layout="@layout/url_quick_check_field"/>
-    </LinearLayout>
+		<include layout="@layout/url_quick_check_field"/>
+	</LinearLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:foreground="?android:windowContentOverlay">
-        <android.support.v4.widget.SwipeRefreshLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/swiper_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <ListView
-                android:id="@+id/monitor_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="3dp"
-                android:paddingBottom="72dp"
-                android:divider="@null"
-                android:dividerHeight="0dp"
-                android:visibility="gone"
-                android:clipToPadding="false"
-                android:listSelector="@android:color/transparent"
-                android:cacheColorHint="@android:color/transparent"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:scrollbarStyle="outsideOverlay"/>
-        </android.support.v4.widget.SwipeRefreshLayout>
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:foreground="?android:windowContentOverlay">
 
-        <include layout="@layout/floating_action_button"/>
+		<android.support.v4.widget.SwipeRefreshLayout
+			xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/swiper_container"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
 
-        <include layout="@layout/empty_list_view" />
-    </FrameLayout>
+			<ListView
+				android:id="@+id/monitor_list"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:cacheColorHint="@android:color/transparent"
+				android:clipToPadding="false"
+				android:divider="@null"
+				android:dividerHeight="0dp"
+				android:focusable="true"
+				android:focusableInTouchMode="true"
+				android:listSelector="@android:color/transparent"
+				android:paddingBottom="72dp"
+				android:paddingTop="3dp"
+				android:scrollbarStyle="outsideOverlay"
+				android:visibility="gone"/>
+		</android.support.v4.widget.SwipeRefreshLayout>
+
+		<include layout="@layout/floating_action_button"/>
+
+		<include layout="@layout/empty_list_view"/>
+	</FrameLayout>
 </LinearLayout>

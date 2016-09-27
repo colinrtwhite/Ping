@@ -9,28 +9,28 @@ import android.util.AttributeSet;
 import com.colinwhite.ping.R;
 
 public class SwitchPreferenceCompat extends CheckBoxPreference {
-    public SwitchPreferenceCompat(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
+	public SwitchPreferenceCompat(Context context, AttributeSet attrs, int defStyleAttr) {
+		super(context, attrs, defStyleAttr);
+		init();
+	}
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public SwitchPreferenceCompat(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	public SwitchPreferenceCompat(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+		super(context, attrs, defStyleAttr, defStyleRes);
+		init();
+	}
 
-    public SwitchPreferenceCompat(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
+	public SwitchPreferenceCompat(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		init();
+	}
 
-    public SwitchPreferenceCompat(Context context) {
-        super(context);
-        init();
-    }
+	public SwitchPreferenceCompat(Context context) {
+		super(context);
+		init();
+	}
 
-    private void init() {
-        setWidgetLayoutResource(R.layout.preference_switch_layout);
-    }
+	private void init() {
+		setWidgetLayoutResource(R.layout.preference_switch_layout);
+	}
 }

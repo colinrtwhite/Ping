@@ -1,26 +1,27 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity">
+<menu
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context=".MainActivity">
 
-    <item
-        android:id="@+id/action_sort"
-        android:icon="@drawable/ic_action_content_sort"
-        android:title="@string/sort_by"
-        app:showAsAction="ifRoom"/>
+	<item
+		android:id="@+id/action_sort"
+		android:icon="@drawable/ic_sort"
+		android:title="@string/sort_by"
+		app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/action_icon_reference"
-        android:title="@string/action_icon_reference"
-        app:showAsAction="never" />
+	<item
+		android:id="@+id/action_icon_reference"
+		android:title="@string/action_icon_reference"
+		app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+	<item
+		android:id="@+id/action_settings"
+		android:title="@string/action_settings"
+		app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/rate_app"
-        android:title="@string/rate_app"
-        app:showAsAction="never" />
+	<item
+		android:id="@+id/rate_app"
+		android:title="@string/rate_app"
+		app:showAsAction="never"/>
 </menu>

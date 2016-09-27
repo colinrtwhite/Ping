@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.melnykov.fab.FloatingActionButton
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/add_button"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="end|bottom"
-    android:layout_marginBottom="@dimen/add_button_margin"
-    android:layout_marginRight="@dimen/add_button_margin"
-    android:src="@drawable/ic_content_add"
-    fab:fab_colorNormal="@color/accent"
-    fab:fab_colorPressed="@color/accent_lightened"/>
+<android.support.design.widget.FloatingActionButton
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/add_button"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_gravity="end|bottom"
+	android:layout_margin="@dimen/add_button_margin"
+	android:src="@drawable/ic_plus"
+	app:rippleColor="@android:color/white"/>

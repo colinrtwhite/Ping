@@ -8,19 +8,8 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
--optimizationpasses 10
 -allowaccessmodification
+-flattenpackagehierarchy
 -mergeinterfacesaggressively
--flattenpackagehierarchy ''
+-optimizationpasses 100 # If a pass finishes and no optimization is made, then it skips the rest of the passes.
 -overloadaggressively
-
-# Used for Butterknife:
--keep class butterknife.** { *; }
--dontwarn butterknife.internal.**
--keep class **$$ViewBinder { *; }
--keepclasseswithmembernames class * {
-    @butterknife.* <fields>;
-}
--keepclasseswithmembernames class * {
-    @butterknife.* <methods>;
-}

@@ -1,41 +1,32 @@
 <resources>
+	<!-- Base application theme. -->
+	<style name="AppTheme" parent="AppTheme.Common">
+		<item name="colorPrimary">@color/primary</item>
+		<item name="colorPrimaryDark">@color/primary_dark</item>
+		<item name="colorAccent">@color/accent</item>
+		<item name="android:scrollViewStyle">@style/ScrollViewStyle</item>
+		<item name="android:listViewStyle">@style/ListViewStyle</item>
+	</style>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="AppTheme.Common">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
-        <item name="android:scrollViewStyle">@style/ScrollViewStyle</item>
-        <item name="android:listViewStyle">@style/ListViewStyle</item>
-        <item name="android:seekBarStyle">@style/SeekBarAppTheme</item>
-    </style>
+	<!-- Common elements between base and v21 AppTheme. -->
+	<style name="AppTheme.Common" parent="Theme.AppCompat.Light.NoActionBar">
+		<item name="colorControlNormal">@color/accent</item>
+		<item name="colorControlActivated">@color/accent</item>
+		<item name="colorControlHighlight">@color/accent</item>
+		<item name="android:textColor">@android:color/black</item>
+	</style>
 
-    <!-- Common elements between base and v21 AppTheme. -->
-    <style name="AppTheme.Common" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorControlNormal">@color/accent</item>
-        <item name="colorControlActivated">@color/accent</item>
-        <item name="colorControlHighlight">@color/accent</item>
-        <item name="android:textColor">@android:color/black</item>
-    </style>
+	<!-- Used to colour the scrollbar in pre-Lollipop devices. -->
+	<style name="ScrollViewStyle" parent="android:Widget.ScrollView">
+		<item name="android:scrollbarThumbVertical">@drawable/scrollbar_vertical_thumb</item>
+	</style>
 
-    <!-- Used to colour the scrollbar in pre-Lollipop devices. -->
-    <style name="ScrollViewStyle" parent="android:Widget.ScrollView">
-        <item name="android:scrollbarThumbVertical">@drawable/scrollbar_vertical_thumb</item>
-    </style>
-    <style name="ListViewStyle" parent="android:Widget.ListView">
-        <item name="android:scrollbarThumbVertical">@drawable/scrollbar_vertical_thumb</item>
-    </style>
+	<style name="ListViewStyle" parent="android:Widget.ListView">
+		<item name="android:scrollbarThumbVertical">@drawable/scrollbar_vertical_thumb</item>
+	</style>
 
-    <!-- Set the CardView selector appropriately for the OS version. -->
-    <style name="CardViewStyle" parent="android:Widget.TextView">
-        <item name="android:foreground">@drawable/ripple_accent</item>
-    </style>
-
-    <!-- Used to colour the SeekBar in pre-Lollipop devices. -->
-    <style name="SeekBarAppTheme" parent="android:Widget.Holo.Light.SeekBar">
-        <item name="android:progressDrawable">@drawable/apptheme_scrubber_progress_horizontal_holo_light</item>
-        <item name="android:indeterminateDrawable">@drawable/apptheme_scrubber_progress_horizontal_holo_light</item>
-        <item name="android:thumb">@drawable/apptheme_scrubber_control_selector_holo_light</item>
-    </style>
-
+	<!-- Set the CardView selector appropriately for the OS version. -->
+	<style name="CardViewStyle" parent="android:Widget.TextView">
+		<item name="android:foreground">@drawable/ripple_accent</item>
+	</style>
 </resources>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="sort_options">
-        <item>Order created</item>
-        <item>Time checked</item>
-        <item>Title</item>
-        <item>Current state</item>
-    </string-array>
+	<string-array name="sort_options">
+		<item>Order created</item>
+		<item>Time checked</item>
+		<item>Title</item>
+		<item>Current state</item>
+	</string-array>
 </resources>

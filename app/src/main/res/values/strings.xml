@@ -1,83 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Ping!</string>
-    <string name="action_settings">Preferences</string>
-    <string name="is_up">The website looks to be UP.</string>
-    <string name="is_down">The website seems to be DOWN!</string>
-    <string name="does_not_exist">That doesn\'t look like a website URL…</string>
-    <string name="other">Looks like some kind of error occurred while checking.</string>
-    <string name="initial_output_text_id">Enter a website URL to check.</string>
-    <string name="create_monitor_activity_title">Create Monitor</string>
-    <string name="monitor_title_hint">Title (e.g. Google)</string>
-    <string name="ping_frequency_header">Ping Frequency</string>
-    <string name="url_hint">URL (e.g. "google.com")</string>
-    <string name="create_button_title">Create</string>
-    <string name="delete_button_title">Delete</string>
-    <string name="ping_frequency_explanation" formatted="false">Ping every %s%s.</string>
-    <string name="date_picker_header">Expiration Date</string>
-    <string name="date_picker_label">Tap to set date.</string>
-    <string name="time_picker_label">Tap to set time.</string>
-    <string name="no_internet_connection">You don\'t have an internet connection!</string>
-    <string name="empty_list_view_message">Add a Monitor to track the status of your favourite websites. Ping! will automatically notify you if they go down or come back up. Click the plus button to get started!</string>
-    <string name="sync_account_type" translatable="false">ping.colinwhite.com</string>
-    <string name="content_authority" translatable="false">com.colinwhite.ping</string>
-    <string name="monitor_detail_activity_title">Edit Monitor</string>
-    <string name="save_button_title">Update</string>
-    <string name="last_checked_text"><![CDATA[Checked at <i>%s</i>.]]></string>
-    <string name="last_checked_text_no_info">This will be checked soon.</string>
-    <string name="notification_text" formatted="false">%s is %s as of %s.</string>
-    <string name="expiration_date_explanation">Set the date and time you would like the Monitor to stop pinging automatically.</string>
-    <string name="ping_explanation_never">Never ping the website automatically.</string>
-    <string name="approximately_tag"/>
-    <string name="invalid_input_title">Please enter a title.</string>
-    <string name="invalid_input_url_empty">Please enter a URL.</string>
-    <string name="invalid_input_time">Please set an expiration time.</string>
-    <string name="invalid_input_date">Please set an expiration date.</string>
-    <string name="invalid_input_ping_frequency">You cannot set an expiration date if the Monitor is set to never ping automatically.</string>
-    <string name="ping_frequency_warning"><![CDATA[<br><font color=\"#ff0000\">WARNING:</font> This will wake your phone often and can reduce battery life.]]></string>
-    <string name="invalid_input_url">Please enter a valid URL.</string>
-    <string name="invalid_input_date_before_now">The expiration date cannot come before the current time.</string>
-    <string name="pref_24_hour_clock_title">24 Hour Clock</string>
-    <string name="pref_24_hour_clock">Use the 24 hour clock.</string>
-    <string name="settings_activity_label">Preferences</string>
-    <string name="pref_disable_notifications_title">Disable Notifications</string>
-    <string name="pref_disable_notifications">Disable all notifications from Ping!</string>
-    <string name="pref_key_disable_notifications" translatable="false">pref_key_disable_notifications</string>
-    <string name="pref_key_24_hour_clock" translatable="false">pref_key_24_hour_clock</string>
-    <string name="dialog_confirm_delete">Are you sure you want to delete this Monitor?</string>
-    <string name="confirm">Confirm</string>
-    <string name="cancel">Cancel</string>
-    <string name="okay">Okay</string>
-    <string name="dialog_explain_approximate_message">Ping! uses inexact timers to schedule network processes together. This saves you heaps of battery life!\n\nUnfortunately, Android Jelly Bean only supports exact timers so Monitors run on a fixed schedule.</string>
-    <string name="action_explain_approximate_title">Approximate timers</string>
-    <string name="icon_reference_activity_label">Icon Reference</string>
-    <string name="action_icon_reference">Icon reference</string>
-    <string name="icon_explanation_is_up">The website is up and responding to network requests.</string>
-    <string name="icon_explanation_no_internet">Ping! couldn\'t complete its last network request to the website. Your internet connection might not be working or you might not be able to access the host.</string>
-    <string name="icon_explanation_is_not_website">According to the host, it didn\'t receive a valid URL.</string>
-    <string name="icon_explanation_no_info">Ping! hasn\'t checked the website yet. It could be waiting for an internet connection, or will simply check in a second.</string>
-    <string name="icon_explanation_is_down">The website isn\'t responding to network requests from the host and seems to be down.</string>
-    <string name="host_text_prefix"><![CDATA[<b>Host</b>]]></string>
-    <string name="invalid_input_url_uniqueness">A Monitor with this URL already exists.</string>
-    <string name="error_poor_connection">Ping! couldn\'t connect to the host. Check your internet connection.</string>
-    <string name="empty_list_view_header">What\'s a Monitor?</string>
-    <string name="error">An internal error occurred.</string>
-    <string name="sort_by">Sort by</string>
-    <string name="rate_app">Rate app</string>
-    <string name="action_explain_approximate_dialog_title">Approximate Timers</string>
-    <string name="dialog_confirm_delete_title">Delete Monitor?</string>
-    <string name="sort_by_title">Sort by:</string>
-    <string name="ascending">Ascending</string>
-    <string name="descending">Descending</string>
-    <string name="content_description_is_up">Is up status</string>
-    <string name="content_description_is_down">Is down status</string>
-    <string name="content_description_no_info">No info status</string>
-    <string name="content_description_is_not_website">Is not a website status</string>
-    <string name="content_description_no_internet">No internet status</string>
-    <string name="content_description_ping_button">Check URL button</string>
-    <string name="content_description_status">Monitor\'s status</string>
-    <string name="content_description_refresh_button">Refresh button</string>
-    <string name="pref_avoid_metered_connections_title">Avoid Metered Connections</string>
-    <string name="pref_key_avoid_metered_connection" translatable="false">pref_key_avoid_metered_connection</string>
-    <string name="pref_avoid_metered_connections">Don\'t ping on metered connections (e.g. mobile data). NOTE: This can delay pings.</string>
+	<string name="app_name" translatable="false">Ping!</string>
+	<string name="action_settings">Preferences</string>
+	<string name="is_up">The website looks to be UP.</string>
+	<string name="is_down">The website seems to be DOWN!</string>
+	<string name="does_not_exist">That doesn\'t look like a website URL…</string>
+	<string name="other">Looks like some kind of error occurred while checking.</string>
+	<string name="initial_output_text_id">Enter a website URL to check.</string>
+	<string name="create_monitor_activity_title">Create Monitor</string>
+	<string name="monitor_title_hint">Title (e.g. Google)</string>
+	<string name="ping_frequency_header">Ping Frequency</string>
+	<string name="url_hint">URL (e.g. "google.com")</string>
+	<string name="create_button_title">Create</string>
+	<string name="delete_button_title">Delete</string>
+	<string formatted="false" name="ping_frequency_explanation">Ping every %s%s.</string>
+	<string name="date_picker_header">Expiration Date</string>
+	<string name="date_picker_label">Tap to set date.</string>
+	<string name="time_picker_label">Tap to set time.</string>
+	<string name="no_internet_connection">You don\'t have an internet connection!</string>
+	<string name="empty_list_view_message">Add a Monitor to track the status of your favourite websites. Ping! will automatically notify you if they go down or come back up. Click the plus button to get started!</string>
+	<string name="sync_account_type" translatable="false">ping.colinwhite.com</string>
+	<string name="content_authority" translatable="false">com.colinwhite.ping</string>
+	<string name="monitor_detail_activity_title">Edit Monitor</string>
+	<string name="save_button_title">Update</string>
+	<string name="last_checked_text"><![CDATA[Checked at <i>%s</i>.]]></string>
+	<string name="last_checked_text_no_info">This will be checked soon.</string>
+	<string formatted="false" name="notification_text">%s is %s as of %s.</string>
+	<string name="expiration_date_explanation">Set the date and time you would like the Monitor to stop pinging automatically.</string>
+	<string name="ping_explanation_never">Never ping the website automatically.</string>
+	<string name="approximately_tag"/>
+	<string name="invalid_input_title">Please enter a title.</string>
+	<string name="invalid_input_url_empty">Please enter a URL.</string>
+	<string name="invalid_input_time">Please set an expiration time.</string>
+	<string name="invalid_input_date">Please set an expiration date.</string>
+	<string name="invalid_input_ping_frequency">You cannot set an expiration date if the Monitor is set to never ping automatically.</string>
+	<string name="ping_frequency_warning"><![CDATA[<br><font color=\"#ff0000\">WARNING:</font> This will wake your phone often and can reduce battery life.]]></string>
+	<string name="invalid_input_url">Please enter a valid URL.</string>
+	<string name="invalid_input_date_before_now">The expiration date cannot come before the current time.</string>
+	<string name="pref_24_hour_clock_title">24 Hour Clock</string>
+	<string name="pref_24_hour_clock">Use the 24 hour clock.</string>
+	<string name="settings_activity_label">Preferences</string>
+	<string name="pref_disable_notifications_title">Disable Notifications</string>
+	<string name="pref_disable_notifications">Disable all notifications from Ping!</string>
+	<string name="pref_key_disable_notifications" translatable="false">pref_key_disable_notifications</string>
+	<string name="pref_key_24_hour_clock" translatable="false">pref_key_24_hour_clock</string>
+	<string name="dialog_confirm_delete">Are you sure you want to delete this Monitor?</string>
+	<string name="confirm">Confirm</string>
+	<string name="cancel">Cancel</string>
+	<string name="okay">Okay</string>
+	<string name="dialog_explain_approximate_message">Ping! uses inexact timers to schedule network processes together. This saves you heaps of battery life!\n\nUnfortunately, Android Jelly Bean only supports exact timers so Monitors run on a fixed schedule.</string>
+	<string name="action_explain_approximate_title">Approximate timers</string>
+	<string name="icon_reference_activity_label">Icon Reference</string>
+	<string name="action_icon_reference">Icon reference</string>
+	<string name="icon_explanation_is_up">The website is up and responding to network requests.</string>
+	<string name="icon_explanation_no_internet">Ping! couldn\'t complete its last network request to the website. Your internet connection might not be working or you might not be able to access the host.</string>
+	<string name="icon_explanation_is_not_website">According to the host, it didn\'t receive a valid URL.</string>
+	<string name="icon_explanation_no_info">Ping! hasn\'t checked the website yet. It could be waiting for an internet connection, or will simply check in a second.</string>
+	<string name="icon_explanation_is_down">The website isn\'t responding to network requests from the host and seems to be down.</string>
+	<string name="host_text_prefix"><![CDATA[<b>Host</b>]]></string>
+	<string name="invalid_input_url_uniqueness">A Monitor with this URL already exists.</string>
+	<string name="error_poor_connection">Ping! couldn\'t connect to the host. Check your internet connection.</string>
+	<string name="empty_list_view_header">What\'s a Monitor?</string>
+	<string name="sort_by">Sort by</string>
+	<string name="rate_app">Rate app</string>
+	<string name="action_explain_approximate_dialog_title">Approximate Timers</string>
+	<string name="dialog_confirm_delete_title">Delete Monitor?</string>
+	<string name="sort_by_title">Sort by:</string>
+	<string name="ascending">Ascending</string>
+	<string name="descending">Descending</string>
+	<string name="content_description_is_up">Is up status</string>
+	<string name="content_description_is_down">Is down status</string>
+	<string name="content_description_no_info">No info status</string>
+	<string name="content_description_is_not_website">Is not a website status</string>
+	<string name="content_description_no_internet">No internet status</string>
+	<string name="content_description_ping_button">Check URL button</string>
+	<string name="content_description_status">Monitor\'s status</string>
+	<string name="content_description_refresh_button">Refresh button</string>
+	<string name="pref_avoid_metered_connections_title">Avoid Metered Connections</string>
+	<string name="pref_key_avoid_metered_connection" translatable="false">pref_key_avoid_metered_connection</string>
+	<string name="pref_avoid_metered_connections">Don\'t ping on metered connections (e.g. mobile data). NOTE: This can delay pings.</string>
 </resources>

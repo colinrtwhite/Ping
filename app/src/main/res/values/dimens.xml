@@ -1,9 +1,10 @@
 <resources>
-    <dimen name="elevation_low">2dp</dimen>
-    <dimen name="add_button_margin">16dp</dimen>
-    <dimen name="status_icon_size">48dp</dimen>
-    <dimen name="status_icon_reference_margin">16dp</dimen>
-    <dimen name="icon_explanation_margin">6dp</dimen>
-    <dimen name="text_size_small">12sp</dimen>
-    <dimen name="text_size_large">16sp</dimen>
+	<dimen name="elevation_low">2dp</dimen>
+	<dimen name="elevation_medium">4dp</dimen>
+	<dimen name="add_button_margin">16dp</dimen>
+	<dimen name="status_icon_size">48dp</dimen>
+	<dimen name="status_icon_reference_margin">16dp</dimen>
+	<dimen name="icon_explanation_margin">6dp</dimen>
+	<dimen name="text_size_small">12sp</dimen>
+	<dimen name="text_size_large">16sp</dimen>
 </resources>

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.colinwhite.ping.widget.ClearableEditText
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/url_text_field_quick"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="1"
-    android:hint="@string/initial_output_text_id"
-    android:inputType="textUri"
-    android:singleLine="true"
-    android:textSize="@dimen/text_size_large"
-    android:textColor="@android:color/white"
-    android:textColorHint="@android:color/white"
-    android:drawableRight="@drawable/ic_content_clear" />
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/url_text_field_quick"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:layout_weight="1"
+	android:drawableRight="@drawable/ic_clear"
+	android:hint="@string/initial_output_text_id"
+	android:inputType="textUri"
+	android:textColor="@android:color/white"
+	android:textColorHint="@android:color/white"
+	android:textSize="@dimen/text_size_large"
+	android:maxLines="1"/>

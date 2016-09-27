@@ -18,47 +18,55 @@ import com.colinwhite.ping.sync.PingSyncAdapter;
  * manual refresh.
  */
 public class SyncRemovalService extends IntentService {
-    private final String[] projection = {PingContract.MonitorEntry.URL};
+	private final String[] projection = {PingContract.MonitorEntry.URL};
 
-    public SyncRemovalService() { super(SyncRemovalService.class.getName()); }
-    public SyncRemovalService(String name) { super(name); }
+	public SyncRemovalService() {
+		super(SyncRemovalService.class.getName());
+	}
 
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        // If we're not given a Monitor ID then there is nothing we can do.
-        int monitorId = intent.getIntExtra(PingContract.MonitorEntry._ID, -1);
-        if (monitorId < 0) {
-            return;
-        }
+	public SyncRemovalService(String name) {
+		super(name);
+	}
 
-        // Get the specific Monitor's data.
-        final String[] selectionArgs = {String.valueOf(monitorId)};
-        ContentResolver contentResolver = getContentResolver();
-        String selection = MonitorEntry._ID + " = ?";
-        Cursor cursor = contentResolver.query(
-                MonitorEntry.buildUri(monitorId),
-                projection,
-                selection,
-                selectionArgs,
-                null);
-        cursor.moveToFirst();
+	@Override
+	protected void onHandleIntent(Intent intent) {
+		// If we're not given a Monitor ID then there is nothing we can do.
+		int monitorId = intent.getIntExtra(PingContract.MonitorEntry._ID, -1);
+		if (monitorId < 0) {
+			return;
+		}
 
-        // Turn off the expiry date and set the ping frequency to not update automatically.
-        ContentValues values = new ContentValues();
-        values.put(MonitorEntry.PING_FREQUENCY, MonitorEntry.PING_FREQUENCY_MAX);
-        values.put(MonitorEntry.END_TIME, MonitorEntry.END_TIME_NONE);
+		// Get the specific Monitor's data.
+		final String[] selectionArgs = {String.valueOf(monitorId)};
+		ContentResolver contentResolver = getContentResolver();
+		String selection = MonitorEntry._ID + " = ?";
+		Cursor cursor = contentResolver.query(
+				MonitorEntry.buildUri(monitorId),
+				projection,
+				selection,
+				selectionArgs,
+				null);
+		if (cursor == null) {
+			return;
+		}
+		cursor.moveToFirst();
 
-        // Sync one last time.
-        String url = cursor.getString(cursor.getColumnIndex(MonitorEntry.URL));
-        PingSyncAdapter.syncImmediately(this, PingSyncAdapter.getSyncAccount(this), url, monitorId);
+		// Turn off the expiry date and set the ping frequency to not update automatically.
+		ContentValues values = new ContentValues();
+		values.put(MonitorEntry.PING_FREQUENCY, MonitorEntry.PING_FREQUENCY_MAX);
+		values.put(MonitorEntry.END_TIME, MonitorEntry.END_TIME_NONE);
 
-        // Remove the periodic sync.
-        PingSyncAdapter.removePeriodicSync(
-                this,
-                url,
-                monitorId);
-        cursor.close();
+		// Sync one last time.
+		String url = cursor.getString(cursor.getColumnIndex(MonitorEntry.URL));
+		PingSyncAdapter.syncImmediately(this, PingSyncAdapter.getSyncAccount(this), url, monitorId);
 
-        contentResolver.update(MonitorEntry.CONTENT_URI, values, selection, selectionArgs);
-    }
+		// Remove the periodic sync.
+		PingSyncAdapter.removePeriodicSync(
+				this,
+				url,
+				monitorId);
+		cursor.close();
+
+		contentResolver.update(MonitorEntry.CONTENT_URI, values, selection, selectionArgs);
+	}
 }

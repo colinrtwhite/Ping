@@ -1,100 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.colinwhite.ping">
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	package="com.colinwhite.ping">
 
-    <!-- Necessary for network activity -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<!-- Necessary for network activity -->
+	<uses-permission android:name="android.permission.INTERNET"/>
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
-    <!-- Permissions required by the sync adapter -->
-    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+	<!-- Permissions required by the sync adapter -->
+	<uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
+	<uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+	<uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+	<uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
 
-    <!-- Permissions required for haptic feedback -->
-    <uses-permission android:name="android.permission.VIBRATE"/>
+	<!-- Permissions required for haptic feedback -->
+	<uses-permission android:name="android.permission.VIBRATE"/>
 
-    <!-- Permissions required to check if any Monitors are syncing -->
-    <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
+	<!-- Permissions required to check if any Monitors are syncing -->
+	<uses-permission android:name="android.permission.READ_SYNC_STATS"/>
 
-    <application
-        android:allowBackup="true"
-        android:fullBackupContent="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:supportsRtl="false">
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name">
-            <!-- Required to designate as main activity -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <!-- Required to designate as share action handler -->
-            <intent-filter>
-                <action android:name="android.intent.action.SEND"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:mimeType="text/plain"/>
-            </intent-filter>
-        </activity>
+	<application
+		android:allowBackup="true"
+		android:fullBackupContent="true"
+		android:icon="@mipmap/ic_launcher"
+		android:label="@string/app_name"
+		android:supportsRtl="false"
+		android:theme="@style/AppTheme"
+		tools:ignore="GoogleAppIndexingWarning">
+		<activity
+			android:name=".MainActivity"
+			android:label="@string/app_name">
+			<!-- Required to designate as main activity -->
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+				<category android:name="android.intent.category.LAUNCHER"/>
+			</intent-filter>
+			<!-- Required to designate as share action handler -->
+			<intent-filter>
+				<action android:name="android.intent.action.SEND"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+				<category android:name="android.intent.category.BROWSABLE"/>
+				<data android:mimeType="text/plain"/>
+			</intent-filter>
+		</activity>
 
-        <activity
-            android:name=".MonitorDetailActivity"
-            android:label="@string/create_monitor_activity_title" />
+		<activity
+			android:name=".MonitorDetailActivity"
+			android:label="@string/create_monitor_activity_title"/>
 
-        <activity
-            android:name=".pref.PreferencesActivity"
-            android:label="@string/settings_activity_label"/>
+		<activity
+			android:name=".pref.PreferencesActivity"
+			android:label="@string/settings_activity_label"/>
 
-        <activity
-            android:name=".IconReferenceActivity"
-            android:label="@string/icon_reference_activity_label"/>
+		<activity
+			android:name=".IconReferenceActivity"
+			android:label="@string/icon_reference_activity_label"/>
 
-        <provider
-            android:authorities="@string/content_authority"
-            android:name=".data.MonitorProvider"
-            android:exported="false"
-            android:syncable="true" />
+		<provider
+			android:name=".data.MonitorProvider"
+			android:authorities="@string/content_authority"
+			android:exported="false"
+			android:syncable="true"/>
 
-        <service
-            android:name=".PingService"
-            android:enabled="true" />
+		<service
+			android:name=".PingService"
+			android:enabled="true"/>
 
-        <service
-            android:name=".SyncRemovalService"
-            android:enabled="true" />
+		<service
+			android:name=".SyncRemovalService"
+			android:enabled="true"/>
 
-        <!-- SyncAdapter's dummy authentication service -->
-        <service
-            android:name=".sync.PingAuthenticatorService"
-            android:exported="true"
-            android:permission="android.permission.ACCOUNT_MANAGER">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service>
+		<!-- SyncAdapter's dummy authentication service -->
+		<service
+			android:name=".sync.PingAuthenticatorService"
+			android:exported="true"
+			android:permission="android.permission.ACCOUNT_MANAGER">
+			<intent-filter>
+				<action android:name="android.accounts.AccountAuthenticator"/>
+			</intent-filter>
+			<meta-data
+				android:name="android.accounts.AccountAuthenticator"
+				android:resource="@xml/authenticator"/>
+		</service>
 
-        <!-- The SyncAdapter service -->
-        <service
-            android:name=".sync.PingSyncService"
-            android:exported="true"
-            android:permission="android.permission.ACCOUNT_MANAGER">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
-            </intent-filter>
-            <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/sync_adapter" />
-        </service>
-    </application>
-
+		<!-- The SyncAdapter service -->
+		<service
+			android:name=".sync.PingSyncService"
+			android:exported="true"
+			android:permission="android.permission.ACCOUNT_MANAGER">
+			<intent-filter>
+				<action android:name="android.content.SyncAdapter"/>
+			</intent-filter>
+			<meta-data
+				android:name="android.content.SyncAdapter"
+				android:resource="@xml/sync_adapter"/>
+		</service>
+	</application>
 </manifest>

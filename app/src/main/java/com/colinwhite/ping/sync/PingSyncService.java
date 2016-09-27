@@ -9,18 +9,18 @@ import android.os.IBinder;
  * PingSyncAdapter be run.
  */
 public class PingSyncService extends Service {
-    private static PingSyncAdapter pingSyncAdapter = null;
+	private static PingSyncAdapter pingSyncAdapter;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        if (pingSyncAdapter == null) {
-            pingSyncAdapter = new PingSyncAdapter(getApplicationContext());
-        }
-    }
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		if (pingSyncAdapter == null) {
+			pingSyncAdapter = new PingSyncAdapter(getApplicationContext());
+		}
+	}
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return pingSyncAdapter.getSyncAdapterBinder();
-    }
+	@Override
+	public IBinder onBind(Intent intent) {
+		return pingSyncAdapter.getSyncAdapterBinder();
+	}
 }

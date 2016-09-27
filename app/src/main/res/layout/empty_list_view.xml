@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/empty_monitor_list"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:orientation="vertical"
-    android:layout_marginBottom="30dp">
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/empty_monitor_list"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:layout_gravity="center"
+	android:layout_marginBottom="30dp"
+	android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_monitor"
-        android:layout_margin="8dp"
-        android:contentDescription="@null"/>
+	<ImageView
+		android:layout_width="80dp"
+		android:layout_height="80dp"
+		android:layout_gravity="center"
+		android:layout_margin="8dp"
+		android:contentDescription="@null"
+		android:src="@drawable/ic_monitor"
+		android:tint="@color/accent"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textStyle="bold"
-        android:text="@string/empty_list_view_header"
-        android:textSize="@dimen/abc_text_size_small_material"
-        android:gravity="center"/>
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:gravity="center"
+		android:text="@string/empty_list_view_header"
+		android:textSize="@dimen/abc_text_size_small_material"
+		android:textStyle="bold"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/empty_list_view_message"
-        android:textSize="@dimen/abc_text_size_small_material"
-        android:paddingTop="10dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"/>
-
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:gravity="center"
+		android:paddingStart="20dp"
+		android:paddingEnd="20dp"
+		android:paddingTop="10dp"
+		android:text="@string/empty_list_view_message"
+		android:textSize="@dimen/abc_text_size_small_material"/>
 </LinearLayout>
