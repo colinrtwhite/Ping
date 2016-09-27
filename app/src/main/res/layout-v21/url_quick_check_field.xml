@@ -5,7 +5,6 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:layout_weight="1"
-	android:drawableRight="@drawable/ic_clear"
 	android:hint="@string/initial_output_text_id"
 	android:inputType="textUri"
 	android:textColor="@android:color/white"

@@ -10,7 +10,6 @@
 	android:layout_marginTop="8dp"
 	android:layout_weight="1"
 	android:background="@drawable/line_background"
-	android:drawableRight="@drawable/ic_clear"
 	android:hint="@string/initial_output_text_id"
 	android:inputType="textUri"
 	android:paddingBottom="5dp"

@@ -10,6 +10,8 @@ import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.widget.EditText;
 
+import com.colinwhite.ping.R;
+
 /**
  * ClearableEditText extends the functionality of EditText to show a clear icon, which simply gets
  * rid of all the text in the field. Used for the URL field in MainActivity.
@@ -96,7 +98,7 @@ public class ClearableEditText extends EditText implements OnTouchListener,
 	private void init() {
 		clearIcon = getCompoundDrawables()[2];
 		if (clearIcon == null) {
-			clearIcon = ContextCompat.getDrawable(getContext(), android.R.drawable.presence_offline);
+			clearIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_clear);
 		}
 		clearIcon.setBounds(0, 0, clearIcon.getIntrinsicWidth(), clearIcon.getIntrinsicHeight());
 		setClearIconVisible(false);
